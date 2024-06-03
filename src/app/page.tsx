@@ -15,7 +15,7 @@ async function Recipes() {
       )}
       {images.map((image) => (
         <div key={image.id} className="w-48">
-          <Link href={`/recipe/${image.id}`}>
+          <Link href={`/img/${image.id}`}>
             <Image
               src={image.url}
               alt={image.name}
