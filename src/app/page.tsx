@@ -1,22 +1,17 @@
 import Link from "next/link";
+import { db } from "~/server/db";
 
 export const dynamic = "force-dynamic";
 
-const mockUrls = [
-  "https://utfs.io/f/be838078-efd1-4855-80b3-6ee57ec952b9-567z33.webp",
-  "https://utfs.io/f/18a61f93-dcb4-4fdc-ba0d-581bb7c58f9b-9ff3qs.jpg",
-];
+export default async function HomePage() {
+  const images = await db.query.images.findMany({
+    orderBy: (model, { desc }) => desc(model.id),
+  });
 
-const mockImages = mockUrls.map((url, index) => ({
-  id: index + 1,
-  url,
-}));
-
-export default function HomePage() {
   return (
     <main className="">
       <div className="flex flex-wrap gap-4 p-4">
-        {mockImages.map((image) => (
+        {images.map((image) => (
           <div key={image.id} className="w-48">
             <Link href={`/recipe/${image.id}`}>
               <img src={image.url} alt="" className="w-full rounded-md" />
