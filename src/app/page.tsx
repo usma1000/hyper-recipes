@@ -1,6 +1,6 @@
 import { SignedIn, SignedOut } from "@clerk/nextjs";
+import Image from "next/image";
 import Link from "next/link";
-import { db } from "~/server/db";
 import { getMyImages } from "~/server/queries";
 
 export const dynamic = "force-dynamic";
@@ -9,14 +9,20 @@ async function Recipes() {
   const images = await getMyImages();
 
   return (
-    <div className="flex flex-wrap gap-4 p-4">
+    <div className="flex flex-wrap justify-center gap-4 p-4">
       {images.length === 0 && (
         <div className="w-full text-center text-2xl">No recipes yet</div>
       )}
       {images.map((image) => (
         <div key={image.id} className="w-48">
           <Link href={`/recipe/${image.id}`}>
-            <img src={image.url} alt="" className="w-full rounded-md" />
+            <Image
+              src={image.url}
+              alt={image.name}
+              width={200}
+              height={160}
+              className="rounded-md shadow-lg hover:shadow-2xl"
+            />
             <span className="mt-2 block font-semibold text-white">Title</span>
             <p className="text-sm text-gray-400">Description</p>
           </Link>
