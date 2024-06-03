@@ -10,6 +10,7 @@ export default function PhotoModal({
 
   return (
     <div>
+      {/* replace with a modal, image on left, scrollable ingredients on right */}
       <FullPageRecipeView id={idAsNumber} />
     </div>
   );
