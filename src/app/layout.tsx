@@ -1,7 +1,12 @@
 import "~/styles/globals.css";
+import "@uploadthing/react/styles.css";
+
 import { ClerkProvider } from "@clerk/nextjs";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig } from "uploadthing/server";
 import { GeistSans } from "geist/font/sans";
 import TopNav from "./_components/TopNav";
+import { ourFileRouter } from "./api/uploadthing/core";
 
 export const metadata = {
   title: "Hyper Recipes",
@@ -15,13 +20,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
-      <ClerkProvider>
+    <ClerkProvider>
+      <html lang="en" className={`${GeistSans.variable}`}>
+        <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
         <body>
           <TopNav />
           {children}
         </body>
-      </ClerkProvider>
-    </html>
+      </html>
+    </ClerkProvider>
   );
 }

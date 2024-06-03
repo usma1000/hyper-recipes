@@ -10,6 +10,9 @@ async function Recipes() {
   });
   return (
     <div className="flex flex-wrap gap-4 p-4">
+      {images.length === 0 && (
+        <div className="w-full text-center text-2xl">No recipes yet</div>
+      )}
       {images.map((image) => (
         <div key={image.id} className="w-48">
           <Link href={`/recipe/${image.id}`}>
