@@ -1,6 +1,6 @@
-import { getImage } from "~/server/queries";
+import FullPageRecipeView from "~/components/FullRecipePage";
 
-export default async function PhotoModal({
+export default function PhotoModal({
   params: { id: photoId },
 }: {
   params: { id: string };
@@ -8,10 +8,9 @@ export default async function PhotoModal({
   const idAsNumber = Number(photoId);
   if (Number.isNaN(idAsNumber)) throw new Error("Invalid photo ID");
 
-  const image = await getImage(idAsNumber);
   return (
     <div>
-      <img src={image.url} alt={image.name} className="w-96" />
+      <FullPageRecipeView id={idAsNumber} />
     </div>
   );
 }
