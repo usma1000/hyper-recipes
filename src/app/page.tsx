@@ -1,12 +1,12 @@
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
-import { getMyImages } from "~/server/queries";
+import { getAllImages } from "~/server/queries";
 
 export const dynamic = "force-dynamic";
 
 async function Recipes() {
-  const images = await getMyImages();
+  const images = await getAllImages();
 
   return (
     <div className="flex flex-wrap justify-center gap-4 p-4">
@@ -34,13 +34,14 @@ async function Recipes() {
 
 export default function HomePage() {
   return (
-    <main className="">
+    <>
+      <Recipes />
       <SignedOut>
         <div className="h-full w-full text-center text-2xl">Please sign in</div>
       </SignedOut>
       <SignedIn>
-        <Recipes />
+        <div>Signed in: Button to create or edit recipes.</div>
       </SignedIn>
-    </main>
+    </>
   );
 }

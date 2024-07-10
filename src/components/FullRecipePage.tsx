@@ -7,10 +7,21 @@ export default async function FullPageRecipeView(props: { id: number }) {
   const uploaderInfo = await clerkClient.users.getUser(image.userId);
 
   return (
-    <div>
-      <img src={image.url} alt={image.name} className="w-96" />
-      <p>Posted by: {uploaderInfo.fullName}</p>
-      <p>Posted on: {new Date(image.createdAt).toLocaleDateString()}</p>
-    </div>
+    <>
+      <div>
+        <p>Ingredients</p>
+        <ul>
+          <li>
+            <input type="checkbox" />
+            <span>Onions</span>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <img src={image.url} alt={image.name} className="w-96" />
+        <p>Posted by: {uploaderInfo.fullName}</p>
+        <p>Posted on: {new Date(image.createdAt).toLocaleDateString()}</p>
+      </div>
+    </>
   );
 }

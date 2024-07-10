@@ -14,6 +14,7 @@ export default function TopNav() {
       </Link>
 
       <div className="flex flex-row">
+        <Link href="/new">Recipes</Link>
         <SignedOut>
           <SignInButton />
         </SignedOut>

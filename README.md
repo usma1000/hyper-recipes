@@ -11,7 +11,8 @@
 - [x] "taint" (server-only)
 - [x] Use Next/Image component
 - [x] Error management (sentry)
-- [ ] Routing/recipe page (parallel route)
+- [ ] Routing/recipe page (parallel route) https://youtu.be/d5x0JCZbAJs?t=5538
 - [ ] Delete button (w/ server actions)
 - [ ] Analytics (posthog)
 - [ ] Ratelimiting (upstash)
+- [ ] Add Quilljs for recipe wysiwyg
