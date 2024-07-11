@@ -21,6 +21,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export const dynamic = "force-dynamic";
 
@@ -70,6 +71,10 @@ async function Recipes() {
                   )}
                   <DialogTitle>{recipe.name}</DialogTitle>
                   <DialogDescription>{recipe.description}</DialogDescription>
+                  <div className="flex flex-row gap-2">
+                    <Badge variant="outline">Indian</Badge>
+                    <Badge variant="outline">Vegetarian</Badge>
+                  </div>
                   <DialogFooter>
                     <div className="flex w-full flex-row justify-between">
                       <Link
