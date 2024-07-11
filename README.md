@@ -4,7 +4,7 @@
 
 - [ ] Move recipes view into own component
 - [ ] Fix up full recipe view page
-- [ ] Add Carousel component
+- [ ] Ability to favorite a recipe if logged in
 - [ ] Create Tags table (name, type)
 - [ ] Add tags of type cuisine to recipes
 - [ ] Display carousels of only recipes tagged Indian for testing
