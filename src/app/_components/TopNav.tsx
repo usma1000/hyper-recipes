@@ -6,6 +6,7 @@ import Link from "next/link";
 // import { UploadButton } from "~/utils/uploadthing";
 import { ModeToggle } from "./ModeToggle";
 import { CommandSearch } from "./CommandSearch";
+import { Button } from "@/components/ui/button";
 
 export default function TopNav() {
   // const router = useRouter();
@@ -19,7 +20,9 @@ export default function TopNav() {
         <div className="flex items-center gap-4">
           <CommandSearch />
           <SignedOut>
-            <SignInButton />
+            <Button>
+              <SignInButton />
+            </Button>
           </SignedOut>
           <SignedIn>
             {/* <Link href="/dashboard">Add New Recipe</Link> */}
