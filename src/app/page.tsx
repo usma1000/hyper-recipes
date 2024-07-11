@@ -1,5 +1,5 @@
 import { SignedIn, SignedOut } from "@clerk/nextjs";
-import { getAllImages } from "~/server/queries";
+import { getAllRecipes } from "~/server/queries";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -19,52 +19,67 @@ import { Star } from "lucide-react";
 export const dynamic = "force-dynamic";
 
 async function Recipes() {
-  const images = await getAllImages();
+  const recipes = await getAllRecipes();
 
   return (
     <div className="flex flex-wrap justify-center gap-4 p-4">
-      {images.length === 0 && (
+      {recipes.length === 0 && (
         <div className="w-full text-center text-2xl">No recipes yet</div>
       )}
-      {images.map((image) => (
-        <div key={image.id} className="w-48">
-          <Dialog>
-            <DialogTrigger asChild>
-              <div>
-                <Image
-                  src={image.url}
-                  alt={image.name}
-                  width={200}
-                  height={160}
-                  className="rounded-md shadow-lg hover:shadow-2xl"
-                />
-                <span className="mt-2 block font-semibold">Title</span>
-                <p className="text-sm text-gray-400">Description</p>
-              </div>
-            </DialogTrigger>
-            <DialogPortal>
-              <DialogOverlay />
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Title</DialogTitle>
-                  <DialogDescription>Description</DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                  <Link
-                    href={`/recipe/${image.id}`}
-                    className={buttonVariants({ variant: "default" })}
-                  >
-                    View Recipe
-                  </Link>
-                  <Button variant="outline" size="icon">
-                    <Star className="h-3 w-3" />
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </DialogPortal>
-          </Dialog>
-        </div>
-      ))}
+      {recipes.map((recipe) => {
+        return (
+          <div key={recipe.id} className="w-48">
+            <Dialog>
+              <DialogTrigger asChild>
+                <div>
+                  {recipe.heroImage?.url && (
+                    <Image
+                      src={recipe.heroImage.url}
+                      alt={recipe.heroImage.name}
+                      width={200}
+                      height={160}
+                      className="rounded-md shadow-lg hover:shadow-2xl"
+                    />
+                  )}
+                  <span className="mt-2 block font-semibold">
+                    {recipe.name}
+                  </span>
+                  <p className="text-sm text-gray-400">{recipe.description}</p>
+                </div>
+              </DialogTrigger>
+              <DialogPortal>
+                <DialogOverlay />
+                <DialogContent>
+                  {recipe.heroImage?.url && (
+                    <DialogHeader className="w relative h-64">
+                      <Image
+                        src={recipe.heroImage.url}
+                        alt={recipe.heroImage.name}
+                        fill={true}
+                        className="rounded-md shadow-lg"
+                        style={{ objectFit: "cover" }}
+                      />
+                    </DialogHeader>
+                  )}
+                  <DialogTitle>{recipe.name}</DialogTitle>
+                  <DialogDescription>{recipe.description}</DialogDescription>
+                  <DialogFooter>
+                    <Button variant="outline" size="icon">
+                      <Star className="h-3 w-3" />
+                    </Button>
+                    <Link
+                      href={`/recipe/${recipe.id}`}
+                      className={buttonVariants({ variant: "default" })}
+                    >
+                      View Recipe
+                    </Link>
+                  </DialogFooter>
+                </DialogContent>
+              </DialogPortal>
+            </Dialog>
+          </div>
+        );
+      })}
     </div>
   );
 }

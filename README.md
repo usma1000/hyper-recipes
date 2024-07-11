@@ -2,16 +2,12 @@
 
 ## TODO
 
-- [x] Make it deploy (vercel)
-- [x] Scaffold basic UI with mock data
-- [x] Set up db (vercel postgres)
-- [x] Attach db to UI
-- [x] Add auth (clerk)
-- [x] Image upload
-- [x] "taint" (server-only)
-- [x] Use Next/Image component
-- [x] Error management (sentry)
-- [x] Create Dialog component
+- [ ] Add Card component
+- [ ] Add Carousel component
+- [ ] Add Badge component
+- [ ] Create Tags table (name, type)
+- [ ] Add tags of type cuisine to recipes
+- [ ] Display carousels of only recipes tagged Indian for testing
 - [ ] Add admin/editor roles through clerk metadata https://clerk.com/docs/guides/basic-rbac
 - [ ] Create Skeleton component for loading state
 - [ ] Command component for quick search

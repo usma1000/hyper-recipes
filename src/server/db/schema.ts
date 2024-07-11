@@ -1,7 +1,7 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { sql } from "drizzle-orm";
+import { sql, relations } from "drizzle-orm";
 import {
   pgTableCreator,
   serial,
@@ -36,11 +36,16 @@ export const recipe = createTable(
     description: varchar("description", { length: 1024 }).notNull(),
     heroImageId: integer("hero_image_id").references(() => images.id),
 
-    userId: varchar("userId", { length: 256 }).notNull(),
-
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
     updatedAt: timestamp("updatedAt"),
   }
 );
+
+export const recipeHeroImage = relations(recipe, ({one}) => ({
+  heroImage: one(images, {
+    fields: [recipe.heroImageId],
+    references: [images.id],
+  }),
+}));
