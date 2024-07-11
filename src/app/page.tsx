@@ -15,6 +15,12 @@ import {
 } from "@/components/ui/dialog";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Star } from "lucide-react";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 
 export const dynamic = "force-dynamic";
 
@@ -28,35 +34,36 @@ async function Recipes() {
       )}
       {recipes.map((recipe) => {
         return (
-          <div key={recipe.id} className="w-48">
+          <div key={recipe.id} className="w-64">
             <Dialog>
               <DialogTrigger asChild>
-                <div>
-                  {recipe.heroImage?.url && (
-                    <Image
-                      src={recipe.heroImage.url}
-                      alt={recipe.heroImage.name}
-                      width={200}
-                      height={160}
-                      className="rounded-md shadow-lg hover:shadow-2xl"
-                    />
-                  )}
-                  <span className="mt-2 block font-semibold">
-                    {recipe.name}
-                  </span>
-                  <p className="text-sm text-gray-400">{recipe.description}</p>
-                </div>
+                <Card className="overflow-hidden transition-all hover:-translate-y-1 hover:cursor-pointer hover:shadow-lg">
+                  <div className="relative h-48">
+                    {recipe.heroImage?.url && (
+                      <Image
+                        src={recipe.heroImage.url}
+                        alt={recipe.heroImage.name}
+                        fill={true}
+                        style={{ objectFit: "cover" }}
+                      />
+                    )}
+                  </div>
+                  <CardHeader>
+                    <CardTitle>{recipe.name}</CardTitle>
+                    <CardDescription>{recipe.description}</CardDescription>
+                  </CardHeader>
+                </Card>
               </DialogTrigger>
               <DialogPortal>
                 <DialogOverlay />
                 <DialogContent>
                   {recipe.heroImage?.url && (
-                    <DialogHeader className="w relative h-64">
+                    <DialogHeader className="relative h-64">
                       <Image
                         src={recipe.heroImage.url}
                         alt={recipe.heroImage.name}
                         fill={true}
-                        className="rounded-md shadow-lg"
+                        className="rounded-md shadow-sm"
                         style={{ objectFit: "cover" }}
                       />
                     </DialogHeader>
@@ -64,15 +71,17 @@ async function Recipes() {
                   <DialogTitle>{recipe.name}</DialogTitle>
                   <DialogDescription>{recipe.description}</DialogDescription>
                   <DialogFooter>
-                    <Button variant="outline" size="icon">
-                      <Star className="h-3 w-3" />
-                    </Button>
-                    <Link
-                      href={`/recipe/${recipe.id}`}
-                      className={buttonVariants({ variant: "default" })}
-                    >
-                      View Recipe
-                    </Link>
+                    <div className="flex w-full flex-row justify-between">
+                      <Link
+                        href={`/recipe/${recipe.id}`}
+                        className={buttonVariants({ variant: "default" })}
+                      >
+                        View Recipe
+                      </Link>
+                      <Button variant="outline" size="icon">
+                        <Star className="h-3 w-3" />
+                      </Button>
+                    </div>
                   </DialogFooter>
                 </DialogContent>
               </DialogPortal>

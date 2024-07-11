@@ -2,7 +2,7 @@
 
 ## TODO
 
-- [ ] Add Card component
+- [ ] Move recipes view into own component
 - [ ] Add Carousel component
 - [ ] Add Badge component
 - [ ] Create Tags table (name, type)
