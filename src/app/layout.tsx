@@ -4,7 +4,7 @@ import { Inter as FontSans } from "next/font/google";
 
 import { ClerkProvider } from "@clerk/nextjs";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "~/components/theme-provider";
 import { extractRouterConfig } from "uploadthing/server";
 import { GeistSans } from "geist/font/sans";
 import TopNav from "./_components/TopNav";
