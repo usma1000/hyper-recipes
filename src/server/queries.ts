@@ -44,6 +44,9 @@ export async function getAllRecipes() {
 export async function getRecipe(id: number) {
   const recipe = await db.query.recipe.findFirst({ 
     where: (model, { eq }) => eq(model.id, id),
+    with: {
+      heroImage: true,
+    },
   });
 
   if (!recipe) throw new Error('Recipe not found');

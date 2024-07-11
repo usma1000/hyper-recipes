@@ -2,7 +2,6 @@
 
 ## TODO
 
-- [ ] Fix up full recipe view page
 - [ ] Ability to favorite a recipe if logged in
 - [ ] Create Tags table (name, type)
 - [ ] Add tags of type cuisine to recipes

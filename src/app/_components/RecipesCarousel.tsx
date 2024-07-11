@@ -13,7 +13,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Car, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import {
   Card,
   CardHeader,
