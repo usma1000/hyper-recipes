@@ -22,7 +22,7 @@ export default function TopNav() {
             <SignInButton />
           </SignedOut>
           <SignedIn>
-            <Link href="/dashboard">Add New Recipe</Link>
+            {/* <Link href="/dashboard">Add New Recipe</Link> */}
             {/* <UploadButton
             endpoint="imageUploader"
             onClientUploadComplete={() => {
