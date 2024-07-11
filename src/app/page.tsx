@@ -9,8 +9,12 @@ export default function HomePage() {
           Sign in to start saving recipes to your book.
         </div>
       </SignedOut>
+      <h1>Browse Recipes</h1>
       <section>
-        <h1>Featured Recipes</h1>
+        <h2>Featured</h2>
+        <p className="text-sm text-slate-500">
+          Some of our favorites, hand picked for you.
+        </p>
         <RecipesCarousel />
       </section>
       <SignedIn>

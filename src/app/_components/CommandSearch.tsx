@@ -54,7 +54,7 @@ export function CommandSearch() {
         <CommandInput placeholder="Type a command or search..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Suggestions">
+          <CommandGroup heading="Recipes">
             <CommandItem>
               <Calendar className="mr-2 h-4 w-4" />
               <span>Calendar</span>

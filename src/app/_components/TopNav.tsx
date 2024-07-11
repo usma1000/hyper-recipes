@@ -7,13 +7,15 @@ import Link from "next/link";
 import { ModeToggle } from "./ModeToggle";
 import { CommandSearch } from "./CommandSearch";
 import { Button } from "@/components/ui/button";
+import { Zap } from "lucide-react";
 
 export default function TopNav() {
   // const router = useRouter();
   return (
     <div className="border-b border-slate-500 border-opacity-20 py-4">
       <nav className="mx-auto flex max-w-3xl items-center justify-between font-semibold">
-        <Link href="/" className="text-xl font-semibold">
+        <Link href="/" className="flex align-middle text-xl font-semibold">
+          <Zap size={16} />
           Hyper Recipes
         </Link>
 
