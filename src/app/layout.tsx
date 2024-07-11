@@ -24,10 +24,8 @@ export const metadata = {
 
 export default function RootLayout({
   children,
-  modal,
 }: {
   children: React.ReactNode;
-  modal: React.ReactNode;
 }) {
   return (
     <ClerkProvider>
@@ -46,10 +44,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <TopNav />
-            <main className="p-8">
-              {children}
-              {modal}
-            </main>
+            <main className="mx-auto my-8 max-w-3xl">{children}</main>
             <div id="modal-root" />
           </ThemeProvider>
         </body>

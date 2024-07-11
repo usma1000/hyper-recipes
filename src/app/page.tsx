@@ -118,7 +118,7 @@ async function Recipes() {
 
 export default function HomePage() {
   return (
-    <div className="mx-auto max-w-3xl">
+    <>
       <h1>Featured Recipes</h1>
       <Recipes />
       <h2>My favorites</h2>
@@ -129,6 +129,6 @@ export default function HomePage() {
       <SignedIn>
         <div>Signed in: Button to create or edit recipes.</div>
       </SignedIn>
-    </div>
+    </>
   );
 }
