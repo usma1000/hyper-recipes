@@ -2,7 +2,6 @@
 
 ## TODO
 
-- [ ] Move recipes view into own component
 - [ ] Fix up full recipe view page
 - [ ] Ability to favorite a recipe if logged in
 - [ ] Create Tags table (name, type)
