@@ -1,6 +1,6 @@
 import FullPageRecipeView from "~/components/FullRecipePage";
 
-export default function PhotoModal({
+export default function RecipePage({
   params: { id: photoId },
 }: {
   params: { id: string };
@@ -10,7 +10,6 @@ export default function PhotoModal({
 
   return (
     <div>
-      {/* replace with a modal, image on left, scrollable ingredients on right */}
       <FullPageRecipeView id={idAsNumber} />
     </div>
   );

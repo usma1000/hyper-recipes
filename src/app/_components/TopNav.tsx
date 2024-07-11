@@ -15,19 +15,21 @@ export default function TopNav() {
       </Link>
 
       <div className="flex items-center gap-4">
-        <Link href="/new">Recipes</Link>
         <ModeToggle />
         <SignedOut>
           <SignInButton />
         </SignedOut>
         <SignedIn>
+          <Link href="/dashboard">Add New Recipe</Link>
           {/* <UploadButton
             endpoint="imageUploader"
             onClientUploadComplete={() => {
               router.refresh();
             }}
           /> */}
-          <UserButton />
+          <div className="h-6 w-6 rounded-full bg-slate-500">
+            <UserButton />
+          </div>
         </SignedIn>
       </div>
     </nav>

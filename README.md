@@ -11,7 +11,10 @@
 - [x] "taint" (server-only)
 - [x] Use Next/Image component
 - [x] Error management (sentry)
+- [ ] Create Dialog component
 - [ ] Routing/recipe page (parallel route) https://youtu.be/d5x0JCZbAJs?t=5538
+- [ ] Add admin/editor roles through clerk metadata https://clerk.com/docs/guides/basic-rbac
+- [ ] Create Skeleton component for loading state
 - [ ] Delete button (w/ server actions)
 - [ ] Analytics (posthog)
 - [ ] Ratelimiting (upstash)

@@ -22,10 +22,6 @@ export async function getMyImages() {
 }
 
 export async function getImage(id: number) {
-  const user = auth();
-
-  if (!user.userId) throw new Error('Not authenticated');
-
   const image = await db.query.images.findFirst({ 
     where: (model, { eq }) => eq(model.id, id),
   });
