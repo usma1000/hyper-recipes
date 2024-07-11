@@ -4,6 +4,7 @@ import { Inter as FontSans } from "next/font/google";
 
 import { ClerkProvider } from "@clerk/nextjs";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { ThemeProvider } from "@/components/theme-provider";
 import { extractRouterConfig } from "uploadthing/server";
 import { GeistSans } from "geist/font/sans";
 import TopNav from "./_components/TopNav";
@@ -38,12 +39,19 @@ export default function RootLayout({
             fontSans.variable,
           )}
         >
-          <TopNav />
-          <main className="p-8">
-            {children}
-            {modal}
-          </main>
-          <div id="modal-root" />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <TopNav />
+            <main className="p-8">
+              {children}
+              {modal}
+            </main>
+            <div id="modal-root" />
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
