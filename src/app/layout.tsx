@@ -10,6 +10,7 @@ import { GeistSans } from "geist/font/sans";
 import TopNav from "./_components/TopNav";
 import { ourFileRouter } from "./api/uploadthing/core";
 import { cn } from "~/lib/utils";
+import Footer from "./_components/Footer";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -45,7 +46,7 @@ export default function RootLayout({
           >
             <TopNav />
             <main className="mx-auto my-8 max-w-3xl">{children}</main>
-            <div id="modal-root" />
+            <Footer />
           </ThemeProvider>
         </body>
       </html>

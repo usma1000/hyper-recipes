@@ -12,7 +12,7 @@ import { Zap } from "lucide-react";
 export default function TopNav() {
   // const router = useRouter();
   return (
-    <div className="border-b border-slate-500 border-opacity-20 py-4">
+    <div className="border-b border-slate-200 bg-white py-4 text-slate-950 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50">
       <nav className="mx-auto flex max-w-3xl items-center justify-between font-semibold">
         <Link href="/" className="flex align-middle text-xl font-semibold">
           <Zap size={16} />

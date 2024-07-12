@@ -43,7 +43,7 @@ export default async function RecipesCarousel() {
             return (
               <CarouselItem
                 key={recipe.id}
-                className="md:basis-1/2 lg:basis-1/2"
+                className="md:basis-1/2 lg:basis-1/3"
               >
                 <Dialog>
                   <DialogTrigger asChild>

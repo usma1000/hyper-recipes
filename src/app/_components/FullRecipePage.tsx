@@ -37,7 +37,7 @@ export default async function FullPageRecipeView(props: { id: number }) {
             <CardTitle>Ingredients</CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="ml-2">
+            <ul className="m-0">
               {fakeIngredients.map((ingredient) => (
                 <li className="list-none">
                   <input type="checkbox" className="mr-2" />
