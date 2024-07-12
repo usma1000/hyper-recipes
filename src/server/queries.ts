@@ -1,9 +1,9 @@
 import 'server-only';
 import { db } from './db';
-// import { auth } from '@clerk/nextjs/server';
+import { auth } from '@clerk/nextjs/server';
 
 export async function getAllImages() {
-  const images = await db.query.images.findMany({
+  const images = await db.query.ImagesTable.findMany({
     orderBy: (model, { desc }) => desc(model.id),
   });
   return images;
@@ -22,7 +22,7 @@ export async function getAllImages() {
 // }
 
 export async function getImage(id: number) {
-  const image = await db.query.images.findFirst({ 
+  const image = await db.query.ImagesTable.findFirst({ 
     where: (model, { eq }) => eq(model.id, id),
   });
 
@@ -32,7 +32,7 @@ export async function getImage(id: number) {
 }
 
 export async function getAllRecipes() {
-  const recipes = await db.query.recipe.findMany({
+  const recipes = await db.query.RecipesTable.findMany({
     orderBy: (model, { desc }) => desc(model.id),
     with: {
       heroImage: true,
@@ -42,7 +42,7 @@ export async function getAllRecipes() {
 }
 
 export async function getRecipe(id: number) {
-  const recipe = await db.query.recipe.findFirst({ 
+  const recipe = await db.query.RecipesTable.findFirst({ 
     where: (model, { eq }) => eq(model.id, id),
     with: {
       heroImage: true,
@@ -53,3 +53,17 @@ export async function getRecipe(id: number) {
 
   return recipe;
 }
+
+// export async function getMyFavoriteRecipes() {
+//   const user = auth();
+
+//   if (!user.userId) throw new Error('Not authenticated');
+
+//   const favoriteRecipes = await db.query.favoriteRecipes.findMany({
+//     where: (model, { eq }) => eq(model.userId, user.userId),
+//     with: {
+//       recipes: true,
+//     },
+//   });
+//   return favoriteRecipes;
+// }

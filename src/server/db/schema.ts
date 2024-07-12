@@ -7,13 +7,18 @@ import {
   serial,
   timestamp,
   varchar,
-  integer
+  integer,
+  pgEnum,
+  uniqueIndex,
+  primaryKey,
+  boolean,
 } from "drizzle-orm/pg-core";
 
 export const createTable = pgTableCreator((name) => `hyper-recipes_${name}`);
 
-export const images = createTable(
-  "image",
+// Table definitions
+export const ImagesTable = createTable(
+  "images",
   {
     id: serial("id").primaryKey(),
     name: varchar("name", { length: 256 }).notNull(),
@@ -28,24 +33,58 @@ export const images = createTable(
   }
 );
 
-export const recipe = createTable(
-  "recipe",
+export const RecipesTable = createTable(
+  "recipes",
   {
     id: serial("id").primaryKey(),
     name: varchar("name", { length: 256 }).notNull(),
     description: varchar("description", { length: 1024 }).notNull(),
-    heroImageId: integer("hero_image_id").references(() => images.id),
+    heroImageId: integer("hero_image_id").references(() => ImagesTable.id),
 
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
     updatedAt: timestamp("updatedAt"),
+  }, table => {
+    return {
+      nameIndex: uniqueIndex("name_index").on(table.name),
+    }
   }
 );
 
-export const recipeHeroImage = relations(recipe, ({one}) => ({
-  heroImage: one(images, {
-    fields: [recipe.heroImageId],
-    references: [images.id],
+// export const favoriteRecipes = createTable(
+//   "favorite_recipes",
+//   {
+//     userId: varchar("user_id", { length: 256 }).notNull(),
+//     recipeId: integer("recipe_id").references(() => RecipesTable.id).notNull(),
+//     isFavorited: boolean("is_favorited").notNull().default(false),  }, table => {
+//     return {
+//       pk: primaryKey({ columns: [table.userId, table.recipeId] }),
+//     }
+//   }
+// );
+
+// export const favoriteRecipeRelations = relations(favoriteRecipes, ({many}) => ({
+//   recipes: many(recipe)
+// }));
+
+// export const tagTypes = pgEnum("tag_types", ["cuisine_type", "meal_type"]);
+// export const cuisineTypes = pgEnum("cuisine_types", ["american", "italian", "mexican", "chinese", "japanese", "indian", "french", "thai", "greek", "mediterranean", "middle_eastern", "spanish", "german", "korean"]);
+// export const mealTypes = pgEnum("meal_types", ["breakfast", "lunch", "dinner", "snack", "dessert", "drink"]);
+
+// export const tags = createTable(
+//   "tag",
+//   {
+//     id: serial("id").primaryKey(),
+//     name: varchar("name", { length: 256 }).notNull(),
+//     type: varchar("type", { length: 256 }).notNull(),
+//   }
+// );
+
+// Table relations
+export const RecipesTableRelations = relations(RecipesTable, ({one, many}) => ({
+  heroImage: one(ImagesTable, {
+    fields: [RecipesTable.heroImageId],
+    references: [ImagesTable.id],
   }),
 }));
