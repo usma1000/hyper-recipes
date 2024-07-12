@@ -54,16 +54,16 @@ export async function getRecipe(id: number) {
   return recipe;
 }
 
-// export async function getMyFavoriteRecipes() {
-//   const user = auth();
+export async function getMyFavoriteRecipes() {
+  const user = auth();
 
-//   if (!user.userId) throw new Error('Not authenticated');
+  if (!user.userId) throw new Error('Not authenticated');
 
-//   const favoriteRecipes = await db.query.favoriteRecipes.findMany({
-//     where: (model, { eq }) => eq(model.userId, user.userId),
-//     with: {
-//       recipes: true,
-//     },
-//   });
-//   return favoriteRecipes;
-// }
+  const favoriteRecipes = await db.query.FavoritesTable.findMany({
+    where: (model, { eq }) => eq(model.userId, user.userId),
+    with: {
+      favoritedRecipe: true
+    },
+  });
+  return favoriteRecipes;
+}

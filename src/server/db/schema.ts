@@ -52,21 +52,14 @@ export const RecipesTable = createTable(
   }
 );
 
-// export const favoriteRecipes = createTable(
-//   "favorite_recipes",
-//   {
-//     userId: varchar("user_id", { length: 256 }).notNull(),
-//     recipeId: integer("recipe_id").references(() => RecipesTable.id).notNull(),
-//     isFavorited: boolean("is_favorited").notNull().default(false),  }, table => {
-//     return {
-//       pk: primaryKey({ columns: [table.userId, table.recipeId] }),
-//     }
-//   }
-// );
-
-// export const favoriteRecipeRelations = relations(favoriteRecipes, ({many}) => ({
-//   recipes: many(recipe)
-// }));
+export const FavoritesTable = createTable(
+  "favorite_recipes",
+  {
+    id: serial("id").primaryKey(),
+    userId: varchar("user_id", { length: 256 }).notNull(),
+    recipeId: integer("recipe_id").references(() => RecipesTable.id).notNull(),
+  }
+);
 
 // export const tagTypes = pgEnum("tag_types", ["cuisine_type", "meal_type"]);
 // export const cuisineTypes = pgEnum("cuisine_types", ["american", "italian", "mexican", "chinese", "japanese", "indian", "french", "thai", "greek", "mediterranean", "middle_eastern", "spanish", "german", "korean"]);
@@ -82,9 +75,21 @@ export const RecipesTable = createTable(
 // );
 
 // Table relations
-export const RecipesTableRelations = relations(RecipesTable, ({one, many}) => ({
-  heroImage: one(ImagesTable, {
-    fields: [RecipesTable.heroImageId],
-    references: [ImagesTable.id],
-  }),
-}));
+export const RecipesTableRelations = relations(RecipesTable, ({one, many}) => {
+  return {
+    heroImage: one(ImagesTable, {
+      fields: [RecipesTable.heroImageId],
+      references: [ImagesTable.id],
+    }),
+    favoritedBy: many(FavoritesTable),
+  }
+});
+
+export const FavoritesTableRelations = relations(FavoritesTable, ({one}) => {
+  return {
+    favoritedRecipe: one(RecipesTable, {
+      fields: [FavoritesTable.recipeId],
+      references: [RecipesTable.id],
+    }),
+  }
+});
