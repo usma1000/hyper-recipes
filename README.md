@@ -2,8 +2,7 @@
 
 ## TODO
 
-- [ ] Add footer component
-- [ ] Ability to favorite a recipe if logged in
+- [ ] Ability to favorite a recipe if logged in, server actions?
 - [ ] Create Tags table (name, type)
 - [ ] Add tags of type cuisine to recipes
 - [ ] Display carousels of only recipes tagged Indian for testing

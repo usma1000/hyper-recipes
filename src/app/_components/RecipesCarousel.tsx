@@ -1,4 +1,3 @@
-import { getAllRecipes } from "~/server/queries";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -28,18 +27,18 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { SelectRecipe } from "~/server/db/schema";
 
-export default async function RecipesCarousel() {
-  const recipes = await getAllRecipes();
-
+export default async function RecipesCarousel({
+  recipes,
+}: {
+  recipes: SelectRecipe[];
+}) {
   return (
     <div>
-      {recipes.length === 0 && (
-        <div className="w-full text-center text-2xl">No recipes yet</div>
-      )}
       <Carousel className="w-full">
         <CarouselContent className="py-4">
-          {recipes.map((recipe) => {
+          {recipes?.map((recipe) => {
             return (
               <CarouselItem
                 key={recipe.id}

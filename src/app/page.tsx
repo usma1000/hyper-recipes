@@ -1,7 +1,15 @@
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import RecipesCarousel from "./_components/RecipesCarousel";
 
-export default function HomePage() {
+import { getAllRecipes, getMyFavoriteRecipes } from "~/server/queries";
+import { auth } from "@clerk/nextjs/server";
+
+export default async function HomePage() {
+  const { userId } = auth();
+
+  const allRecipes = await getAllRecipes();
+  const myFavoriteRecipes = userId ? await getMyFavoriteRecipes() : null;
+
   return (
     <div className="flex flex-col gap-8">
       <SignedOut>
@@ -15,7 +23,7 @@ export default function HomePage() {
         <p className="text-sm text-slate-500">
           Some of our favorites, hand picked for you.
         </p>
-        <RecipesCarousel />
+        <RecipesCarousel recipes={allRecipes} />
       </section>
       <SignedIn>
         <section>
@@ -23,7 +31,7 @@ export default function HomePage() {
           <p className="text-sm text-slate-500">
             You can save any recipe to your favorites by clicking the star icon.
           </p>
-          <RecipesCarousel />
+          {myFavoriteRecipes && <RecipesCarousel recipes={myFavoriteRecipes} />}
         </section>
       </SignedIn>
     </div>

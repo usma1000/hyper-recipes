@@ -62,8 +62,13 @@ export async function getMyFavoriteRecipes() {
   const favoriteRecipes = await db.query.FavoritesTable.findMany({
     where: (model, { eq }) => eq(model.userId, user.userId),
     with: {
-      favoritedRecipe: true
+      favoritedRecipe: {
+        with: {
+          heroImage: true,
+        }
+      }
     },
   });
-  return favoriteRecipes;
+  const recipes = favoriteRecipes.map(favorite => favorite.favoritedRecipe);
+  return recipes;
 }

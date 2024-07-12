@@ -33,6 +33,23 @@ export const ImagesTable = createTable(
   }
 );
 
+export type SelectRecipe = {
+  id: number;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date | null;
+  description: string;
+  heroImageId: number | null;
+  heroImage: {
+      id: number;
+      name: string;
+      url: string;
+      userId: string;
+      createdAt: Date;
+      updatedAt: Date | null;
+  } | null;
+}
+
 export const RecipesTable = createTable(
   "recipes",
   {
