@@ -120,3 +120,16 @@ export async function removeFavoriteRecipe(recipeId: number) {
   revalidatePath('/', 'layout');
   revalidatePath('/recipe/[slug]', 'page');
 }
+
+// Tags queries
+
+export async function getAllTagsForRecipe(recipeId: number) {
+  const tags = await db.query.RecipesToTagsTable.findMany({
+    where: (model, { eq }) => eq(model.recipeId, recipeId),
+    with: {
+      tag: true,
+    },
+  });
+
+  return tags.map(tag => tag.tag);
+}

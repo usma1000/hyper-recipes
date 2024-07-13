@@ -11,7 +11,6 @@ import {
   pgEnum,
   uniqueIndex,
   primaryKey,
-  boolean,
 } from "drizzle-orm/pg-core";
 
 export const createTable = pgTableCreator((name) => `hyper-recipes_${name}`);
@@ -21,10 +20,10 @@ export const ImagesTable = createTable(
   "images",
   {
     id: serial("id").primaryKey(),
-    name: varchar("name", { length: 255 }).notNull(),
+    name: varchar("name", { length: 256 }).notNull(),
     url: varchar("url", { length: 1024 }).notNull(),
 
-    userId: varchar("userId", { length: 255 }).notNull(),
+    userId: varchar("userId", { length: 256 }).notNull(),
 
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
@@ -54,7 +53,7 @@ export const RecipesTable = createTable(
   "recipes",
   {
     id: serial("id").primaryKey(),
-    name: varchar("name", { length: 255 }).notNull(),
+    name: varchar("name", { length: 256 }).notNull(),
     description: varchar("description", { length: 1024 }).notNull(),
     heroImageId: integer("hero_image_id").references(() => ImagesTable.id),
 
@@ -73,23 +72,37 @@ export const FavoritesTable = createTable(
   "favorite_recipes",
   {
     id: serial("id").primaryKey(),
-    userId: varchar("user_id", { length: 255 }).notNull(),
+    userId: varchar("user_id", { length: 256 }).notNull(),
     recipeId: integer("recipe_id").references(() => RecipesTable.id).notNull(),
   }
 );
 
-// export const tagTypes = pgEnum("tag_types", ["cuisine_type", "meal_type"]);
-// export const cuisineTypes = pgEnum("cuisine_types", ["american", "italian", "mexican", "chinese", "japanese", "indian", "french", "thai", "greek", "mediterranean", "middle_eastern", "spanish", "german", "korean"]);
-// export const mealTypes = pgEnum("meal_types", ["breakfast", "lunch", "dinner", "snack", "dessert", "drink"]);
+export const tagTypes = pgEnum("tag_types", ["cuisine_type", "meal_type"]);
+export const cuisineTypes = pgEnum("cuisine_types", ["American", "Italian", "Mexican", "Chinese", "Japanese", "Korean", "Thai", "Indian", "French", "Mediterranean", "Middle Eastern", "British", "German", "Greek", "Spanish", "Caribbean", "Latin American", "African", "Other"]);
+export const mealTypes = pgEnum("meal_types", ["Breakfast", "Brunch", "Lunch", "Dinner", "Dessert", "Snack", "Appetizer", "Side Dish", "Drink", "Other"]);
 
-// export const tags = createTable(
-//   "tag",
-//   {
-//     id: serial("id").primaryKey(),
-//     name: varchar("name", { length: 255 }).notNull(),
-//     type: varchar("type", { length: 255 }).notNull(),
-//   }
-// );
+export const TagsTable = createTable(
+  "tag",
+  {
+    id: serial("id").primaryKey(),
+    tagType: tagTypes("tag_types").notNull(),
+    cuisineType: cuisineTypes("cuisine_types"),
+    mealType: mealTypes("meal_types"),
+  }
+);
+
+export const RecipesToTagsTable = createTable(
+  "recipes_to_tags",
+  {
+    recipeId: integer("recipe_id").references(() => RecipesTable.id).notNull(),
+    tagId: integer("tag_id").references(() => TagsTable.id).notNull(),
+  },
+  table => {
+    return {
+      pk: primaryKey({ columns: [table.recipeId, table.tagId] }),
+    }
+  }
+);
 
 // Table relations
 export const RecipesTableRelations = relations(RecipesTable, ({one, many}) => {
@@ -99,6 +112,7 @@ export const RecipesTableRelations = relations(RecipesTable, ({one, many}) => {
       references: [ImagesTable.id],
     }),
     favoritedBy: many(FavoritesTable),
+    tags: many(RecipesToTagsTable),
   }
 });
 
@@ -107,6 +121,25 @@ export const FavoritesTableRelations = relations(FavoritesTable, ({one}) => {
     favoritedRecipe: one(RecipesTable, {
       fields: [FavoritesTable.recipeId],
       references: [RecipesTable.id],
+    }),
+  }
+});
+
+export const TagsRelations = relations(TagsTable, ({many}) => {
+  return {
+    recipes: many(RecipesToTagsTable),
+  }
+});
+
+export const RecipesToTagsRelations = relations(RecipesToTagsTable, ({one}) => {
+  return {
+    recipe: one(RecipesTable, {
+      fields: [RecipesToTagsTable.recipeId],
+      references: [RecipesTable.id],
+    }),
+    tag: one(TagsTable, {
+      fields: [RecipesToTagsTable.tagId],
+      references: [TagsTable.id],
     }),
   }
 });

@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { SelectRecipe } from "~/server/db/schema";
 import {
   createFavoriteRecipe,
+  getAllTagsForRecipe,
   isFavoriteRecipe,
   removeFavoriteRecipe,
 } from "~/server/queries";
@@ -33,6 +34,8 @@ export default async function RecipeDialog({
   recipe: SelectRecipe;
 }) {
   const isFavorite = await isFavoriteRecipe(recipe.id);
+
+  const tags = await getAllTagsForRecipe(recipe.id);
 
   async function toggleFavorite() {
     "use server";
@@ -84,8 +87,20 @@ export default async function RecipeDialog({
             <DialogDescription>{recipe.description}</DialogDescription>
           </div>
           <div className="flex flex-row gap-2">
-            <Badge variant="outline">Indian</Badge>
-            <Badge variant="outline">Vegetarian</Badge>
+            {tags
+              .filter((tag) => tag.tagType === "cuisine_type")
+              .map((tag) => (
+                <Badge key={tag.id} variant="outline">
+                  {tag.cuisineType}
+                </Badge>
+              ))}
+            {tags
+              .filter((tag) => tag.tagType === "meal_type")
+              .map((tag) => (
+                <Badge key={tag.id} variant="outline">
+                  {tag.mealType}
+                </Badge>
+              ))}
           </div>
           <DialogFooter>
             <div className="flex w-full flex-row justify-between">

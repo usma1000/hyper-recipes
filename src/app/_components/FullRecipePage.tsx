@@ -1,5 +1,6 @@
 import {
   createFavoriteRecipe,
+  getAllTagsForRecipe,
   getRecipe,
   isFavoriteRecipe,
   removeFavoriteRecipe,
@@ -25,6 +26,8 @@ const fakeIngredients = [
 
 export default async function FullPageRecipeView(props: { id: number }) {
   const recipe = await getRecipe(props.id);
+
+  const tags = await getAllTagsForRecipe(recipe.id);
 
   const isFavorite = await isFavoriteRecipe(recipe.id);
 
@@ -94,8 +97,20 @@ export default async function FullPageRecipeView(props: { id: number }) {
             </div>
             <CardDescription>{recipe.description}</CardDescription>
             <div className="flex flex-row gap-2">
-              <Badge variant="outline">Indian</Badge>
-              <Badge variant="outline">Vegetarian</Badge>
+              {tags
+                .filter((tag) => tag.tagType === "cuisine_type")
+                .map((tag) => (
+                  <Badge key={tag.id} variant="outline">
+                    {tag.cuisineType}
+                  </Badge>
+                ))}
+              {tags
+                .filter((tag) => tag.tagType === "meal_type")
+                .map((tag) => (
+                  <Badge key={tag.id} variant="outline">
+                    {tag.mealType}
+                  </Badge>
+                ))}
             </div>
           </CardHeader>
         </Card>
