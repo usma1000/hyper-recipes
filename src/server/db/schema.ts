@@ -21,10 +21,10 @@ export const ImagesTable = createTable(
   "images",
   {
     id: serial("id").primaryKey(),
-    name: varchar("name", { length: 256 }).notNull(),
+    name: varchar("name", { length: 255 }).notNull(),
     url: varchar("url", { length: 1024 }).notNull(),
 
-    userId: varchar("userId", { length: 256 }).notNull(),
+    userId: varchar("userId", { length: 255 }).notNull(),
 
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
@@ -54,7 +54,7 @@ export const RecipesTable = createTable(
   "recipes",
   {
     id: serial("id").primaryKey(),
-    name: varchar("name", { length: 256 }).notNull(),
+    name: varchar("name", { length: 255 }).notNull(),
     description: varchar("description", { length: 1024 }).notNull(),
     heroImageId: integer("hero_image_id").references(() => ImagesTable.id),
 
@@ -73,7 +73,7 @@ export const FavoritesTable = createTable(
   "favorite_recipes",
   {
     id: serial("id").primaryKey(),
-    userId: varchar("user_id", { length: 256 }).notNull(),
+    userId: varchar("user_id", { length: 255 }).notNull(),
     recipeId: integer("recipe_id").references(() => RecipesTable.id).notNull(),
   }
 );
@@ -86,8 +86,8 @@ export const FavoritesTable = createTable(
 //   "tag",
 //   {
 //     id: serial("id").primaryKey(),
-//     name: varchar("name", { length: 256 }).notNull(),
-//     type: varchar("type", { length: 256 }).notNull(),
+//     name: varchar("name", { length: 255 }).notNull(),
+//     type: varchar("type", { length: 255 }).notNull(),
 //   }
 // );
 

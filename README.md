@@ -3,6 +3,7 @@
 ## TODO
 
 - [ ] Ability to favorite a recipe if logged in, server actions?
+- [ ] Set up seeding for db https://youtu.be/vLze97zZKsU?t=1407
 - [ ] Create Tags table (name, type)
 - [ ] Add tags of type cuisine to recipes
 - [ ] Display carousels of only recipes tagged Indian for testing

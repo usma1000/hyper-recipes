@@ -1,7 +1,7 @@
 import { getRecipe } from "~/server/queries";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Star } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -9,7 +9,8 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 const fakeIngredients = [
   { name: "Onions" },
@@ -65,8 +66,17 @@ export default async function FullPageRecipeView(props: { id: number }) {
                 />
               </div>
             )}
-            <h1>{recipe.name}</h1>
+            <div className="flex items-end gap-2">
+              <h1>{recipe.name}</h1>
+              <Button variant="ghost" size="sm">
+                <Star className="h-5 w-5" />
+              </Button>
+            </div>
             <CardDescription>{recipe.description}</CardDescription>
+            <div className="flex flex-row gap-2">
+              <Badge variant="outline">Indian</Badge>
+              <Badge variant="outline">Vegetarian</Badge>
+            </div>
           </CardHeader>
         </Card>
 

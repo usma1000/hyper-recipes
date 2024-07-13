@@ -9,18 +9,6 @@ export async function getAllImages() {
   return images;
 }
 
-// export async function getMyImages() {
-//   const user = auth();
-
-//   if (!user.userId) throw new Error('Not authenticated');
-
-//   const images = await db.query.images.findMany({
-//     where: (model, { eq }) => eq(model.userId, user.userId),
-//     orderBy: (model, { desc }) => desc(model.id),
-//   });
-//   return images;
-// }
-
 export async function getImage(id: number) {
   const image = await db.query.ImagesTable.findFirst({ 
     where: (model, { eq }) => eq(model.id, id),
@@ -34,6 +22,17 @@ export async function getImage(id: number) {
 export async function getAllRecipes() {
   const recipes = await db.query.RecipesTable.findMany({
     orderBy: (model, { desc }) => desc(model.id),
+    with: {
+      heroImage: true,
+    },
+  });
+  return recipes;
+}
+
+export async function getSliderRecipes() {
+  const recipes = await db.query.RecipesTable.findMany({
+    orderBy: (model, { desc }) => desc(model.id),
+    limit: 6,
     with: {
       heroImage: true,
     },

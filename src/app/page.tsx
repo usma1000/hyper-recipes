@@ -1,19 +1,19 @@
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import RecipesCarousel from "./_components/RecipesCarousel";
 
-import { getAllRecipes, getMyFavoriteRecipes } from "~/server/queries";
+import { getSliderRecipes, getMyFavoriteRecipes } from "~/server/queries";
 import { auth } from "@clerk/nextjs/server";
 
 export default async function HomePage() {
   const { userId } = auth();
 
-  const allRecipes = await getAllRecipes();
+  const allRecipes = await getSliderRecipes();
   const myFavoriteRecipes = userId ? await getMyFavoriteRecipes() : null;
 
   return (
     <div className="flex flex-col gap-8">
       <SignedOut>
-        <div className="h-full w-full rounded-md border bg-slate-50 p-6 text-center text-2xl font-semibold text-slate-600">
+        <div className="h-full w-full rounded-lg border border-slate-200 bg-white p-6 text-center text-xl font-semibold text-slate-950 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50">
           Sign in to start saving recipes to your book.
         </div>
       </SignedOut>
