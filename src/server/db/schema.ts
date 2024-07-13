@@ -77,7 +77,7 @@ export const FavoritesTable = createTable(
   }
 );
 
-export const tagTypes = pgEnum("tag_types", ["cuisine_type", "meal_type"]);
+export const tagTypes = pgEnum("tag_types", ["Cuisine", "Meal"]);
 export const cuisineTypes = pgEnum("cuisine_types", ["American", "Italian", "Mexican", "Chinese", "Japanese", "Korean", "Thai", "Indian", "French", "Mediterranean", "Middle Eastern", "British", "German", "Greek", "Spanish", "Caribbean", "Latin American", "African", "Other"]);
 export const mealTypes = pgEnum("meal_types", ["Breakfast", "Brunch", "Lunch", "Dinner", "Dessert", "Snack", "Appetizer", "Side Dish", "Drink", "Other"]);
 

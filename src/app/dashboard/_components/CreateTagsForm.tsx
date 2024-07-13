@@ -14,6 +14,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cuisineTypes, mealTypes, tagTypes } from "~/server/db/schema";
 
 const CreateTagsFormSchema = z.object({
@@ -61,43 +68,56 @@ export default function CreateTagsForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Tag Type</FormLabel>
-              <FormControl>
-                <select {...field}>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a tag type" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
                   {tagTypes.enumValues.map((tagType) => (
-                    <option key={tagType} value={tagType}>
+                    <SelectItem key={tagType} value={tagType}>
                       {tagType}
-                    </option>
+                    </SelectItem>
                   ))}
-                </select>
-              </FormControl>
+                </SelectContent>
+              </Select>
               <FormDescription>Select a tag type.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        {form.watch("tagType") === "cuisine_type" && (
+        {form.watch("tagType") === "Cuisine" && (
           <FormField
             control={form.control}
             name="cuisineType"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Cuisine Type</FormLabel>
-                <FormControl>
-                  <select {...field}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a cuisine type" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
                     {cuisineTypes.enumValues.map((cuisineType) => (
-                      <option key={cuisineType} value={cuisineType}>
+                      <SelectItem key={cuisineType} value={cuisineType}>
                         {cuisineType}
-                      </option>
+                      </SelectItem>
                     ))}
-                  </select>
-                </FormControl>
+                  </SelectContent>
+                </Select>
                 <FormDescription>Select a cuisine type.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
         )}
-        {form.watch("tagType") === "meal_type" && (
+        {form.watch("tagType") === "Meal" && (
           <FormField
             control={form.control}
             name="mealType"
@@ -105,13 +125,21 @@ export default function CreateTagsForm() {
               <FormItem>
                 <FormLabel>Meal Type</FormLabel>
                 <FormControl>
-                  <select {...field}>
-                    {mealTypes.enumValues.map((mealType) => (
-                      <option key={mealType} value={mealType}>
-                        {mealType}
-                      </option>
-                    ))}
-                  </select>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a meal type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {mealTypes.enumValues.map((mealType) => (
+                        <SelectItem key={mealType} value={mealType}>
+                          {mealType}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </FormControl>
                 <FormDescription>Select a meal type.</FormDescription>
                 <FormMessage />
