@@ -6,8 +6,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import CreateTagsForm from "./_components/CreateTagsForm";
+import { getAllRecipeNames } from "~/server/queries";
 
-export default function Page() {
+export default async function Page() {
+  const recipeNames = await getAllRecipeNames();
   return (
     <div className="flex flex-col gap-8">
       <h1>Dashboard</h1>
@@ -19,7 +21,7 @@ export default function Page() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <CreateTagsForm />
+          <CreateTagsForm recipeNames={recipeNames} />
         </CardContent>
       </Card>
     </div>

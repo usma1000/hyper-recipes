@@ -36,6 +36,17 @@ export async function getAllRecipes() {
   return recipes;
 }
 
+export async function getAllRecipeNames() {
+  const recipes = await db.query.RecipesTable.findMany({
+    orderBy: (model, { desc }) => desc(model.name),
+    columns: {
+      id: true,
+      name: true,
+    },
+  });
+  return recipes;
+}
+
 export async function getSliderRecipes() {
   const recipes = await db.query.RecipesTable.findMany({
     orderBy: (model, { desc }) => desc(model.id),

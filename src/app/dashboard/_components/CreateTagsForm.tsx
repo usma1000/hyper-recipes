@@ -12,7 +12,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Combobox } from "@/components/ui/combobox";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -24,13 +24,17 @@ import {
 import { cuisineTypes, mealTypes, tagTypes } from "~/server/db/schema";
 
 const CreateTagsFormSchema = z.object({
-  recipeId: z.coerce.number(),
+  recipeId: z.number(),
   tagType: z.enum(tagTypes.enumValues),
   cuisineType: z.optional(z.enum(cuisineTypes.enumValues)),
   mealType: z.optional(z.enum(mealTypes.enumValues)),
 });
 
-export default function CreateTagsForm() {
+export default function CreateTagsForm({
+  recipeNames,
+}: {
+  recipeNames: { id: number; name: string }[];
+}) {
   const form = useForm<z.infer<typeof CreateTagsFormSchema>>({
     resolver: zodResolver(CreateTagsFormSchema),
   });
@@ -50,13 +54,14 @@ export default function CreateTagsForm() {
         <FormField
           control={form.control}
           name="recipeId"
-          render={({ field }) => (
-            <FormItem>
+          render={() => (
+            <FormItem className="flex flex-col">
               <FormLabel>Recipe</FormLabel>
-              <FormControl>
-                {/* replace with a combobox */}
-                <Input placeholder="Search by name..." {...field} />
-              </FormControl>
+              {recipeNames.length === 0 ? (
+                <p>No recipes found</p>
+              ) : (
+                <Combobox recipeNames={recipeNames} />
+              )}
               <FormDescription>Select a recipe to add tags to.</FormDescription>
               <FormMessage />
             </FormItem>
