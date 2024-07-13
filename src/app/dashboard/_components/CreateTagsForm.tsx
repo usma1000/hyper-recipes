@@ -12,6 +12,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cuisineTypes, mealTypes, tagTypes } from "~/server/db/schema";
 
@@ -46,7 +47,8 @@ export default function CreateTagsForm() {
             <FormItem>
               <FormLabel>Recipe</FormLabel>
               <FormControl>
-                <input placeholder="Recipe" {...field} />
+                {/* replace with a combobox */}
+                <Input placeholder="Search by name..." {...field} />
               </FormControl>
               <FormDescription>Select a recipe to add tags to.</FormDescription>
               <FormMessage />
