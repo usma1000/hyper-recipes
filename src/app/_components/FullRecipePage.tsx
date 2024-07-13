@@ -1,4 +1,8 @@
-import { getRecipe } from "~/server/queries";
+import {
+  createFavoriteRecipe,
+  getRecipe,
+  isFavoriteRecipe,
+} from "~/server/queries";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Star } from "lucide-react";
@@ -20,6 +24,8 @@ const fakeIngredients = [
 
 export default async function FullPageRecipeView(props: { id: number }) {
   const recipe = await getRecipe(props.id);
+
+  const isFavorite = isFavoriteRecipe(recipe.id);
 
   return (
     <div className="flex">
@@ -68,9 +74,18 @@ export default async function FullPageRecipeView(props: { id: number }) {
             )}
             <div className="flex items-end gap-2">
               <h1>{recipe.name}</h1>
-              <Button variant="ghost" size="sm">
-                <Star className="h-5 w-5" />
-              </Button>
+              <form
+                action={async () => {
+                  "use server";
+                  await createFavoriteRecipe(recipe.id);
+                }}
+              >
+                <Button type="submit" variant="ghost" size="sm">
+                  <Star
+                    className={`h-5 w-5 ${(await isFavorite) ? "fill-amber-400" : ""}`}
+                  />
+                </Button>
+              </form>
             </div>
             <CardDescription>{recipe.description}</CardDescription>
             <div className="flex flex-row gap-2">

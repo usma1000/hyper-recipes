@@ -1,6 +1,10 @@
 import 'server-only';
 import { db } from './db';
 import { auth } from '@clerk/nextjs/server';
+import { FavoritesTable } from './db/schema';
+import { revalidatePath } from 'next/cache';
+
+// Image queries
 
 export async function getAllImages() {
   const images = await db.query.ImagesTable.findMany({
@@ -18,6 +22,8 @@ export async function getImage(id: number) {
 
   return image;
 }
+
+// Recipe queries
 
 export async function getAllRecipes() {
   const recipes = await db.query.RecipesTable.findMany({
@@ -53,6 +59,8 @@ export async function getRecipe(id: number) {
   return recipe;
 }
 
+// Favorite recipes queries
+
 export async function getMyFavoriteRecipes() {
   const user = auth();
 
@@ -70,4 +78,32 @@ export async function getMyFavoriteRecipes() {
   });
   const recipes = favoriteRecipes.map(favorite => favorite.favoritedRecipe);
   return recipes;
+}
+
+export async function isFavoriteRecipe(recipeId: number) {
+  const user = auth();
+
+  if (!user.userId) throw new Error('Not authenticated');
+
+  const favoriteRecipe = await db.query.FavoritesTable.findFirst({
+    where: (model, { and, eq }) => and(
+      eq(model.userId, user.userId),
+      eq(model.recipeId, recipeId),
+    ),
+  });
+
+  return !!favoriteRecipe;
+}
+
+export async function createFavoriteRecipe(recipeId: number) {
+  const user = auth();
+
+  if (!user.userId) throw new Error('Not authenticated');
+
+  await db.insert(FavoritesTable).values({
+    userId: user.userId,
+    recipeId,
+  });
+
+  revalidatePath('/recipe/[slug]', 'page');
 }
