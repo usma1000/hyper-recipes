@@ -34,7 +34,7 @@ export default function RootLayout({
         <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
         <body
           className={cn(
-            "min-h-screen font-sans antialiased",
+            "flex min-h-screen flex-col font-sans antialiased",
             fontSans.variable,
           )}
         >
@@ -45,7 +45,9 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <TopNav />
-            <main className="mx-auto my-8 max-w-3xl">{children}</main>
+            <main className="mx-auto my-8 h-full max-w-3xl grow">
+              {children}
+            </main>
             <Footer />
           </ThemeProvider>
         </body>

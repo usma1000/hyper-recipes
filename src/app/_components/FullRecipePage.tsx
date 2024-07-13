@@ -2,6 +2,7 @@ import {
   createFavoriteRecipe,
   getRecipe,
   isFavoriteRecipe,
+  removeFavoriteRecipe,
 } from "~/server/queries";
 import Image from "next/image";
 import Link from "next/link";
@@ -25,7 +26,16 @@ const fakeIngredients = [
 export default async function FullPageRecipeView(props: { id: number }) {
   const recipe = await getRecipe(props.id);
 
-  const isFavorite = isFavoriteRecipe(recipe.id);
+  const isFavorite = await isFavoriteRecipe(recipe.id);
+
+  async function toggleFavorite() {
+    "use server";
+    if (isFavorite) {
+      await removeFavoriteRecipe(recipe.id);
+    } else {
+      await createFavoriteRecipe(recipe.id);
+    }
+  }
 
   return (
     <div className="flex">
@@ -74,15 +84,10 @@ export default async function FullPageRecipeView(props: { id: number }) {
             )}
             <div className="flex items-end gap-2">
               <h1>{recipe.name}</h1>
-              <form
-                action={async () => {
-                  "use server";
-                  await createFavoriteRecipe(recipe.id);
-                }}
-              >
+              <form action={toggleFavorite}>
                 <Button type="submit" variant="ghost" size="sm">
                   <Star
-                    className={`h-5 w-5 ${(await isFavorite) ? "fill-amber-400" : ""}`}
+                    className={`h-5 w-5 transition-all active:-translate-y-1 ${isFavorite ? "fill-amber-400" : ""}`}
                   />
                 </Button>
               </form>

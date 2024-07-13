@@ -3,6 +3,7 @@ import { db } from './db';
 import { auth } from '@clerk/nextjs/server';
 import { FavoritesTable } from './db/schema';
 import { revalidatePath } from 'next/cache';
+import { and, eq } from 'drizzle-orm';
 
 // Image queries
 
@@ -105,5 +106,17 @@ export async function createFavoriteRecipe(recipeId: number) {
     recipeId,
   });
 
+  revalidatePath('/', 'layout');
+  revalidatePath('/recipe/[slug]', 'page');
+}
+
+export async function removeFavoriteRecipe(recipeId: number) {
+  const user = auth();
+
+  if (!user.userId) throw new Error('Not authenticated');
+
+  await db.delete(FavoritesTable).where(and(eq(FavoritesTable.userId, user.userId), eq(FavoritesTable.recipeId, recipeId)));
+
+  revalidatePath('/', 'layout');
   revalidatePath('/recipe/[slug]', 'page');
 }

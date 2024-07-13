@@ -2,7 +2,7 @@
 
 ## TODO
 
-- [ ] Ability to favorite a recipe if logged in, server actions?
+- [ ] Break up carousel and modal queries into two, only including fields needed
 - [ ] Set up seeding for db https://youtu.be/vLze97zZKsU?t=1407
 - [ ] Create Tags table (name, type)
 - [ ] Add tags of type cuisine to recipes
