@@ -53,6 +53,7 @@ export default async function RecipesCarousel({
                             src={recipe.heroImage.url}
                             alt={recipe.heroImage.name}
                             fill={true}
+                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 250px"
                             style={{ objectFit: "cover" }}
                           />
                         )}
@@ -71,8 +72,9 @@ export default async function RecipesCarousel({
                           <Image
                             src={recipe.heroImage.url}
                             alt={recipe.heroImage.name}
-                            fill={true}
-                            className="rounded-md shadow-sm"
+                            width={463}
+                            height={256}
+                            className="h-auto overflow-hidden rounded-md shadow-sm"
                             style={{ objectFit: "cover" }}
                           />
                         </DialogHeader>

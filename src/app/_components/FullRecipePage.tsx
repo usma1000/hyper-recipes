@@ -32,7 +32,7 @@ export default async function FullPageRecipeView(props: { id: number }) {
         >
           <ArrowLeft size={16} /> Back
         </Link>
-        <Card>
+        <Card className="sticky top-8">
           <CardHeader>
             <CardTitle>Ingredients</CardTitle>
           </CardHeader>
@@ -53,10 +53,13 @@ export default async function FullPageRecipeView(props: { id: number }) {
           <CardHeader>
             {recipe.heroImage?.url && (
               <div className="relative mb-8 h-96">
+                {/* update "sizes" when mobile is fixed */}
                 <Image
                   src={recipe.heroImage.url}
                   alt={recipe.heroImage.name}
                   fill={true}
+                  priority={true}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 510px"
                   className="rounded-lg"
                   style={{ objectFit: "cover" }}
                 />
