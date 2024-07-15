@@ -18,15 +18,17 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "~/lib/utils";
 import { CommandList } from "cmdk";
-import { FormControl } from "./form";
+import { FormControl } from "../../../components/ui/form";
 
 export function Combobox({
   recipeNames,
+  form,
 }: {
   recipeNames: {
     id: number;
     name: string;
   }[];
+  form: any;
 }) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState<number | null>();
@@ -65,6 +67,7 @@ export function Combobox({
                   value={recipe.id.toString()}
                   onSelect={(currentValue) => {
                     setValue(parseInt(currentValue));
+                    form.setValue("recipeId", parseInt(currentValue));
                     setOpen(false);
                   }}
                 >

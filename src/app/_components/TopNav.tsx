@@ -6,8 +6,8 @@ import Link from "next/link";
 // import { UploadButton } from "~/utils/uploadthing";
 import { ModeToggle } from "./ModeToggle";
 import { CommandSearch } from "./CommandSearch";
-import { Button } from "@/components/ui/button";
-import { Zap } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { LayoutDashboard, Zap } from "lucide-react";
 
 export default function TopNav() {
   // const router = useRouter();
@@ -34,6 +34,15 @@ export default function TopNav() {
               router.refresh();
             }}
           /> */}
+            <Link
+              href="/dashboard"
+              className={buttonVariants({
+                variant: "ghost",
+                size: "sm",
+              })}
+            >
+              <LayoutDashboard size={24} />
+            </Link>
             <div className="h-6 w-6 rounded-full bg-slate-500">
               <UserButton />
             </div>

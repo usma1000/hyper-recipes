@@ -12,7 +12,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Combobox } from "@/components/ui/combobox";
+import { Combobox } from "./combobox";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -23,12 +23,25 @@ import {
 } from "@/components/ui/select";
 import { cuisineTypes, mealTypes, tagTypes } from "~/server/db/schema";
 
-const CreateTagsFormSchema = z.object({
-  recipeId: z.number(),
-  tagType: z.enum(tagTypes.enumValues),
-  cuisineType: z.optional(z.enum(cuisineTypes.enumValues)),
-  mealType: z.optional(z.enum(mealTypes.enumValues)),
-});
+const CreateTagsFormSchema = z
+  .object({
+    recipeId: z.number(),
+    tagType: z.enum(tagTypes.enumValues),
+    cuisineType: z.optional(z.enum(cuisineTypes.enumValues)),
+    mealType: z.optional(z.enum(mealTypes.enumValues)),
+  })
+  .refine(
+    (data) => {
+      if (data.mealType && data.cuisineType) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Cannot have both Meal and Cuisine types",
+      path: ["mealType"],
+    },
+  );
 
 export default function CreateTagsForm({
   recipeNames,
@@ -60,7 +73,7 @@ export default function CreateTagsForm({
               {recipeNames.length === 0 ? (
                 <p>No recipes found</p>
               ) : (
-                <Combobox recipeNames={recipeNames} />
+                <Combobox recipeNames={recipeNames} form={form} />
               )}
               <FormDescription>Select a recipe to add tags to.</FormDescription>
               <FormMessage />
@@ -73,7 +86,14 @@ export default function CreateTagsForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Tag Type</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  form.setValue("cuisineType", undefined);
+                  form.setValue("mealType", undefined);
+                }}
+                defaultValue={field.value}
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a tag type" />
@@ -117,7 +137,6 @@ export default function CreateTagsForm({
                   </SelectContent>
                 </Select>
                 <FormDescription>Select a cuisine type.</FormDescription>
-                <FormMessage />
               </FormItem>
             )}
           />
@@ -147,7 +166,6 @@ export default function CreateTagsForm({
                   </Select>
                 </FormControl>
                 <FormDescription>Select a meal type.</FormDescription>
-                <FormMessage />
               </FormItem>
             )}
           />
