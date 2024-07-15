@@ -10,6 +10,7 @@ import { getAllRecipeNames } from "~/server/queries";
 
 export default async function Page() {
   const recipeNames = await getAllRecipeNames();
+
   return (
     <div className="flex flex-col gap-8">
       <h1>Dashboard</h1>

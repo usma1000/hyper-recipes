@@ -88,14 +88,14 @@ export default async function RecipeDialog({
           </div>
           <div className="flex flex-row gap-2">
             {tags
-              .filter((tag) => tag.tagType === "cuisine_type")
+              .filter((tag) => tag.tagType === "Cuisine")
               .map((tag) => (
                 <Badge key={tag.id} variant="outline">
                   {tag.cuisineType}
                 </Badge>
               ))}
             {tags
-              .filter((tag) => tag.tagType === "meal_type")
+              .filter((tag) => tag.tagType === "Meal")
               .map((tag) => (
                 <Badge key={tag.id} variant="outline">
                   {tag.mealType}

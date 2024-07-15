@@ -21,9 +21,11 @@ import { CommandList } from "cmdk";
 import { FormControl } from "../../../components/ui/form";
 
 export function Combobox({
+  defaultValue,
   recipeNames,
   form,
 }: {
+  defaultValue: number;
   recipeNames: {
     id: number;
     name: string;
@@ -31,11 +33,7 @@ export function Combobox({
   form: any;
 }) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState<number | null>();
-
-  React.useEffect(() => {
-    console.log(value, typeof value);
-  }, [value]);
+  const [value, setValue] = React.useState<number | null>(defaultValue);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -61,7 +59,6 @@ export function Combobox({
             <CommandEmpty>No recipes found.</CommandEmpty>
             <CommandGroup>
               {recipeNames.map((recipe) => (
-                // something here is broken
                 <CommandItem
                   key={recipe.id}
                   value={recipe.id.toString()}
