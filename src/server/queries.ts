@@ -1,7 +1,7 @@
 import 'server-only';
 import { db } from './db';
 import { auth } from '@clerk/nextjs/server';
-import { FavoritesTable, RecipesToTagsTable, TagsTable, cuisineTypes, mealTypes, tagTypes } from './db/schema';
+import { FavoritesTable, RecipesToTagsTable, TagsTable } from './db/schema';
 import { revalidatePath } from 'next/cache';
 import { and, eq } from 'drizzle-orm';
 
@@ -147,14 +147,12 @@ export async function getAllTagsForRecipe(recipeId: number) {
 
 type newTag = typeof TagsTable.$inferInsert;
 
-const insertRecipeToTag = async (recipeId: number, tagId: number) => {
-  return db.insert(RecipesToTagsTable).values({ recipeId, tagId });
-}
+export const createNewTag = async (tag: newTag) => {
+  // TODO: Only admins should be able to create tags
+  const user = auth();
 
-export const insertTag = async (tag: newTag, recipeId: number) => {
-  // TODO: first check if tag with the cuisine or meal type already exists
-  const newTagId = await db.insert(TagsTable).values(tag).returning({ tagId: TagsTable.id });
-  await insertRecipeToTag(recipeId, newTagId.reduce((_acc, val) => val.tagId, 0));
-  revalidatePath('/', 'layout');
-  revalidatePath('/recipe/[slug]', 'page');
+  if (!user.userId) throw new Error('Not authenticated');
+
+  console.log('Creating tag', tag);
+  await db.insert(TagsTable).values(tag);
 }
