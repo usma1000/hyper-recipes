@@ -11,6 +11,7 @@ import TopNav from "./_components/TopNav";
 import { ourFileRouter } from "./api/uploadthing/core";
 import { cn } from "~/lib/utils";
 import Footer from "./_components/Footer";
+import { Toaster } from "@/components/ui/sonner";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -48,6 +49,7 @@ export default function RootLayout({
             <main className="mx-auto my-8 h-full max-w-3xl grow">
               {children}
             </main>
+            <Toaster />
             <Footer />
           </ThemeProvider>
         </body>

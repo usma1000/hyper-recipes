@@ -25,6 +25,7 @@ import { onSubmit } from "./actions";
 import { Input } from "@/components/ui/input";
 import { useEffect } from "react";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { toast } from "sonner";
 
 export const CreateTagsFormSchema = z.object({
   recipeId: z.number(),
@@ -48,6 +49,7 @@ export default function CreateTagsForm() {
 
   useEffect(() => {
     if (isSubmitSuccessful) {
+      toast(`${form.getValues("name")} successfully created.`);
       form.reset();
     }
   }, [isSubmitSuccessful]);
