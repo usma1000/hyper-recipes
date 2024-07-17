@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { SignedIn } from "@clerk/nextjs";
+import FullRecipeSheet from "./FullRecipeSheet";
 
 const fakeIngredients = [
   { name: "Onions" },
@@ -43,15 +45,21 @@ export default async function FullPageRecipeView(props: { id: number }) {
   return (
     <div className="flex">
       <div className="basis-1/4">
-        <Link
-          href="/"
-          className={`${buttonVariants({
-            variant: "outline",
-            size: "sm",
-          })} mb-8`}
-        >
-          <ArrowLeft size={16} /> Back
-        </Link>
+        <div className="mb-8 flex justify-between align-middle">
+          <Link
+            href="/"
+            className={`${buttonVariants({
+              variant: "default",
+              size: "sm",
+            })}`}
+          >
+            <ArrowLeft size={16} /> Back
+          </Link>
+          {/* TODO: Update to admin only */}
+          <SignedIn>
+            <FullRecipeSheet />
+          </SignedIn>
+        </div>
         <Card className="sticky top-8">
           <CardHeader>
             <CardTitle>Ingredients</CardTitle>
@@ -101,14 +109,14 @@ export default async function FullPageRecipeView(props: { id: number }) {
                 .filter((tag) => tag.tagType === "Cuisine")
                 .map((tag) => (
                   <Badge key={tag.id} variant="outline">
-                    {tag.cuisineType}
+                    {tag.name}
                   </Badge>
                 ))}
               {tags
                 .filter((tag) => tag.tagType === "Meal")
                 .map((tag) => (
                   <Badge key={tag.id} variant="outline">
-                    {tag.mealType}
+                    {tag.name}
                   </Badge>
                 ))}
             </div>
