@@ -40,6 +40,7 @@
     "react-dom": "^18.3.0",
     "react-hook-form": "^7.52.1",
     "server-only": "^0.0.1",
+    "sonner": "^1.5.0",
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
     "uploadthing": "^6.12.0",
