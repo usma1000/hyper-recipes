@@ -23,6 +23,8 @@ import {
 import { tagTypes } from "~/server/db/schema";
 import { onSubmit } from "./actions";
 import { Input } from "@/components/ui/input";
+import { useEffect } from "react";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 export const CreateTagsFormSchema = z.object({
   recipeId: z.number(),
@@ -40,12 +42,30 @@ export default function CreateTagsForm() {
     },
   });
 
+  const {
+    formState: { isLoading, isSubmitting, isSubmitSuccessful },
+  } = form;
+
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      form.reset();
+    }
+  }, [isSubmitSuccessful]);
+
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit((e) => onSubmit(e))}
-        className="flex flex-col gap-4"
+        className="relative flex flex-col gap-4"
       >
+        {isLoading ||
+          (isSubmitting && (
+            <div className="absolute left-0 top-0 z-10 h-full w-full bg-white bg-opacity-50">
+              <div className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
+                <LoadingSpinner />
+              </div>
+            </div>
+          ))}
         <FormField
           control={form.control}
           name="tagType"
@@ -103,7 +123,9 @@ export default function CreateTagsForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Create New Tag</Button>
+        <Button type="submit" disabled={isLoading || isSubmitting}>
+          Create New Tag
+        </Button>
       </form>
     </Form>
   );
