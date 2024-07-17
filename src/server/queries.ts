@@ -134,6 +134,17 @@ export async function removeFavoriteRecipe(recipeId: number) {
 
 // Tags queries
 
+export async function getAllTagNames() {
+  const tags = await db.query.TagsTable.findMany({
+    orderBy: (model, { desc }) => desc(model.name),
+    columns: {
+      id: true,
+      name: true,
+    },
+  });
+  return tags;
+}
+
 export async function getAllTagsForRecipe(recipeId: number) {
   const tags = await db.query.RecipesToTagsTable.findMany({
     where: (model, { eq }) => eq(model.recipeId, recipeId),
@@ -153,6 +164,5 @@ export const createNewTag = async (tag: newTag) => {
 
   if (!user.userId) throw new Error('Not authenticated');
 
-  console.log('Creating tag', tag);
   await db.insert(TagsTable).values(tag);
 }
