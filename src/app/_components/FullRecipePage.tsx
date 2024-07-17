@@ -21,9 +21,9 @@ import { SignedIn } from "@clerk/nextjs";
 import FullRecipeSheet from "./FullRecipeSheet";
 
 const fakeIngredients = [
-  { name: "Onions" },
-  { name: "Okra" },
-  { name: "Olive Oil" },
+  { amount: "2", name: "Onions" },
+  { amount: "2 lbs", name: "Okra" },
+  { amount: "2 tbsp", name: "Olive Oil" },
 ];
 
 export default async function FullPageRecipeView(props: { id: number }) {
@@ -69,6 +69,7 @@ export default async function FullPageRecipeView(props: { id: number }) {
               {fakeIngredients.map((ingredient) => (
                 <li className="list-none">
                   <input type="checkbox" className="mr-2" />
+                  {ingredient.amount}
                   {ingredient.name}
                 </li>
               ))}
