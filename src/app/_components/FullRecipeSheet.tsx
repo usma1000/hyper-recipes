@@ -29,10 +29,6 @@ export default async function FullRecipeSheet() {
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>Edit Recipe</SheetHeader>
-        <h3 className="mb-4">Assign Tags</h3>
-        <SheetDescription>
-          Select which tag(s) to apply to this recipe.
-        </SheetDescription>
         <AssignTagsForm allTags={allTags} />
       </SheetContent>
     </Sheet>

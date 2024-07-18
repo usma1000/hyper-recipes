@@ -166,3 +166,17 @@ export const createNewTag = async (tag: newTag) => {
 
   await db.insert(TagsTable).values(tag);
 }
+
+export async function assignTagsToRecipe(recipeId: number, tagIds: number[]) {
+  const user = auth();
+
+  if (!user.userId) throw new Error('Not authenticated');
+
+  await db.insert(RecipesToTagsTable).values(tagIds.map(tagId => ({
+    recipeId,
+    tagId,
+  })));
+
+  revalidatePath('/', 'layout');
+  revalidatePath('/recipe/[slug]', 'page');
+}
