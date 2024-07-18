@@ -110,6 +110,20 @@ export const IngredientsTable = createTable(
   }
 );
 
+export const RecipeIngredientsTable = createTable(
+  "recipe_ingredients",
+  {
+    recipeId: integer("recipe_id").references(() => RecipesTable.id).notNull(),
+    ingredientId: integer("ingredient_id").references(() => IngredientsTable.id).notNull(),
+    quantity: varchar("quantity", { length: 256 }).notNull(),
+  },
+  table => {
+    return {
+      pk: primaryKey({ columns: [table.recipeId, table.ingredientId] }),
+    }
+  }
+);
+
 // Table relations
 export const RecipesTableRelations = relations(RecipesTable, ({one, many}) => {
   return {
@@ -119,6 +133,7 @@ export const RecipesTableRelations = relations(RecipesTable, ({one, many}) => {
     }),
     favoritedBy: many(FavoritesTable),
     tags: many(RecipesToTagsTable),
+    ingredients: many(RecipeIngredientsTable),
   }
 });
 
@@ -146,6 +161,25 @@ export const RecipesToTagsRelations = relations(RecipesToTagsTable, ({one}) => {
     tag: one(TagsTable, {
       fields: [RecipesToTagsTable.tagId],
       references: [TagsTable.id],
+    }),
+  }
+});
+
+export const IngredientsRelations = relations(IngredientsTable, ({many}) => {
+  return {
+    recipes: many(RecipeIngredientsTable),
+  }
+});
+
+export const RecipeIngredientsRelations = relations(RecipeIngredientsTable, ({one}) => {
+  return {
+    recipe: one(RecipesTable, {
+      fields: [RecipeIngredientsTable.recipeId],
+      references: [RecipesTable.id],
+    }),
+    ingredient: one(IngredientsTable, {
+      fields: [RecipeIngredientsTable.ingredientId],
+      references: [IngredientsTable.id],
     }),
   }
 });

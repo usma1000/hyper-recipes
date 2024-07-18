@@ -198,3 +198,14 @@ export async function getAllIngredients() {
   const ingredients = await db.query.IngredientsTable.findMany();
   return ingredients;
 }
+
+export async function getIngredientsForRecipe(recipeId: number) {
+  const ingredients = await db.query.RecipeIngredientsTable.findMany({
+    where: (model, { eq }) => eq(model.recipeId, recipeId),
+    with: {
+      ingredient: true,
+    },
+  });
+
+  return ingredients;
+}

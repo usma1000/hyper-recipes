@@ -1,6 +1,6 @@
 import {
   createFavoriteRecipe,
-  getAllIngredients,
+  getIngredientsForRecipe,
   getAllTagsForRecipe,
   getRecipe,
   isFavoriteRecipe,
@@ -29,7 +29,7 @@ import {
 export default async function FullPageRecipeView(props: { id: number }) {
   const recipe = await getRecipe(props.id);
 
-  const ingredients = await getAllIngredients();
+  const ingredients = await getIngredientsForRecipe(props.id);
 
   const tags = await getAllTagsForRecipe(recipe.id);
 
@@ -68,7 +68,12 @@ export default async function FullPageRecipeView(props: { id: number }) {
           </CardHeader>
           <CardContent>
             <ul className="m-0">
-              {ingredients.map((ingredient) => (
+              {ingredients.length === 0 && (
+                <span className="text-sm">
+                  Oops. Someone forgot to add the ingredients.
+                </span>
+              )}
+              {ingredients.map(({ ingredient, quantity }) => (
                 <li className="flex list-none items-center text-sm font-semibold leading-tight">
                   <input type="checkbox" className="mr-2" />
                   <HoverCard>
@@ -82,7 +87,7 @@ export default async function FullPageRecipeView(props: { id: number }) {
                       </Button>
                     </HoverCardContent>
                   </HoverCard>
-                  <span>5tbsp</span>
+                  <span>{quantity}</span>
                 </li>
               ))}
             </ul>
