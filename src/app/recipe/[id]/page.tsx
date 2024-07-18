@@ -1,4 +1,4 @@
-import FullPageRecipeView from "~/app/_components/FullRecipePage";
+import FullRecipePage from "./_components/FullRecipePage";
 
 export default function RecipePage({
   params: { id: recipeId },
@@ -10,7 +10,7 @@ export default function RecipePage({
 
   return (
     <div>
-      <FullPageRecipeView id={idAsNumber} />
+      <FullRecipePage id={idAsNumber} />
     </div>
   );
 }

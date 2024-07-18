@@ -26,7 +26,7 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 
-export default async function FullPageRecipeView(props: { id: number }) {
+export default async function FullRecipePage(props: { id: number }) {
   const recipe = await getRecipe(props.id);
 
   const ingredients = await getIngredientsForRecipe(props.id);
