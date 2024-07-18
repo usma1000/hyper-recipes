@@ -191,3 +191,10 @@ export async function removeAllTagsFromRecipe(recipeId: number) {
   revalidatePath('/', 'layout');
   revalidatePath('/recipe/[slug]', 'page');
 }
+
+// Ingredient queries
+
+export async function getAllIngredients() {
+  const ingredients = await db.query.IngredientsTable.findMany();
+  return ingredients;
+}

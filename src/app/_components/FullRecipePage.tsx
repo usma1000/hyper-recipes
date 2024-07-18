@@ -1,5 +1,6 @@
 import {
   createFavoriteRecipe,
+  getAllIngredients,
   getAllTagsForRecipe,
   getRecipe,
   isFavoriteRecipe,
@@ -20,14 +21,10 @@ import { Badge } from "@/components/ui/badge";
 import { SignedIn } from "@clerk/nextjs";
 import FullRecipeSheet from "./FullRecipeSheet";
 
-const fakeIngredients = [
-  { amount: "2", name: "Onions" },
-  { amount: "2 lbs", name: "Okra" },
-  { amount: "2 tbsp", name: "Olive Oil" },
-];
-
 export default async function FullPageRecipeView(props: { id: number }) {
   const recipe = await getRecipe(props.id);
+
+  const ingredients = await getAllIngredients();
 
   const tags = await getAllTagsForRecipe(recipe.id);
 
@@ -66,10 +63,11 @@ export default async function FullPageRecipeView(props: { id: number }) {
           </CardHeader>
           <CardContent>
             <ul className="m-0">
-              {fakeIngredients.map((ingredient) => (
+              {ingredients.map((ingredient) => (
                 <li className="list-none">
                   <input type="checkbox" className="mr-2" />
-                  {`${ingredient.amount} ${ingredient.name}`}
+                  <span>{ingredient.name}</span>
+                  <span> - 5tbsp</span>
                 </li>
               ))}
             </ul>
