@@ -6,8 +6,14 @@ import {
 } from "@/components/ui/sheet";
 import { buttonVariants } from "@/components/ui/button";
 
-import { getAllTagNames, getAllTagsForRecipe } from "~/server/queries";
+import {
+  getAllTagNames,
+  getAllTagsForRecipe,
+  getAllIngredients,
+  getIngredientsForRecipe,
+} from "~/server/queries";
 import AssignTagsForm from "./AssignTagsForm";
+import IngredientsForm from "./IngredientsForm";
 
 export default async function FullRecipeSheet({
   recipeId,
@@ -15,14 +21,25 @@ export default async function FullRecipeSheet({
   recipeId: number;
 }) {
   const rawTags = await getAllTagNames();
-  let allTags = rawTags.map((tag) => ({
+  const allTags = rawTags.map((tag) => ({
     value: tag.id.toString(),
     label: tag.name,
   }));
 
   const rawAssignedTags = await getAllTagsForRecipe(recipeId);
-  let allAssignedTags = rawAssignedTags.map((tag) => ({
+  const allAssignedTags = rawAssignedTags.map((tag) => ({
     id: tag.id,
+  }));
+
+  const rawIngredients = await getAllIngredients();
+  const allIngredients = rawIngredients.map((ingredient) => ({
+    value: ingredient.id.toString(),
+    label: ingredient.name,
+  }));
+
+  const rawAssignedIngredients = await getIngredientsForRecipe(recipeId);
+  const allAssignedIngredients = rawAssignedIngredients.map((ingredient) => ({
+    id: ingredient.ingredient.id,
   }));
 
   return (
@@ -37,11 +54,18 @@ export default async function FullRecipeSheet({
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>Edit Recipe</SheetHeader>
-        <AssignTagsForm
-          allTags={allTags}
-          allAssignedTags={allAssignedTags}
-          recipeId={recipeId}
-        />
+        <div className="flex flex-col gap-8">
+          <AssignTagsForm
+            allTags={allTags}
+            allAssignedTags={allAssignedTags}
+            recipeId={recipeId}
+          />
+          <IngredientsForm
+            recipeId={recipeId}
+            allIngredients={allIngredients}
+            allAssignedIngredients={allAssignedIngredients}
+          />
+        </div>
       </SheetContent>
     </Sheet>
   );

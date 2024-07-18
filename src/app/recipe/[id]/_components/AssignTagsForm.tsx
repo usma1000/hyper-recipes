@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { onSubmit } from "./actions";
+import { onTagSubmit } from "./actions";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,7 +20,7 @@ import { toast } from "sonner";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 export const AssignTagsFormSchema = z.object({
-  tags: z.array(z.string()).nonempty(),
+  tags: z.array(z.string()).min(1),
 });
 
 type PropTypes = {
@@ -55,7 +55,7 @@ export default function AssignTagsForm({
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit((e) => onSubmit(recipeId, e))}
+        onSubmit={form.handleSubmit((e) => onTagSubmit(recipeId, e))}
         className="relative flex flex-col gap-4"
       >
         {isLoading ||

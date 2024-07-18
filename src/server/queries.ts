@@ -1,7 +1,7 @@
 import 'server-only';
 import { db } from './db';
 import { auth } from '@clerk/nextjs/server';
-import { FavoritesTable, RecipesToTagsTable, TagsTable } from './db/schema';
+import { FavoritesTable, RecipeIngredientsTable, RecipesToTagsTable, TagsTable } from './db/schema';
 import { revalidatePath } from 'next/cache';
 import { and, eq } from 'drizzle-orm';
 
@@ -208,4 +208,19 @@ export async function getIngredientsForRecipe(recipeId: number) {
   });
 
   return ingredients;
+}
+
+export async function createIngredientForRecipe(recipeId: number, ingredientId: number, quantity: string) {
+  const user = auth();
+
+  if (!user.userId) throw new Error('Not authenticated');
+
+  await db.insert(RecipeIngredientsTable).values({
+    recipeId,
+    ingredientId,
+    quantity,
+  });
+
+  revalidatePath('/', 'layout');
+  revalidatePath('/recipe/[slug]', 'page');
 }
