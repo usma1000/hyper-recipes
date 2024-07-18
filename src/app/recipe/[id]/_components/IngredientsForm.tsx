@@ -13,15 +13,21 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "~/components/ui/form";
+} from "@/components/ui/form";
 import { onIngredientSubmit } from "./actions";
-import { LoadingSpinner } from "~/components/ui/loading-spinner";
-import { Input } from "~/components/ui/input";
-import { Button } from "~/components/ui/button";
-import { MultiSelect } from "~/components/ui/multi-select";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const AddIngredientFormSchema = z.object({
-  ingredient: z.number().min(1),
+  ingredient: z.string().min(1),
   amount: z.string().min(1),
 });
 
@@ -49,6 +55,14 @@ export default function IngredientsForm({
     },
   });
 
+  const AllUnassignedIngredients = allIngredients.filter(
+    (ingredient) =>
+      !allAssignedIngredients.some(
+        (assignedIngredient) =>
+          assignedIngredient.id === Number(ingredient.value),
+      ),
+  );
+
   const {
     formState: { isLoading, isSubmitting, isSubmitSuccessful },
   } = form;
@@ -64,7 +78,7 @@ export default function IngredientsForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit((e) =>
-          onIngredientSubmit(recipeId, e.ingredient, e.amount),
+          onIngredientSubmit(recipeId, Number(e.ingredient), e.amount),
         )}
         className="relative flex flex-col gap-4"
       >
@@ -83,7 +97,31 @@ export default function IngredientsForm({
             <FormItem>
               <FormLabel>Add Ingredient</FormLabel>
               <FormControl>
-                {/* <MultiSelect placeholder="Select an ingredient..." /> */}
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value?.toString()}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select an ingredient" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {!AllUnassignedIngredients.length && (
+                      <SelectItem disabled value="0">
+                        No ingredients available
+                      </SelectItem>
+                    )}
+                    {AllUnassignedIngredients.map((ingredient) => (
+                      <SelectItem
+                        key={ingredient.value}
+                        value={ingredient.value}
+                      >
+                        {ingredient.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </FormControl>
               <FormDescription>
                 Select the ingredient from the list.
