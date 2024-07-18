@@ -71,7 +71,7 @@ export default function AssignTagsForm({
           name="tags"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Assign Tags</FormLabel>
+              <FormLabel>Tags</FormLabel>
               <FormControl>
                 <MultiSelect
                   options={allTags}

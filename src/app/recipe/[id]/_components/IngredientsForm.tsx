@@ -95,7 +95,7 @@ export default function IngredientsForm({
           name="ingredient"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Add Ingredient</FormLabel>
+              <FormLabel>Ingredient</FormLabel>
               <FormControl>
                 <Select
                   onValueChange={field.onChange}

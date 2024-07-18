@@ -14,6 +14,7 @@ import {
 } from "~/server/queries";
 import AssignTagsForm from "./AssignTagsForm";
 import IngredientsForm from "./IngredientsForm";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default async function FullRecipeSheet({
   recipeId,
@@ -55,16 +56,30 @@ export default async function FullRecipeSheet({
       <SheetContent>
         <SheetHeader>Edit Recipe</SheetHeader>
         <div className="flex flex-col gap-8">
-          <AssignTagsForm
-            allTags={allTags}
-            allAssignedTags={allAssignedTags}
-            recipeId={recipeId}
-          />
-          <IngredientsForm
-            recipeId={recipeId}
-            allIngredients={allIngredients}
-            allAssignedIngredients={allAssignedIngredients}
-          />
+          <Card>
+            <CardHeader>
+              <CardTitle>Assign Tags</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <AssignTagsForm
+                allTags={allTags}
+                allAssignedTags={allAssignedTags}
+                recipeId={recipeId}
+              />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Add Ingredient</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <IngredientsForm
+                recipeId={recipeId}
+                allIngredients={allIngredients}
+                allAssignedIngredients={allAssignedIngredients}
+              />
+            </CardContent>
+          </Card>
         </div>
       </SheetContent>
     </Sheet>
