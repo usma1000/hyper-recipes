@@ -8,7 +8,7 @@ import {
 } from "~/server/queries";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Star } from "lucide-react";
+import { ArrowLeft, Plus, Star } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -20,6 +20,11 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SignedIn } from "@clerk/nextjs";
 import FullRecipeSheet from "./FullRecipeSheet";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 
 export default async function FullPageRecipeView(props: { id: number }) {
   const recipe = await getRecipe(props.id);
@@ -64,10 +69,20 @@ export default async function FullPageRecipeView(props: { id: number }) {
           <CardContent>
             <ul className="m-0">
               {ingredients.map((ingredient) => (
-                <li className="list-none">
+                <li className="flex list-none items-center text-sm font-semibold leading-tight">
                   <input type="checkbox" className="mr-2" />
-                  <span>{ingredient.name}</span>
-                  <span> - 5tbsp</span>
+                  <HoverCard>
+                    <HoverCardTrigger asChild>
+                      <Button variant="link">{ingredient.name}</Button>
+                    </HoverCardTrigger>
+                    <HoverCardContent className="w-80">
+                      <div>{ingredient.description}</div>
+                      <Button className="mt-4" size="sm">
+                        <Plus size={16} /> Shopping List
+                      </Button>
+                    </HoverCardContent>
+                  </HoverCard>
+                  <span>5tbsp</span>
                 </li>
               ))}
             </ul>
