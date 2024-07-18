@@ -46,9 +46,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <TopNav />
-            <main className="mx-auto my-8 h-full max-w-3xl grow">
-              {children}
-            </main>
+            <main className="container h-full grow py-8">{children}</main>
             <Toaster />
             <Footer />
           </ThemeProvider>

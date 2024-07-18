@@ -43,8 +43,8 @@ export default async function FullPageRecipeView(props: { id: number }) {
   }
 
   return (
-    <div className="flex">
-      <div className="basis-1/4">
+    <div className="flex flex-wrap gap-8">
+      <div className="flex-grow-[1] basis-64">
         <div className="mb-8 flex justify-between align-middle">
           <Link
             href="/"
@@ -69,15 +69,14 @@ export default async function FullPageRecipeView(props: { id: number }) {
               {fakeIngredients.map((ingredient) => (
                 <li className="list-none">
                   <input type="checkbox" className="mr-2" />
-                  {ingredient.amount}
-                  {ingredient.name}
+                  {`${ingredient.amount} ${ingredient.name}`}
                 </li>
               ))}
             </ul>
           </CardContent>
         </Card>
       </div>
-      <div className="flex w-full flex-col gap-8 pl-8">
+      <div className="flex grow-[999] basis-0 flex-col gap-8">
         <Card>
           <CardHeader>
             {recipe.heroImage?.url && (
