@@ -91,14 +91,14 @@ export default async function RecipeDialog({
               .filter((tag) => tag.tagType === "Cuisine")
               .map((tag) => (
                 <Badge key={tag.id} variant="outline">
-                  {tag.cuisineType}
+                  {tag.name}
                 </Badge>
               ))}
             {tags
               .filter((tag) => tag.tagType === "Meal")
               .map((tag) => (
                 <Badge key={tag.id} variant="outline">
-                  {tag.mealType}
+                  {tag.name}
                 </Badge>
               ))}
           </div>

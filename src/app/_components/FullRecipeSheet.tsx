@@ -1,27 +1,21 @@
-"use client";
-
-import { useState } from "react";
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { buttonVariants } from "@/components/ui/button";
-import { MultiSelect } from "@/components/ui/multi-select";
 
-const tagsForTesting = [
-  { value: "1", label: "Indian" },
-  { value: "2", label: "Italian" },
-  { value: "3", label: "Mexican" },
-  { value: "4", label: "Chinese" },
-];
+import { getAllTagNames } from "~/server/queries";
+import AssignTagsForm from "./AssignTagsForm";
 
-export default function FullRecipeSheet() {
-  const [selectedTags, setSelectedTags] = useState<string[]>([
-    "Indian",
-    "Mexican",
-  ]);
+export default async function FullRecipeSheet() {
+  const rawTags = await getAllTagNames();
+  let allTags = rawTags.map((tag) => ({
+    value: tag.id.toString(),
+    label: tag.name,
+  }));
 
   return (
     <Sheet>
@@ -35,13 +29,11 @@ export default function FullRecipeSheet() {
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>Edit Recipe</SheetHeader>
-        <h3>Assign Tags</h3>
-        <MultiSelect
-          options={tagsForTesting}
-          onValueChange={setSelectedTags}
-          defaultValue={[]}
-          placeholder="Select tags"
-        />
+        <h3 className="mb-4">Assign Tags</h3>
+        <SheetDescription>
+          Select which tag(s) to apply to this recipe.
+        </SheetDescription>
+        <AssignTagsForm allTags={allTags} />
       </SheetContent>
     </Sheet>
   );
