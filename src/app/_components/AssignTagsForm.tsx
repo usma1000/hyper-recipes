@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { onSubmit } from "./actions";
@@ -26,16 +25,19 @@ export const AssignTagsFormSchema = z.object({
 
 type PropTypes = {
   allTags: { value: string; label: string }[];
+  allAssignedTags: { id: number }[];
+  recipeId: number;
 };
 
-export default function AssignTagsForm({ allTags }: PropTypes) {
-  const params = useParams();
-  const recipeId = Number(params.id);
-
+export default function AssignTagsForm({
+  allTags,
+  allAssignedTags,
+  recipeId,
+}: PropTypes) {
   const form = useForm<z.infer<typeof AssignTagsFormSchema>>({
     resolver: zodResolver(AssignTagsFormSchema),
     defaultValues: {
-      tags: [],
+      tags: allAssignedTags.map((tag) => tag.id.toString()),
     },
   });
 

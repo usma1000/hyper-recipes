@@ -57,7 +57,7 @@ export default async function FullPageRecipeView(props: { id: number }) {
           </Link>
           {/* TODO: Update to admin only */}
           <SignedIn>
-            <FullRecipeSheet />
+            <FullRecipeSheet recipeId={props.id} />
           </SignedIn>
         </div>
         <Card className="sticky top-8">

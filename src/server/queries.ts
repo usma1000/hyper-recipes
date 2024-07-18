@@ -180,3 +180,14 @@ export async function assignTagsToRecipe(recipeId: number, tagIds: number[]) {
   revalidatePath('/', 'layout');
   revalidatePath('/recipe/[slug]', 'page');
 }
+
+export async function removeAllTagsFromRecipe(recipeId: number) {
+  const user = auth();
+
+  if (!user.userId) throw new Error('Not authenticated');
+
+  await db.delete(RecipesToTagsTable).where(eq(RecipesToTagsTable.recipeId, recipeId));
+
+  revalidatePath('/', 'layout');
+  revalidatePath('/recipe/[slug]', 'page');
+}
