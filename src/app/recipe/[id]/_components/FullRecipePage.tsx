@@ -77,11 +77,17 @@ export default async function FullRecipePage(props: { id: number }) {
                 </span>
               )}
               {ingredients.map(({ ingredient, quantity }) => (
-                <li className="flex list-none items-center text-sm font-semibold leading-tight">
+                <li className="flex list-none items-center text-sm leading-tight">
                   <input type="checkbox" className="mr-2" />
                   <HoverCard>
                     <HoverCardTrigger asChild>
-                      <Button variant="link">{ingredient.name}</Button>
+                      <Button
+                        variant="link"
+                        size="sm"
+                        className="font-semibold"
+                      >
+                        {ingredient.name}
+                      </Button>
                     </HoverCardTrigger>
                     <HoverCardContent className="w-80">
                       <div>{ingredient.description}</div>

@@ -12,21 +12,28 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Star } from "lucide-react";
+import { Plus, Star } from "lucide-react";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
+  CardContent,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { SelectRecipe } from "~/server/db/schema";
 import {
   createFavoriteRecipe,
   getAllTagsForRecipe,
+  getIngredientsForRecipe,
   isFavoriteRecipe,
   removeFavoriteRecipe,
 } from "~/server/queries";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 
 export default async function RecipeDialog({
   recipe,
@@ -36,6 +43,8 @@ export default async function RecipeDialog({
   const isFavorite = await isFavoriteRecipe(recipe.id);
 
   const tags = await getAllTagsForRecipe(recipe.id);
+
+  const ingredients = await getIngredientsForRecipe(recipe.id);
 
   async function toggleFavorite() {
     "use server";
@@ -69,38 +78,80 @@ export default async function RecipeDialog({
       </DialogTrigger>
       <DialogPortal>
         <DialogOverlay />
-        <DialogContent>
-          {recipe.heroImage?.url && (
-            <DialogHeader className="relative h-64">
-              <Image
-                src={recipe.heroImage.url}
-                alt={recipe.heroImage.name}
-                width={463}
-                height={256}
-                className="h-auto overflow-hidden rounded-md shadow-sm"
-                style={{ objectFit: "cover" }}
-              />
-            </DialogHeader>
-          )}
-          <DialogTitle>{recipe.name}</DialogTitle>
-          <div>
-            <DialogDescription>{recipe.description}</DialogDescription>
-          </div>
-          <div className="flex flex-row gap-2">
-            {tags
-              .filter((tag) => tag.tagType === "Cuisine")
-              .map((tag) => (
-                <Badge key={tag.id} variant="outline">
-                  {tag.name}
-                </Badge>
-              ))}
-            {tags
-              .filter((tag) => tag.tagType === "Meal")
-              .map((tag) => (
-                <Badge key={tag.id} variant="outline">
-                  {tag.name}
-                </Badge>
-              ))}
+        <DialogContent className="max-w-2xl">
+          <div className="flex gap-4">
+            <Card className="grow-[999] basis-0">
+              {recipe.heroImage?.url && (
+                <DialogHeader className="relative h-64">
+                  <Image
+                    src={recipe.heroImage.url}
+                    alt={recipe.heroImage.name}
+                    width={463}
+                    height={256}
+                    className="mb-4 h-auto overflow-hidden rounded-t-md shadow-sm"
+                    style={{ objectFit: "cover" }}
+                  />
+                </DialogHeader>
+              )}
+              <CardContent className="flex flex-col gap-4">
+                <DialogTitle>{recipe.name}</DialogTitle>
+                <div>
+                  <DialogDescription>{recipe.description}</DialogDescription>
+                </div>
+                <div className="flex flex-row gap-2">
+                  {tags
+                    .filter((tag) => tag.tagType === "Cuisine")
+                    .map((tag) => (
+                      <Badge key={tag.id} variant="outline">
+                        {tag.name}
+                      </Badge>
+                    ))}
+                  {tags
+                    .filter((tag) => tag.tagType === "Meal")
+                    .map((tag) => (
+                      <Badge key={tag.id} variant="outline">
+                        {tag.name}
+                      </Badge>
+                    ))}
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="sticky top-8 flex-grow-[1] basis-64">
+              <CardHeader>
+                <CardTitle>Ingredients</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="m-0">
+                  {ingredients.length === 0 && (
+                    <span className="text-sm">
+                      Oops. Someone forgot to add the ingredients.
+                    </span>
+                  )}
+                  {ingredients.map(({ ingredient, quantity }) => (
+                    <li className="flex list-none items-center text-sm leading-tight">
+                      <HoverCard>
+                        <HoverCardTrigger asChild>
+                          <Button
+                            variant="link"
+                            size="sm"
+                            className="font-semibold"
+                          >
+                            {ingredient.name}
+                          </Button>
+                        </HoverCardTrigger>
+                        <HoverCardContent className="w-80">
+                          <div>{ingredient.description}</div>
+                          <Button className="mt-4" size="sm">
+                            <Plus size={16} /> Shopping List
+                          </Button>
+                        </HoverCardContent>
+                      </HoverCard>
+                      <span>{quantity}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
           </div>
           <DialogFooter>
             <div className="flex w-full flex-row justify-between">
