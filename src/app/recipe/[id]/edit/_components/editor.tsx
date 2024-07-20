@@ -15,6 +15,8 @@ import { defaultExtensions } from "./extensions";
 import { defaultEditorContent } from "./content";
 import { useDebouncedCallback } from "use-debounce";
 import { slashCommand, suggestionItems } from "./slash-command";
+import { useParams } from "next/navigation";
+import { onSaveSteps } from "./actions";
 
 const extensions = [...defaultExtensions, slashCommand];
 
@@ -25,13 +27,16 @@ export default function Editor() {
   const [saveStatus, setSaveStatus] = useState("Saved");
   const [charsCount, setCharsCount] = useState();
 
+  const { id } = useParams();
+
   // TODO: switch from localStorage to db
   const debouncedUpdates = useDebouncedCallback(
     async (editor: EditorInstance) => {
       const json = editor.getJSON();
       setCharsCount(editor.storage.characterCount.words());
       window.localStorage.setItem("novel-content", JSON.stringify(json));
-      setSaveStatus("Saved");
+      await onSaveSteps(Number(id), json);
+      return setSaveStatus("Saved");
     },
     500,
   );

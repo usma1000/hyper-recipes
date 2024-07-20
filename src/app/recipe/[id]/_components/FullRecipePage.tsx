@@ -5,6 +5,7 @@ import {
   getRecipe,
   isFavoriteRecipe,
   removeFavoriteRecipe,
+  getStepsByRecipeId,
 } from "~/server/queries";
 import Image from "next/image";
 import Link from "next/link";
@@ -32,6 +33,7 @@ export default async function FullRecipePage(props: { id: number }) {
   const recipe = await getRecipe(props.id);
   const ingredients = await getIngredientsForRecipe(props.id);
   const tags = await getAllTagsForRecipe(recipe.id);
+  const steps = await getStepsByRecipeId(recipe.id);
   let isFavorite = false;
 
   if (userId) {
@@ -189,6 +191,7 @@ export default async function FullRecipePage(props: { id: number }) {
               until QuillJs is set up. There would be a list of steps here. I
               want to include callouts and other formatting options.
             </p>
+            {JSON.stringify(steps)}
           </CardContent>
         </Card>
       </div>
