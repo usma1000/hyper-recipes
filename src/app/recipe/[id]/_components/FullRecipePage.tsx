@@ -8,7 +8,7 @@ import {
 } from "~/server/queries";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Plus, Star } from "lucide-react";
+import { ArrowLeft, Edit, Plus, Star } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -153,8 +153,17 @@ export default async function FullRecipePage(props: { id: number }) {
         </Card>
 
         <Card>
-          <CardHeader>
+          <CardHeader className="relative">
             <CardTitle>Steps:</CardTitle>
+            <Link
+              href={`/recipe/${recipe.id}/edit`}
+              className={`${buttonVariants({
+                variant: "ghost",
+                size: "icon",
+              })} absolute right-3 top-1 z-10 mb-5`}
+            >
+              <Edit size={16} />
+            </Link>
           </CardHeader>
           <CardContent>
             <p>
