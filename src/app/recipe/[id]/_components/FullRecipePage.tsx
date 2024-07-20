@@ -155,15 +155,18 @@ export default async function FullRecipePage(props: { id: number }) {
         <Card>
           <CardHeader className="relative">
             <CardTitle>Steps:</CardTitle>
-            <Link
-              href={`/recipe/${recipe.id}/edit`}
-              className={`${buttonVariants({
-                variant: "ghost",
-                size: "icon",
-              })} absolute right-3 top-1 z-10 mb-5`}
-            >
-              <Edit size={16} />
-            </Link>
+            {/* TODO: switch to admin only */}
+            <SignedIn>
+              <Link
+                href={`/recipe/${recipe.id}/edit`}
+                className={`${buttonVariants({
+                  variant: "ghost",
+                  size: "icon",
+                })} absolute right-3 top-1 z-10 mb-5`}
+              >
+                <Edit size={16} />
+              </Link>
+            </SignedIn>
           </CardHeader>
           <CardContent>
             <p>
