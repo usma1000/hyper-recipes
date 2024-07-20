@@ -1,4 +1,4 @@
-import {StarterKit} from "novel/extensions";
+import {StarterKit, CharacterCount} from "novel/extensions";
 import { cx } from "class-variance-authority";
 
 const starterKit = StarterKit.configure({
@@ -41,6 +41,8 @@ const starterKit = StarterKit.configure({
   gapcursor: false,
 });
 
+const characterCount = CharacterCount.configure();
+
 export const defaultExtensions = [
-  starterKit
+  starterKit, characterCount
 ]
