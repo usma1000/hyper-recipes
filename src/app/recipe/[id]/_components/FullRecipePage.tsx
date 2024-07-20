@@ -19,6 +19,7 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SignedIn } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import FullRecipeSheet from "./FullRecipeSheet";
 import {
   HoverCard,
@@ -27,13 +28,15 @@ import {
 } from "@/components/ui/hover-card";
 
 export default async function FullRecipePage(props: { id: number }) {
+  const { userId } = auth();
   const recipe = await getRecipe(props.id);
-
   const ingredients = await getIngredientsForRecipe(props.id);
-
   const tags = await getAllTagsForRecipe(recipe.id);
+  let isFavorite = false;
 
-  const isFavorite = await isFavoriteRecipe(recipe.id);
+  if (userId) {
+    isFavorite = await isFavoriteRecipe(recipe.id);
+  }
 
   async function toggleFavorite() {
     "use server";
@@ -113,13 +116,15 @@ export default async function FullRecipePage(props: { id: number }) {
             )}
             <div className="flex items-end gap-2">
               <h1>{recipe.name}</h1>
-              <form action={toggleFavorite}>
-                <Button type="submit" variant="ghost" size="sm">
-                  <Star
-                    className={`h-5 w-5 transition-all active:-translate-y-1 ${isFavorite ? "fill-amber-400" : ""}`}
-                  />
-                </Button>
-              </form>
+              <SignedIn>
+                <form action={toggleFavorite}>
+                  <Button type="submit" variant="ghost" size="sm">
+                    <Star
+                      className={`h-5 w-5 transition-all active:-translate-y-1 ${isFavorite ? "fill-amber-400" : ""}`}
+                    />
+                  </Button>
+                </form>
+              </SignedIn>
             </div>
             <CardDescription>{recipe.description}</CardDescription>
             <div className="flex flex-row gap-2">
