@@ -27,6 +27,12 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import {
+  NodeHandler,
+  NodeHandlers,
+  TipTapNode,
+  TipTapRender,
+} from "@troop.com/tiptap-react-render";
 
 export default async function FullRecipePage(props: { id: number }) {
   const { userId } = auth();
@@ -48,6 +54,28 @@ export default async function FullRecipePage(props: { id: number }) {
       await createFavoriteRecipe(recipe.id);
     }
   }
+
+  // parse the steps from JSON
+  // handle the document
+  const doc: NodeHandler = (props) => <>{props.children}</>;
+
+  // handle a paragraph
+  const paragraph: NodeHandler = (props) => {
+    return <p>{props.children}</p>;
+  };
+
+  // handle text
+  const text: NodeHandler = (props) => {
+    // you could process text marks here from props.node.marks ...
+    return <span>{props.node.text}</span>;
+  };
+
+  // create a handlers wrapper
+  const handlers: NodeHandlers = {
+    doc: doc,
+    text: text,
+    paragraph: paragraph,
+  };
 
   return (
     <div className="flex flex-wrap gap-8">
@@ -153,7 +181,6 @@ export default async function FullRecipePage(props: { id: number }) {
             </div>
           </CardHeader>
         </Card>
-
         <Card>
           <CardHeader className="relative">
             <CardTitle>Steps:</CardTitle>
@@ -171,27 +198,10 @@ export default async function FullRecipePage(props: { id: number }) {
             </SignedIn>
           </CardHeader>
           <CardContent>
-            <p>
-              This is where a recipe steps would go. This is just an example
-              until QuillJs is set up. There would be a list of steps here. I
-              want to include callouts and other formatting options.
-            </p>
-            <p>
-              This is where a recipe steps would go. This is just an example
-              until QuillJs is set up. There would be a list of steps here. I
-              want to include callouts and other formatting options.
-            </p>
-            <p>
-              This is where a recipe steps would go. This is just an example
-              until QuillJs is set up. There would be a list of steps here. I
-              want to include callouts and other formatting options.
-            </p>
-            <p>
-              This is where a recipe steps would go. This is just an example
-              until QuillJs is set up. There would be a list of steps here. I
-              want to include callouts and other formatting options.
-            </p>
-            {JSON.stringify(steps)}
+            {steps === null && <p>Oops. Someone forgot to add the steps.</p>}
+            {steps !== null && (
+              <TipTapRender handlers={handlers} node={steps as TipTapNode} />
+            )}
           </CardContent>
         </Card>
       </div>
