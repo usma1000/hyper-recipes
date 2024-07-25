@@ -5,6 +5,7 @@ import {
   getRecipe,
   isFavoriteRecipe,
   removeFavoriteRecipe,
+  getStepsByRecipeId,
 } from "~/server/queries";
 import Image from "next/image";
 import Link from "next/link";
@@ -21,17 +22,20 @@ import { Badge } from "@/components/ui/badge";
 import { SignedIn } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import FullRecipeSheet from "./FullRecipeSheet";
+import StepsEditor from "./StepsEditor";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { EditorRoot } from "novel";
 
 export default async function FullRecipePage(props: { id: number }) {
   const { userId } = auth();
   const recipe = await getRecipe(props.id);
   const ingredients = await getIngredientsForRecipe(props.id);
   const tags = await getAllTagsForRecipe(recipe.id);
+  const steps = await getStepsByRecipeId(recipe.id);
   let isFavorite = false;
 
   if (userId) {
@@ -151,32 +155,14 @@ export default async function FullRecipePage(props: { id: number }) {
             </div>
           </CardHeader>
         </Card>
-
         <Card>
-          <CardHeader>
+          <CardHeader className="relative">
             <CardTitle>Steps:</CardTitle>
           </CardHeader>
           <CardContent>
-            <p>
-              This is where a recipe steps would go. This is just an example
-              until QuillJs is set up. There would be a list of steps here. I
-              want to include callouts and other formatting options.
-            </p>
-            <p>
-              This is where a recipe steps would go. This is just an example
-              until QuillJs is set up. There would be a list of steps here. I
-              want to include callouts and other formatting options.
-            </p>
-            <p>
-              This is where a recipe steps would go. This is just an example
-              until QuillJs is set up. There would be a list of steps here. I
-              want to include callouts and other formatting options.
-            </p>
-            <p>
-              This is where a recipe steps would go. This is just an example
-              until QuillJs is set up. There would be a list of steps here. I
-              want to include callouts and other formatting options.
-            </p>
+            <EditorRoot>
+              <StepsEditor steps={steps} />
+            </EditorRoot>
           </CardContent>
         </Card>
       </div>

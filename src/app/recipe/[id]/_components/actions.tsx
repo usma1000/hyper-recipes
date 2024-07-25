@@ -7,6 +7,7 @@ import {
   createIngredientForRecipe,
 } from "~/server/queries";
 import { AssignTagsFormSchema } from "./AssignTagsForm";
+import { saveStepsForRecipeId } from "~/server/queries";
 
 export async function onTagSubmit(
   recipeId: number,
@@ -26,5 +27,10 @@ export async function onIngredientSubmit(
   quantity: string,
 ) {
   await createIngredientForRecipe(recipeId, ingredientId, quantity);
+  return { success: true };
+}
+
+export async function onSaveSteps(recipeId: number, steps: any) {
+  await saveStepsForRecipeId(recipeId, steps);
   return { success: true };
 }
