@@ -18,13 +18,6 @@ export default async function HomePage() {
         </div>
       </SignedOut>
       <h1>Browse Recipes</h1>
-      <section>
-        <h2>Featured</h2>
-        <p className="text-sm text-slate-500">
-          Some of our favorites, hand picked for you.
-        </p>
-        <RecipesCarousel recipes={allRecipes} />
-      </section>
       <SignedIn>
         <section>
           <h2>My favorites</h2>
@@ -42,6 +35,13 @@ export default async function HomePage() {
           )}
         </section>
       </SignedIn>
+      <section>
+        <h2>Featured</h2>
+        <p className="text-sm text-slate-500">
+          Some of our favorites, hand picked for you.
+        </p>
+        <RecipesCarousel recipes={allRecipes} />
+      </section>
     </div>
   );
 }
