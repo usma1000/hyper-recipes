@@ -28,7 +28,6 @@ export default function Editor({ steps }: { steps: JSONContent }) {
 
   const { id } = useParams();
 
-  // TODO: switch from localStorage to db
   const debouncedUpdates = useDebouncedCallback(
     async (editor: EditorInstance) => {
       const json = editor.getJSON();
@@ -52,20 +51,22 @@ export default function Editor({ steps }: { steps: JSONContent }) {
 
   return (
     <div className="relative w-full">
-      <div className="absolute -top-14 right-0 z-10 mb-5 flex gap-2">
-        <div className="rounded-lg bg-accent px-2 py-1 text-sm text-muted-foreground">
-          {saveStatus}
+      {isSignedIn && (
+        <div className="absolute -top-14 right-0 z-10 mb-5 flex gap-2">
+          <div className="rounded-lg bg-accent px-2 py-1 text-sm text-muted-foreground">
+            {saveStatus}
+          </div>
+          <div
+            className={
+              charsCount
+                ? "rounded-lg bg-accent px-2 py-1 text-sm text-muted-foreground"
+                : "hidden"
+            }
+          >
+            {charsCount} Words
+          </div>
         </div>
-        <div
-          className={
-            charsCount
-              ? "rounded-lg bg-accent px-2 py-1 text-sm text-muted-foreground"
-              : "hidden"
-          }
-        >
-          {charsCount} Words
-        </div>
-      </div>
+      )}
       <EditorContent
         initialContent={initialContent}
         extensions={extensions}
