@@ -9,7 +9,7 @@ import {
 } from "~/server/queries";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Edit, Plus, Star } from "lucide-react";
+import { ArrowLeft, Plus, Star } from "lucide-react";
 import {
   Card,
   CardHeader,

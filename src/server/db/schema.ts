@@ -13,6 +13,7 @@ import {
   primaryKey,
   json,
 } from "drizzle-orm/pg-core";
+import { type JSONContent } from "novel";
 
 export const createTable = pgTableCreator((name) => `hyper-recipes_${name}`);
 

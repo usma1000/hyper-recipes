@@ -4,6 +4,7 @@ import { auth } from '@clerk/nextjs/server';
 import { FavoritesTable, RecipeIngredientsTable, RecipesTable, RecipesToTagsTable, TagsTable } from './db/schema';
 import { revalidatePath } from 'next/cache';
 import { and, eq } from 'drizzle-orm';
+import { type JSONContent } from 'novel';
 
 // Image queries
 
@@ -71,14 +72,14 @@ export async function getRecipe(id: number) {
   return recipe;
 }
 
-export async function getStepsByRecipeId(id: number) {
+export async function getStepsByRecipeId(id: number): Promise<JSONContent> {
   const recipe = await db.query.RecipesTable.findFirst({ 
     where: (model, { eq }) => eq(model.id, id),
   });
 
   if (!recipe) throw new Error('Recipe not found');
-
-  return recipe.steps;
+  
+  return recipe.steps as JSONContent;
 }
 
 export async function saveStepsForRecipeId(id: number, steps: any) {

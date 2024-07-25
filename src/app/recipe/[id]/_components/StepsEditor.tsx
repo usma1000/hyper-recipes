@@ -19,7 +19,7 @@ import { useUser } from "@clerk/nextjs";
 
 const extensions = [...defaultExtensions, slashCommand];
 
-export default function Editor({ steps }) {
+export default function Editor({ steps }: { steps: JSONContent }) {
   const [initialContent, setInitialContent] = useState<JSONContent>(steps);
   const [saveStatus, setSaveStatus] = useState("Saved");
   const [charsCount, setCharsCount] = useState();
