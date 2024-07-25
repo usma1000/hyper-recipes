@@ -57,10 +57,7 @@ export const RecipesTable = createTable(
     name: varchar("name", { length: 256 }).notNull(),
     description: varchar("description", { length: 1024 }).notNull(),
     heroImageId: integer("hero_image_id").references(() => ImagesTable.id),
-
-    // TODO: make this notNull after adding steps to existing recipes
-    steps: json("steps"),
-
+    steps: json("steps").notNull(),
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),

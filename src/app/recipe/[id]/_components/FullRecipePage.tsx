@@ -22,17 +22,13 @@ import { Badge } from "@/components/ui/badge";
 import { SignedIn } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import FullRecipeSheet from "./FullRecipeSheet";
+import StepsEditor from "./StepsEditor";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import {
-  NodeHandler,
-  NodeHandlers,
-  TipTapNode,
-  TipTapRender,
-} from "@troop.com/tiptap-react-render";
+import { EditorRoot } from "novel";
 
 export default async function FullRecipePage(props: { id: number }) {
   const { userId } = auth();
@@ -54,28 +50,6 @@ export default async function FullRecipePage(props: { id: number }) {
       await createFavoriteRecipe(recipe.id);
     }
   }
-
-  // parse the steps from JSON
-  // handle the document
-  const doc: NodeHandler = (props) => <>{props.children}</>;
-
-  // handle a paragraph
-  const paragraph: NodeHandler = (props) => {
-    return <p>{props.children}</p>;
-  };
-
-  // handle text
-  const text: NodeHandler = (props) => {
-    // you could process text marks here from props.node.marks ...
-    return <span>{props.node.text}</span>;
-  };
-
-  // create a handlers wrapper
-  const handlers: NodeHandlers = {
-    doc: doc,
-    text: text,
-    paragraph: paragraph,
-  };
 
   return (
     <div className="flex flex-wrap gap-8">
@@ -184,24 +158,11 @@ export default async function FullRecipePage(props: { id: number }) {
         <Card>
           <CardHeader className="relative">
             <CardTitle>Steps:</CardTitle>
-            {/* TODO: switch to admin only */}
-            <SignedIn>
-              <Link
-                href={`/recipe/${recipe.id}/edit`}
-                className={`${buttonVariants({
-                  variant: "ghost",
-                  size: "icon",
-                })} absolute right-3 top-1 z-10 mb-5`}
-              >
-                <Edit size={16} />
-              </Link>
-            </SignedIn>
           </CardHeader>
           <CardContent>
-            {steps === null && <p>Oops. Someone forgot to add the steps.</p>}
-            {steps !== null && (
-              <TipTapRender handlers={handlers} node={steps as TipTapNode} />
-            )}
+            <EditorRoot>
+              <StepsEditor steps={steps} />
+            </EditorRoot>
           </CardContent>
         </Card>
       </div>
