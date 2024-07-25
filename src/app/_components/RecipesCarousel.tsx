@@ -7,6 +7,8 @@ import {
 } from "@/components/ui/carousel";
 import { SelectRecipe } from "~/server/db/schema";
 import RecipeDialog from "./RecipeDialog";
+import { Suspense } from "react";
+import RecipeCardSkeleton from "./RecipeCardSkeleton";
 
 export default async function RecipesCarousel({
   recipes,
@@ -23,7 +25,9 @@ export default async function RecipesCarousel({
                 key={recipe.id}
                 className="md:basis-1/2 lg:basis-1/3"
               >
-                <RecipeDialog recipe={recipe} />
+                <Suspense key={recipe.id} fallback={<RecipeCardSkeleton />}>
+                  <RecipeDialog recipe={recipe} />
+                </Suspense>
               </CarouselItem>
             );
           })}
