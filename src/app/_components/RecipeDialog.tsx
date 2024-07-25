@@ -34,13 +34,20 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { SignedIn } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 
 export default async function RecipeDialog({
   recipe,
 }: {
   recipe: SelectRecipe;
 }) {
-  const isFavorite = await isFavoriteRecipe(recipe.id);
+  const user = await currentUser();
+
+  let isFavorite = false;
+  if (user) {
+    isFavorite = await isFavoriteRecipe(recipe.id);
+  }
 
   const tags = await getAllTagsForRecipe(recipe.id);
 
@@ -161,13 +168,15 @@ export default async function RecipeDialog({
               >
                 View Recipe
               </Link>
-              <form action={toggleFavorite}>
-                <Button type="submit" variant="ghost" size="sm">
-                  <Star
-                    className={`h-5 w-5 transition-all active:-translate-y-1 ${isFavorite ? "fill-amber-400" : ""}`}
-                  />
-                </Button>
-              </form>
+              <SignedIn>
+                <form action={toggleFavorite}>
+                  <Button type="submit" variant="ghost" size="sm">
+                    <Star
+                      className={`h-5 w-5 transition-all active:-translate-y-1 ${isFavorite ? "fill-amber-400" : ""}`}
+                    />
+                  </Button>
+                </form>
+              </SignedIn>
             </div>
           </DialogFooter>
         </DialogContent>
