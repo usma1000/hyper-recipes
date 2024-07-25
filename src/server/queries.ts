@@ -72,6 +72,20 @@ export async function getRecipe(id: number) {
   return recipe;
 }
 
+export async function getRecipeNameAndDescription(id: number) {
+  const recipe = await db.query.RecipesTable.findFirst({ 
+    where: (model, { eq }) => eq(model.id, id),
+    columns: {
+      name: true,
+      description: true,
+    },
+  });
+
+  if (!recipe) throw new Error('Recipe not found');
+
+  return recipe;
+}
+
 export async function getStepsByRecipeId(id: number): Promise<JSONContent> {
   const recipe = await db.query.RecipesTable.findFirst({ 
     where: (model, { eq }) => eq(model.id, id),

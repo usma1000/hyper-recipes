@@ -1,12 +1,21 @@
+import { getRecipeNameAndDescription } from "~/server/queries";
 import FullRecipePage from "./_components/FullRecipePage";
 
-export default function RecipePage({
-  params: { id: recipeId },
-}: {
+type Props = {
   params: { id: string };
-}) {
-  const idAsNumber = Number(recipeId);
-  if (Number.isNaN(idAsNumber)) throw new Error("Invalid photo ID");
+};
+
+export async function generateMetadata({ params: { id } }: Props) {
+  const { name, description } = await getRecipeNameAndDescription(Number(id));
+  return {
+    title: `Recipe for ${name}`,
+    description: description,
+  };
+}
+
+export default function RecipePage({ params: { id } }: Props) {
+  const idAsNumber = Number(id);
+  if (Number.isNaN(idAsNumber)) throw new Error("Invalid ID");
 
   return (
     <div>
