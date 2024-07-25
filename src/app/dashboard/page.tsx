@@ -7,12 +7,19 @@ import {
 } from "@/components/ui/card";
 import CreateTagsForm from "./_components/CreateTagsForm";
 import DeleteTagsForm from "./_components/DeleteTagsForm";
+import { getAllTagNames } from "~/server/queries";
 
 export default async function Page() {
+  const rawTags = await getAllTagNames();
+  const allTags = rawTags.map((tag) => ({
+    value: tag.id,
+    label: tag.name,
+  }));
+
   return (
     <div className="flex flex-col gap-8">
       <h1>Dashboard</h1>
-      <div className="flex gap-4">
+      <div className="flex gap-8">
         <Card>
           <CardHeader>
             <CardTitle>Create New Tag</CardTitle>
@@ -34,7 +41,7 @@ export default async function Page() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <DeleteTagsForm />
+            <DeleteTagsForm tags={allTags} />
           </CardContent>
         </Card>
       </div>

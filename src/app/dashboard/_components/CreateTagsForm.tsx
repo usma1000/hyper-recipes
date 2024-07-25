@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { tagTypes } from "~/server/db/schema";
-import { onSubmit } from "./actions";
+import { onNewTagSubmit } from "./actions";
 import { Input } from "@/components/ui/input";
 import { useEffect } from "react";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -57,7 +57,7 @@ export default function CreateTagsForm() {
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit((e) => onSubmit(e))}
+        onSubmit={form.handleSubmit((e) => onNewTagSubmit(e))}
         className="relative flex flex-col gap-4"
       >
         {isLoading ||
