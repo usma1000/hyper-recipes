@@ -11,8 +11,16 @@ export default function Footer() {
           Hyper Recipes
         </Link>
         <div className="flex items-center gap-4">
-          <span>© {currentYear} Hyper Recipes</span>
-          All rights reserved. Privacy Policy | Terms and Conditions
+          <span className="text-sm font-normal">
+            © {currentYear} Hyper Recipes. All rights reserved.{" "}
+            <Link href="/" className="underline">
+              Privacy Policy
+            </Link>{" "}
+            |{" "}
+            <Link href="/" className="underline">
+              Terms and Conditions
+            </Link>
+          </span>
         </div>
       </div>
     </footer>
