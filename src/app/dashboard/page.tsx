@@ -8,6 +8,7 @@ import {
 import CreateTagsForm from "./_components/CreateTagsForm";
 import DeleteTagsForm from "./_components/DeleteTagsForm";
 import { getAllTagNames } from "~/server/queries";
+import CreateIngredientForm from "./_components/CreateIngredientForm";
 
 export default async function Page() {
   const rawTags = await getAllTagNames();
@@ -22,7 +23,7 @@ export default async function Page() {
       <section>
         <h2 className="mb-2">Manage Ingredients</h2>
         <div className="flex gap-8">
-          <Card className="flex flex-col">
+          <Card className="flex basis-1/2 flex-col">
             <CardHeader>
               <CardTitle>Create New Ingredient</CardTitle>
               <CardDescription>
@@ -30,10 +31,10 @@ export default async function Page() {
               </CardDescription>
             </CardHeader>
             <CardContent className="flex-1">
-              {/* <CreateTagsForm /> */}
+              <CreateIngredientForm />
             </CardContent>
           </Card>
-          <Card className="flex flex-col">
+          <Card className="flex basis-1/2 flex-col">
             <CardHeader>
               <CardTitle>Delete an Ingredient</CardTitle>
               <CardDescription>
@@ -42,7 +43,8 @@ export default async function Page() {
               </CardDescription>
             </CardHeader>
             <CardContent className="flex-1">
-              {/* <DeleteTagsForm tags={allTags} /> */}
+              {/* <CreateIngredientForm /> */}
+              <p>Coming soon...</p>
             </CardContent>
           </Card>
         </div>
@@ -50,7 +52,7 @@ export default async function Page() {
       <section>
         <h2 className="mb-2">Manage Tags</h2>
         <div className="flex gap-8">
-          <Card className="flex flex-col">
+          <Card className="flex basis-1/2 flex-col">
             <CardHeader>
               <CardTitle>Create New Tag</CardTitle>
               <CardDescription>
@@ -62,7 +64,7 @@ export default async function Page() {
               <CreateTagsForm />
             </CardContent>
           </Card>
-          <Card className="flex flex-col">
+          <Card className="flex basis-1/2 flex-col">
             <CardHeader>
               <CardTitle>Delete a Tag</CardTitle>
               <CardDescription>

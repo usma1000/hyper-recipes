@@ -1,7 +1,7 @@
 import 'server-only';
 import { db } from './db';
 import { auth } from '@clerk/nextjs/server';
-import { FavoritesTable, RecipeIngredientsTable, RecipesTable, RecipesToTagsTable, TagsTable } from './db/schema';
+import { FavoritesTable, IngredientsTable, RecipeIngredientsTable, RecipesTable, RecipesToTagsTable, TagsTable } from './db/schema';
 import { revalidatePath } from 'next/cache';
 import { and, eq } from 'drizzle-orm';
 import { type JSONContent } from 'novel';
@@ -248,6 +248,15 @@ export async function getAllIngredients() {
   return ingredients;
 }
 
+export async function getAllIngredientNames() {
+  const ingredients = await db.query.IngredientsTable.findMany({
+    columns: {
+      name: true,
+    },
+  });
+  return ingredients;
+}
+
 export async function getIngredientsForRecipe(recipeId: number) {
   const ingredients = await db.query.RecipeIngredientsTable.findMany({
     where: (model, { eq }) => eq(model.recipeId, recipeId),
@@ -257,6 +266,16 @@ export async function getIngredientsForRecipe(recipeId: number) {
   });
 
   return ingredients;
+}
+
+export async function createNewIngredient(ingredient: { name: string }) {
+  const user = auth();
+
+  if (!user.userId) throw new Error('Not authenticated');
+
+  await db.insert(IngredientsTable).values(ingredient);
+
+  revalidatePath('/dashboard', 'page');
 }
 
 export async function createIngredientForRecipe(recipeId: number, ingredientId: number, quantity: string) {
