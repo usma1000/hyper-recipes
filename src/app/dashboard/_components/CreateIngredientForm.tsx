@@ -18,6 +18,7 @@ import { useEffect } from "react";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { toast } from "sonner";
 import { onNewIngredientSubmit } from "./actions";
+import { Textarea } from "@/components/ui/textarea";
 
 export const CreateIngredientFormSchema = z.object({
   name: z.string().max(256),
@@ -81,7 +82,7 @@ export default function CreateIngredientForm() {
             <FormItem>
               <FormLabel>Ingredient Description</FormLabel>
               <FormControl>
-                <Input placeholder="e.g. A white, pungent vegetable." />
+                <Textarea placeholder="e.g. A white, pungent vegetable." />
               </FormControl>
               <FormDescription>
                 This will show up when you hover over the ingredient.
