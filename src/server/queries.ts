@@ -3,7 +3,7 @@ import { db } from './db';
 import { auth } from '@clerk/nextjs/server';
 import { FavoritesTable, IngredientsTable, RecipeIngredientsTable, RecipesTable, RecipesToTagsTable, TagsTable } from './db/schema';
 import { revalidatePath } from 'next/cache';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { type JSONContent } from 'novel';
 
 // Image queries
@@ -41,6 +41,7 @@ export async function createNewRecipe(recipe: newRecipe) {
 
 export async function getAllRecipes() {
   const recipes = await db.query.RecipesTable.findMany({
+    where: (model, { eq }) => eq(model.published, true),
     orderBy: (model, { desc }) => desc(model.id),
     with: {
       heroImage: true,
@@ -51,6 +52,7 @@ export async function getAllRecipes() {
 
 export async function getAllRecipeNames() {
   const recipes = await db.query.RecipesTable.findMany({
+    where: (model, { eq }) => eq(model.published, true),
     orderBy: (model, { desc }) => desc(model.name),
     columns: {
       id: true,
@@ -62,6 +64,7 @@ export async function getAllRecipeNames() {
 
 export async function getSliderRecipes() {
   const recipes = await db.query.RecipesTable.findMany({
+    where: (model, { eq }) => eq(model.published, true),
     orderBy: (model, { desc }) => desc(model.id),
     limit: 6,
     with: {
@@ -73,13 +76,16 @@ export async function getSliderRecipes() {
 
 export async function getRecipe(id: number) {
   const recipe = await db.query.RecipesTable.findFirst({ 
-    where: (model, { eq }) => eq(model.id, id),
+    where: (model, { and, eq }) => and(
+      eq(model.id, id),
+      eq(model.published, true),
+    ),
     with: {
       heroImage: true,
     },
   });
 
-  if (!recipe) throw new Error('Recipe not found');
+  if (!recipe) throw new Error('Recipe not found, or is unpublished');
 
   return recipe;
 }
@@ -128,7 +134,16 @@ export async function getMyFavoriteRecipes() {
   if (!user.userId) throw new Error('Not authenticated');
 
   const favoriteRecipes = await db.query.FavoritesTable.findMany({
-    where: (model, { eq }) => eq(model.userId, user.userId),
+    where: (model, {and, eq }) => and(
+      eq(model.userId, user.userId),
+      inArray(
+        model.recipeId,
+        db
+          .select({ recipeId: RecipesTable.id })
+          .from(RecipesTable)
+          .where(eq(RecipesTable.published, true)),
+        
+    )),
     with: {
       favoritedRecipe: {
         with: {

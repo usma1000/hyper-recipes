@@ -12,8 +12,8 @@ import {
   uniqueIndex,
   primaryKey,
   json,
+  boolean,
 } from "drizzle-orm/pg-core";
-import { type JSONContent } from "novel";
 
 export const createTable = pgTableCreator((name) => `hyper-recipes_${name}`);
 
@@ -63,6 +63,7 @@ export const RecipesTable = createTable(
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
     updatedAt: timestamp("updatedAt"),
+    published: boolean("published").default(false).notNull(),
   }, table => {
     return {
       nameIndex: uniqueIndex("name_index").on(table.name),
