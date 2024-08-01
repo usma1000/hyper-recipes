@@ -15,7 +15,7 @@ export default function TopNav() {
     <div className="border-b border-slate-200 bg-white py-4 text-slate-950 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50">
       <nav className="container flex items-center justify-between font-semibold">
         <Link href="/" className="flex align-middle text-xl font-semibold">
-          <Zap size={16} />
+          <Zap size={16} className="fill-yellow-300" />
           Hyper Recipes
         </Link>
 

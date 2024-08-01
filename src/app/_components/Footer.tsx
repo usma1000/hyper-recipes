@@ -7,7 +7,7 @@ export default function Footer() {
     <footer className="border-t border-slate-200 bg-white py-4 text-slate-950 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50">
       <div className="container flex items-center justify-between font-semibold">
         <Link href="/" className="text-md flex align-middle font-semibold">
-          <Zap size={16} />
+          <Zap size={16} className="fill-yellow-300" />
           Hyper Recipes
         </Link>
         <div className="flex items-center gap-4">
