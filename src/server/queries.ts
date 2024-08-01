@@ -27,6 +27,18 @@ export async function getImage(id: number) {
 
 // Recipe queries
 
+type newRecipe = typeof RecipesTable.$inferInsert;
+
+export async function createNewRecipe(recipe: newRecipe) {
+  const user = auth();
+
+  if (!user.userId) throw new Error('Not authenticated');
+
+  await db.insert(RecipesTable).values(recipe);
+
+  revalidatePath('/', 'layout');
+}
+
 export async function getAllRecipes() {
   const recipes = await db.query.RecipesTable.findMany({
     orderBy: (model, { desc }) => desc(model.id),

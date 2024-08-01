@@ -39,6 +39,7 @@ export default function TopNav() {
               href="/new-recipe"
               className={buttonVariants({
                 variant: "default",
+                size: "sm",
               })}
             >
               <PlusCircle size={16} className="mr-2" />
