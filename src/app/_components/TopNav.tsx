@@ -4,10 +4,10 @@ import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 // import { useRouter } from "next/navigation";
 // import { UploadButton } from "~/utils/uploadthing";
-import { ModeToggle } from "./ModeToggle";
+// import { ModeToggle } from "./ModeToggle";
 import { CommandSearch } from "./CommandSearch";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { LayoutDashboard, Zap } from "lucide-react";
+import { LayoutDashboard, PlusCircle, Zap } from "lucide-react";
 
 export default function TopNav() {
   // const router = useRouter();
@@ -19,8 +19,9 @@ export default function TopNav() {
           Hyper Recipes
         </Link>
 
+        <CommandSearch />
+
         <div className="flex items-center gap-4">
-          <CommandSearch />
           <SignedOut>
             <Button>
               <SignInButton />
@@ -35,6 +36,15 @@ export default function TopNav() {
             }}
           /> */}
             <Link
+              href="/new-recipe"
+              className={buttonVariants({
+                variant: "default",
+              })}
+            >
+              <PlusCircle size={16} className="mr-2" />
+              New Recipe
+            </Link>
+            <Link
               href="/dashboard"
               className={buttonVariants({
                 variant: "ghost",
@@ -47,7 +57,7 @@ export default function TopNav() {
               <UserButton />
             </div>
           </SignedIn>
-          <ModeToggle />
+          {/* <ModeToggle /> */}
         </div>
       </nav>
     </div>
