@@ -17,13 +17,16 @@ const NewRecipePage: NextPage = () => {
   // const router = useRouter();
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="space-y-6">
       <h1>Add New Recipe</h1>
+      <p className="font-bold text-red-500">
+        This is a plcaeholder form. It doesn't do anything yet.
+      </p>
       <Card>
         <CardHeader>
           <CardTitle>Recipe Details</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <div>
             <Label htmlFor="title">Recipe Name</Label>
             <Input id="title" placeholder="Miso Ramen, French Omlette, etc." />
@@ -57,12 +60,20 @@ const NewRecipePage: NextPage = () => {
           <CardTitle>Ingredients</CardTitle>
         </CardHeader>
         <CardContent>
-          <ul>
-            <li>1 cup flour</li>
-            <li>2 tbsp sugar</li>
+          <ul className="m-0 list-none">
+            <li>
+              <span className="inline-block rounded-sm bg-secondary px-4 py-1">
+                1 cup flour
+              </span>
+            </li>
+            <li>
+              <span className="inline-block rounded-sm bg-secondary px-4 py-1">
+                2 tbsp sugar
+              </span>
+            </li>
           </ul>
         </CardContent>
-        <CardFooter className="items-end gap-4">
+        <CardFooter className="items-end space-x-4 border-t p-4">
           <div>
             <Label htmlFor="amount">Amount</Label>
             <Input id="amount" placeholder="1 cup, 2 tbsp, etc." />
