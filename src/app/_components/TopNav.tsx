@@ -24,7 +24,7 @@ export default function TopNav() {
         <div className="flex items-center gap-4">
           <SignedOut>
             <Button>
-              <SignInButton />
+              <SignInButton mode="modal" />
             </Button>
           </SignedOut>
           <SignedIn>
