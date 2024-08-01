@@ -243,6 +243,18 @@ export async function removeAllTagsFromRecipe(recipeId: number) {
 
 // Ingredient queries
 
+type newIngredient = typeof IngredientsTable.$inferInsert;
+
+export async function createNewIngredient(ingredient: newIngredient) {
+  const user = auth();
+
+  if (!user.userId) throw new Error('Not authenticated');
+
+  await db.insert(IngredientsTable).values(ingredient);
+
+  revalidatePath('/dashboard', 'page');
+}
+
 export async function getAllIngredients() {
   const ingredients = await db.query.IngredientsTable.findMany();
   return ingredients;
@@ -266,16 +278,6 @@ export async function getIngredientsForRecipe(recipeId: number) {
   });
 
   return ingredients;
-}
-
-export async function createNewIngredient(ingredient: { name: string }) {
-  const user = auth();
-
-  if (!user.userId) throw new Error('Not authenticated');
-
-  await db.insert(IngredientsTable).values(ingredient);
-
-  revalidatePath('/dashboard', 'page');
 }
 
 export async function createIngredientForRecipe(recipeId: number, ingredientId: number, quantity: string) {

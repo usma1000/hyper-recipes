@@ -21,8 +21,8 @@ import { onNewIngredientSubmit } from "./actions";
 import { Textarea } from "@/components/ui/textarea";
 
 export const CreateIngredientFormSchema = z.object({
-  name: z.string().max(256),
-  description: z.string().max(1024),
+  name: z.string().min(3).max(256),
+  description: z.string().min(3).max(1024),
 });
 
 export default function CreateIngredientForm() {
@@ -66,7 +66,7 @@ export default function CreateIngredientForm() {
             <FormItem>
               <FormLabel>Ingredient Name</FormLabel>
               <FormControl>
-                <Input placeholder="Onions, garlic, etc." />
+                <Input placeholder="Onions, garlic, etc." {...field} />
               </FormControl>
               <FormDescription>
                 This is the name of the ingredient you are adding.
@@ -82,7 +82,10 @@ export default function CreateIngredientForm() {
             <FormItem>
               <FormLabel>Ingredient Description</FormLabel>
               <FormControl>
-                <Textarea placeholder="e.g. A white, pungent vegetable." />
+                <Textarea
+                  placeholder="e.g. A white, pungent vegetable."
+                  {...field}
+                />
               </FormControl>
               <FormDescription>
                 This will show up when you hover over the ingredient.
