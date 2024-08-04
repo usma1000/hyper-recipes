@@ -27,6 +27,7 @@ import {
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
+import { onNewRecipeSubmit } from "./actions";
 
 export const CreateRecipeFormSchema = z.object({
   name: string().min(3).max(256),
@@ -35,27 +36,49 @@ export const CreateRecipeFormSchema = z.object({
   steps: z.unknown().nullable(),
 });
 
+export const AssignTagsFormSchema = z.array(z.number());
+
+export const AssignIngredientsFormSchema = z
+  .array(
+    z.object({
+      ingredientId: z.number(),
+      quantity: z.string(),
+    }),
+  )
+  .min(1);
+
+// merge all form schemas
+export const NewRecipeFormSchema = z.object({
+  recipe: CreateRecipeFormSchema,
+  tags: AssignTagsFormSchema,
+  ingredients: AssignIngredientsFormSchema,
+});
+
 export default function CreateRecipeForm() {
-  const form = useForm<z.infer<typeof CreateRecipeFormSchema>>({
-    resolver: zodResolver(CreateRecipeFormSchema),
+  const form = useForm<z.infer<typeof NewRecipeFormSchema>>({
+    resolver: zodResolver(NewRecipeFormSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      heroImageId: null,
-      steps: {
-        type: "doc",
-        content: [
-          {
-            type: "paragraph",
-            content: [
-              {
-                type: "text",
-                text: "Enter instructions here...",
-              },
-            ],
-          },
-        ],
+      recipe: {
+        name: "",
+        description: "",
+        heroImageId: null,
+        steps: {
+          type: "doc",
+          content: [
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  text: "Enter instructions here...",
+                },
+              ],
+            },
+          ],
+        },
       },
+      tags: [],
+      ingredients: [],
     },
   });
 
@@ -65,7 +88,7 @@ export default function CreateRecipeForm() {
 
   useEffect(() => {
     if (isSubmitSuccessful) {
-      toast(`${form.getValues("name")} successfully created.`);
+      toast(`${form.getValues("recipe.name")} successfully created.`);
       form.reset();
       // TODO: redirect to new recipe page
     }
@@ -74,7 +97,9 @@ export default function CreateRecipeForm() {
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit((e) => console.log(e))}
+        onSubmit={form.handleSubmit((e) =>
+          onNewRecipeSubmit(e.recipe, e.tags, e.ingredients),
+        )}
         className="relative flex flex-col gap-4"
       >
         {isLoading ||
@@ -92,7 +117,7 @@ export default function CreateRecipeForm() {
           <CardContent className="space-y-4">
             <FormField
               control={form.control}
-              name="name"
+              name="recipe.name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Recipe Name</FormLabel>
@@ -108,7 +133,7 @@ export default function CreateRecipeForm() {
             />
             <FormField
               control={form.control}
-              name="description"
+              name="recipe.description"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Description</FormLabel>
