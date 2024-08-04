@@ -9,7 +9,7 @@ import {
 } from "~/server/queries";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Plus, Star } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Plus, Star } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -52,120 +52,134 @@ export default async function FullRecipePage(props: { id: number }) {
   }
 
   return (
-    <div className="flex flex-wrap gap-8">
-      <div className="flex-grow-[1] basis-64">
-        <div className="mb-8 flex justify-between align-middle">
-          <Link
-            href="/"
-            className={`${buttonVariants({
-              variant: "default",
-              size: "sm",
-            })}`}
-          >
-            <ArrowLeft size={16} /> Back
-          </Link>
-          {/* TODO: Update to admin only */}
-          <SignedIn>
-            <FullRecipeSheet recipeId={props.id} />
-          </SignedIn>
+    <>
+      {/* {recipe.published === false && ( */}
+      <div className="mb-8 flex items-center justify-between rounded-md border border-yellow-400 bg-yellow-100 p-4 font-semibold text-yellow-800">
+        <div>
+          <AlertTriangle
+            size={16}
+            className="mr-2 inline-block -translate-y-[2px]"
+          />
+          This recipe is not yet published. It will not be visible to others.
         </div>
-        <Card className="sticky top-8">
-          <CardHeader>
-            <CardTitle>Ingredients</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="m-0">
-              {ingredients.length === 0 && (
-                <span className="text-sm">
-                  Oops. Someone forgot to add the ingredients.
-                </span>
+        <Button>Publish</Button>
+      </div>
+      {/* )} */}
+      <div className="flex flex-wrap gap-8">
+        <div className="flex-grow-[1] basis-64">
+          <div className="mb-8 flex justify-between align-middle">
+            <Link
+              href="/"
+              className={`${buttonVariants({
+                variant: "default",
+                size: "sm",
+              })}`}
+            >
+              <ArrowLeft size={16} /> Back
+            </Link>
+            {/* TODO: Update to admin only */}
+            <SignedIn>
+              <FullRecipeSheet recipeId={props.id} />
+            </SignedIn>
+          </div>
+          <Card className="sticky top-8">
+            <CardHeader>
+              <CardTitle>Ingredients</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="m-0">
+                {ingredients.length === 0 && (
+                  <span className="text-sm">
+                    Oops. Someone forgot to add the ingredients.
+                  </span>
+                )}
+                {ingredients.map(({ ingredient, quantity }) => (
+                  <li className="flex list-none items-center text-sm leading-tight">
+                    <input type="checkbox" className="mr-2" />
+                    <HoverCard>
+                      <HoverCardTrigger asChild>
+                        <Button
+                          variant="link"
+                          size="sm"
+                          className="font-semibold"
+                        >
+                          {ingredient.name}
+                        </Button>
+                      </HoverCardTrigger>
+                      <HoverCardContent className="w-80">
+                        <div>{ingredient.description}</div>
+                        <Button className="mt-4" size="sm">
+                          <Plus size={16} /> Shopping List
+                        </Button>
+                      </HoverCardContent>
+                    </HoverCard>
+                    <span>{quantity}</span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        </div>
+        <div className="flex grow-[999] basis-0 flex-col gap-8">
+          <Card>
+            <CardHeader>
+              {recipe.heroImage?.url && (
+                <div className="relative mb-8 h-96">
+                  {/* update "sizes" when mobile is fixed */}
+                  <Image
+                    src={recipe.heroImage.url}
+                    alt={recipe.heroImage.name}
+                    fill={true}
+                    priority={true}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 510px"
+                    className="rounded-lg"
+                    style={{ objectFit: "cover" }}
+                  />
+                </div>
               )}
-              {ingredients.map(({ ingredient, quantity }) => (
-                <li className="flex list-none items-center text-sm leading-tight">
-                  <input type="checkbox" className="mr-2" />
-                  <HoverCard>
-                    <HoverCardTrigger asChild>
-                      <Button
-                        variant="link"
-                        size="sm"
-                        className="font-semibold"
-                      >
-                        {ingredient.name}
-                      </Button>
-                    </HoverCardTrigger>
-                    <HoverCardContent className="w-80">
-                      <div>{ingredient.description}</div>
-                      <Button className="mt-4" size="sm">
-                        <Plus size={16} /> Shopping List
-                      </Button>
-                    </HoverCardContent>
-                  </HoverCard>
-                  <span>{quantity}</span>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
-      </div>
-      <div className="flex grow-[999] basis-0 flex-col gap-8">
-        <Card>
-          <CardHeader>
-            {recipe.heroImage?.url && (
-              <div className="relative mb-8 h-96">
-                {/* update "sizes" when mobile is fixed */}
-                <Image
-                  src={recipe.heroImage.url}
-                  alt={recipe.heroImage.name}
-                  fill={true}
-                  priority={true}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 510px"
-                  className="rounded-lg"
-                  style={{ objectFit: "cover" }}
-                />
+              <div className="flex items-end gap-2">
+                <h1>{recipe.name}</h1>
+                <SignedIn>
+                  <form action={toggleFavorite}>
+                    <Button type="submit" variant="ghost" size="sm">
+                      <Star
+                        className={`h-5 w-5 transition-all active:-translate-y-1 ${isFavorite ? "fill-amber-400" : ""}`}
+                      />
+                    </Button>
+                  </form>
+                </SignedIn>
               </div>
-            )}
-            <div className="flex items-end gap-2">
-              <h1>{recipe.name}</h1>
-              <SignedIn>
-                <form action={toggleFavorite}>
-                  <Button type="submit" variant="ghost" size="sm">
-                    <Star
-                      className={`h-5 w-5 transition-all active:-translate-y-1 ${isFavorite ? "fill-amber-400" : ""}`}
-                    />
-                  </Button>
-                </form>
-              </SignedIn>
-            </div>
-            <CardDescription>{recipe.description}</CardDescription>
-            <div className="flex flex-row gap-2">
-              {tags
-                .filter((tag) => tag.tagType === "Cuisine")
-                .map((tag) => (
-                  <Badge key={tag.id} variant="outline">
-                    {tag.name}
-                  </Badge>
-                ))}
-              {tags
-                .filter((tag) => tag.tagType === "Meal")
-                .map((tag) => (
-                  <Badge key={tag.id} variant="outline">
-                    {tag.name}
-                  </Badge>
-                ))}
-            </div>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader className="relative">
-            <CardTitle>Steps:</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <EditorRoot>
-              <StepsEditor steps={steps} />
-            </EditorRoot>
-          </CardContent>
-        </Card>
+              <CardDescription>{recipe.description}</CardDescription>
+              <div className="flex flex-row gap-2">
+                {tags
+                  .filter((tag) => tag.tagType === "Cuisine")
+                  .map((tag) => (
+                    <Badge key={tag.id} variant="outline">
+                      {tag.name}
+                    </Badge>
+                  ))}
+                {tags
+                  .filter((tag) => tag.tagType === "Meal")
+                  .map((tag) => (
+                    <Badge key={tag.id} variant="outline">
+                      {tag.name}
+                    </Badge>
+                  ))}
+              </div>
+            </CardHeader>
+          </Card>
+          <Card>
+            <CardHeader className="relative">
+              <CardTitle>Steps:</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <EditorRoot>
+                <StepsEditor steps={steps} />
+              </EditorRoot>
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
