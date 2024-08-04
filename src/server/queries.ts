@@ -149,6 +149,19 @@ export async function saveStepsForRecipeId(id: number, steps: any) {
   revalidatePath('/recipe/[slug]', 'page');
 }
 
+export async function publishRecipe(id: number) {
+  const user = auth();
+
+  if (!user.userId) throw new Error('Not authenticated');
+
+  await db.update(RecipesTable).set({
+    published: true,
+  }).where(eq(RecipesTable.id, id));
+
+  revalidatePath('/recipe/[slug]', 'page');
+  revalidatePath('/', 'layout');
+}
+
 // Favorite recipes queries
 
 export async function getMyFavoriteRecipes() {

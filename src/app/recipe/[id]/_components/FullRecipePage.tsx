@@ -29,6 +29,7 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { EditorRoot } from "novel";
+import { onPublishRecipe } from "./actions";
 
 export default async function FullRecipePage(props: { id: number }) {
   const { userId } = auth();
@@ -51,6 +52,11 @@ export default async function FullRecipePage(props: { id: number }) {
     }
   }
 
+  async function publishRecipe() {
+    "use server";
+    await onPublishRecipe(recipe.id);
+  }
+
   return (
     <>
       {recipe.published === false && (
@@ -62,7 +68,9 @@ export default async function FullRecipePage(props: { id: number }) {
             />
             This recipe is not yet published. It will not be visible to others.
           </div>
-          <Button>Publish</Button>
+          <form action={publishRecipe}>
+            <Button>Publish</Button>
+          </form>
         </div>
       )}
       <div className="flex flex-wrap gap-8">
