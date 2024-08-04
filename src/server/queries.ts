@@ -29,29 +29,39 @@ export async function getImage(id: number) {
 
 type newRecipe = typeof RecipesTable.$inferInsert;
 
-export async function createNewRecipe(recipe: newRecipe, tagIds: number[], ingredients: { ingredientId: number, quantity: string }[]) {
+export async function createNewRecipe(recipe: newRecipe) {
   const user = auth();
 
   if (!user.userId) throw new Error('Not authenticated');
 
-  await db.transaction(async (tx) => {
-    const [recipeId] = await tx.insert(RecipesTable).values(recipe).returning({ recipeId: RecipesTable.id });
-    if (!recipeId) throw new Error('Failed to create recipe');
-
-    await tx.insert(RecipesToTagsTable).values(tagIds.map(tagId => ({
-      recipeId: recipeId.recipeId,
-      tagId,
-    })));
-
-    await tx.insert(RecipeIngredientsTable).values(ingredients.map(({ ingredientId, quantity }) => ({
-      recipeId: recipeId.recipeId,
-      ingredientId,
-      quantity,
-    })));
-  });
+  await db.insert(RecipesTable).values(recipe);
 
   revalidatePath('/', 'layout');
 }
+
+// export async function createFullRecipe(recipe: newRecipe, tagIds: number[], ingredients: { ingredientId: number, quantity: string }[]) {
+//   const user = auth();
+
+//   if (!user.userId) throw new Error('Not authenticated');
+
+//   await db.transaction(async (tx) => {
+//     const [recipeId] = await tx.insert(RecipesTable).values(recipe).returning({ recipeId: RecipesTable.id });
+//     if (!recipeId) throw new Error('Failed to create recipe');
+
+//     await tx.insert(RecipesToTagsTable).values(tagIds.map(tagId => ({
+//       recipeId: recipeId.recipeId,
+//       tagId,
+//     })));
+
+//     await tx.insert(RecipeIngredientsTable).values(ingredients.map(({ ingredientId, quantity }) => ({
+//       recipeId: recipeId.recipeId,
+//       ingredientId,
+//       quantity,
+//     })));
+//   });
+
+//   revalidatePath('/', 'layout');
+// }
 
 export async function getAllRecipes() {
   const recipes = await db.query.RecipesTable.findMany({
@@ -90,16 +100,15 @@ export async function getSliderRecipes() {
 
 export async function getRecipe(id: number) {
   const recipe = await db.query.RecipesTable.findFirst({ 
-    where: (model, { and, eq }) => and(
-      eq(model.id, id),
-      eq(model.published, true),
-    ),
+    where: (model, { eq }) => eq(model.id, id),
     with: {
       heroImage: true,
     },
   });
 
-  if (!recipe) throw new Error('Recipe not found, or is unpublished');
+  if (!recipe) throw new Error('Recipe not found.');
+
+  if (!recipe.published && !auth().userId) throw new Error('Recipe is unpublished.');
 
   return recipe;
 }

@@ -6,10 +6,8 @@ import { CreateRecipeFormSchema } from "./CreateRecipeForm";
 
 export async function onNewRecipeSubmit(
   recipe: z.infer<typeof CreateRecipeFormSchema>,
-  tagIds: number[],
-  ingredients: { ingredientId: number; quantity: string }[],
 ) {
-  await createNewRecipe(recipe, tagIds, ingredients);
+  await createNewRecipe(recipe);
 
   return { success: true };
 }

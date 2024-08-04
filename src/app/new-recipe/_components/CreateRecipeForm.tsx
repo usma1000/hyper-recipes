@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CircleX } from "lucide-react";
+// import { CircleX } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -26,9 +26,9 @@ import {
 } from "@/components/ui/form";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { LoadingSpinner } from "~/components/ui/loading-spinner";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { onNewRecipeSubmit } from "./actions";
-import { MultiSelect } from "~/components/ui/multi-select";
+// import { MultiSelect } from "@/components/ui/multi-select";
 
 export const CreateRecipeFormSchema = z.object({
   name: string().min(3).max(256),
@@ -37,52 +37,48 @@ export const CreateRecipeFormSchema = z.object({
   steps: z.unknown().nullable(),
 });
 
-export const AssignTagsFormSchema = z.array(z.number());
+// export const AssignTagsFormSchema = z.array(z.number());
 
-export const AssignIngredientsFormSchema = z
-  .array(
-    z.object({
-      ingredientId: z.number(),
-      quantity: z.string(),
-    }),
-  )
-  .min(1);
+// export const AssignIngredientsFormSchema = z
+//   .array(
+//     z.object({
+//       ingredientId: z.number(),
+//       quantity: z.string(),
+//     }),
+//   )
+//   .min(1);
 
-export const NewRecipeFormSchema = z.object({
-  recipe: CreateRecipeFormSchema,
-  tags: AssignTagsFormSchema,
-  ingredients: AssignIngredientsFormSchema,
-});
+// export const NewRecipeFormSchema = z.object({
+//   recipe: CreateRecipeFormSchema,
+//   tags: AssignTagsFormSchema,
+//   ingredients: AssignIngredientsFormSchema,
+// });
 
-type CreateRecipeFormProps = {
-  allTags: { value: string; label: string }[];
-};
+// type CreateRecipeFormProps = {
+//   allTags: { value: string; label: string }[];
+// };
 
-export default function CreateRecipeForm({ allTags }: CreateRecipeFormProps) {
-  const form = useForm<z.infer<typeof NewRecipeFormSchema>>({
-    resolver: zodResolver(NewRecipeFormSchema),
+export default function CreateRecipeForm() {
+  const form = useForm<z.infer<typeof CreateRecipeFormSchema>>({
+    resolver: zodResolver(CreateRecipeFormSchema),
     defaultValues: {
-      recipe: {
-        name: "",
-        description: "",
-        heroImageId: null,
-        steps: {
-          type: "doc",
-          content: [
-            {
-              type: "paragraph",
-              content: [
-                {
-                  type: "text",
-                  text: "Enter instructions here...",
-                },
-              ],
-            },
-          ],
-        },
+      name: "",
+      description: "",
+      heroImageId: null,
+      steps: {
+        type: "doc",
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "Enter instructions here...",
+              },
+            ],
+          },
+        ],
       },
-      tags: [],
-      ingredients: [],
     },
   });
 
@@ -92,7 +88,7 @@ export default function CreateRecipeForm({ allTags }: CreateRecipeFormProps) {
 
   useEffect(() => {
     if (isSubmitSuccessful) {
-      toast(`${form.getValues("recipe.name")} successfully created.`);
+      toast(`${form.getValues("name")} successfully created.`);
       form.reset();
       // TODO: redirect to new recipe page
     }
@@ -101,9 +97,7 @@ export default function CreateRecipeForm({ allTags }: CreateRecipeFormProps) {
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit((e) =>
-          onNewRecipeSubmit(e.recipe, e.tags, e.ingredients),
-        )}
+        onSubmit={form.handleSubmit((e) => onNewRecipeSubmit(e))}
         className="relative flex flex-col gap-4"
       >
         {isLoading ||
@@ -121,7 +115,7 @@ export default function CreateRecipeForm({ allTags }: CreateRecipeFormProps) {
           <CardContent className="space-y-4">
             <FormField
               control={form.control}
-              name="recipe.name"
+              name="name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Recipe Name</FormLabel>
@@ -137,7 +131,7 @@ export default function CreateRecipeForm({ allTags }: CreateRecipeFormProps) {
             />
             <FormField
               control={form.control}
-              name="recipe.description"
+              name="description"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Description</FormLabel>
@@ -151,18 +145,18 @@ export default function CreateRecipeForm({ allTags }: CreateRecipeFormProps) {
                 </FormItem>
               )}
             />
-            <div>
+            {/* <div>
               <FormDescription>Image upload doesn't work yet.</FormDescription>
               <Label htmlFor="image">Image</Label>
               <Input id="picture" type="file" />
-            </div>
+            </div> */}
             {/* <UploadButton
         endpoint="imageUploader"
         onClientUploadComplete={() => {
           router.refresh();
         }}
       /> */}
-            <FormField
+            {/* <FormField
               control={form.control}
               name="tags"
               render={({ field }) => (
@@ -182,11 +176,11 @@ export default function CreateRecipeForm({ allTags }: CreateRecipeFormProps) {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            />  */}
           </CardContent>
         </Card>
 
-        <Card>
+        {/* <Card>
           <CardHeader>
             <CardTitle>Ingredients</CardTitle>
           </CardHeader>
@@ -223,8 +217,8 @@ export default function CreateRecipeForm({ allTags }: CreateRecipeFormProps) {
 
             <Button>Add Ingredient</Button>
           </CardFooter>
-        </Card>
-        <Card>
+        </Card> */}
+        {/* <Card>
           <CardHeader>
             <CardTitle>Instructions</CardTitle>
           </CardHeader>
@@ -232,8 +226,10 @@ export default function CreateRecipeForm({ allTags }: CreateRecipeFormProps) {
             <p>Preheat oven to 350 degrees</p>
             <p>Combine flour and sugar in a bowl</p>
           </CardContent>
-        </Card>
-        <Button className="self-start">Create Recipe</Button>
+        </Card> */}
+        <Button type="submit" className="self-start">
+          Create Recipe
+        </Button>
       </form>
     </Form>
   );

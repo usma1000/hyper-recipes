@@ -53,18 +53,18 @@ export default async function FullRecipePage(props: { id: number }) {
 
   return (
     <>
-      {/* {recipe.published === false && ( */}
-      <div className="mb-8 flex items-center justify-between rounded-md border border-yellow-400 bg-yellow-100 p-4 font-semibold text-yellow-800">
-        <div>
-          <AlertTriangle
-            size={16}
-            className="mr-2 inline-block -translate-y-[2px]"
-          />
-          This recipe is not yet published. It will not be visible to others.
+      {recipe.published === false && (
+        <div className="mb-8 flex items-center justify-between rounded-md border border-yellow-400 bg-yellow-100 p-4 font-semibold text-yellow-800">
+          <div>
+            <AlertTriangle
+              size={16}
+              className="mr-2 inline-block -translate-y-[2px]"
+            />
+            This recipe is not yet published. It will not be visible to others.
+          </div>
+          <Button>Publish</Button>
         </div>
-        <Button>Publish</Button>
-      </div>
-      {/* )} */}
+      )}
       <div className="flex flex-wrap gap-8">
         <div className="flex-grow-[1] basis-64">
           <div className="mb-8 flex justify-between align-middle">
