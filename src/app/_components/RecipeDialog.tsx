@@ -12,7 +12,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Plus, Star } from "lucide-react";
+import { Plus, Soup, Star } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -67,7 +67,7 @@ export default async function RecipeDialog({
       <DialogTrigger asChild>
         <Card className="h-full overflow-hidden transition-all hover:-translate-y-1 hover:cursor-pointer hover:shadow-md">
           <div className="relative h-48">
-            {recipe.heroImage?.url && (
+            {recipe.heroImage?.url ? (
               <Image
                 src={recipe.heroImage.url}
                 alt={recipe.heroImage.name}
@@ -75,6 +75,10 @@ export default async function RecipeDialog({
                 sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 250px"
                 style={{ objectFit: "cover" }}
               />
+            ) : (
+              <div className="flex h-full items-center justify-center bg-gray-200">
+                <Soup size={64} className="m-auto text-gray-400" />
+              </div>
             )}
           </div>
           <CardHeader>
@@ -88,7 +92,7 @@ export default async function RecipeDialog({
         <DialogContent className="max-w-2xl">
           <div className="flex gap-4">
             <Card className="grow-[999] basis-0">
-              {recipe.heroImage?.url && (
+              {recipe.heroImage?.url ? (
                 <DialogHeader className="relative h-64">
                   <Image
                     src={recipe.heroImage.url}
@@ -99,6 +103,10 @@ export default async function RecipeDialog({
                     style={{ objectFit: "cover" }}
                   />
                 </DialogHeader>
+              ) : (
+                <div className="mb-4 flex h-auto min-h-40 items-center justify-center bg-gray-200">
+                  <Soup size={64} className="m-auto text-gray-400" />
+                </div>
               )}
               <CardContent className="flex flex-col gap-4">
                 <DialogTitle>{recipe.name}</DialogTitle>
