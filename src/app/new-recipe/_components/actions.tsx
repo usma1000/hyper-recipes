@@ -2,20 +2,14 @@
 
 import { z } from "zod";
 import { createNewRecipe } from "~/server/queries";
+import { CreateRecipeFormSchema } from "./CreateRecipeForm";
 
-// export async function onNewRecipeSubmit(
-//   // values: z.infer<typeof CreateIngredientFormSchema>,
-// ) {
-//   const ingredientNames = await getAllIngredientNames();
-//   const ingredientExists = ingredientNames.find(
-//     (ingredient) => ingredient.name === values.name,
-//   );
+export async function onNewRecipeSubmit(
+  recipe: z.infer<typeof CreateRecipeFormSchema>,
+  tagIds: number[],
+  ingredients: { ingredientId: number; quantity: string }[],
+) {
+  await createNewRecipe(recipe, tagIds, ingredients);
 
-//   if (ingredientExists) {
-//     throw new Error("Ingredient already exists");
-//   }
-
-//   await createNewIngredient(values);
-
-//   return { success: true };
-// }
+  return { success: true };
+}

@@ -29,22 +29,26 @@ export async function getImage(id: number) {
 
 type newRecipe = typeof RecipesTable.$inferInsert;
 
-export async function createNewRecipe(recipe: newRecipe, tagIds: number[]) {
+export async function createNewRecipe(recipe: newRecipe, tagIds: number[], ingredients: { ingredientId: number, quantity: string }[]) {
   const user = auth();
 
   if (!user.userId) throw new Error('Not authenticated');
 
-  // await db.insert(RecipesTable).values(recipe);
-
   await db.transaction(async (tx) => {
     const [recipeId] = await tx.insert(RecipesTable).values(recipe).returning({ recipeId: RecipesTable.id });
-      
-      await tx.insert(RecipesToTagsTable).values(tagIds.map(tagId => ({
-        recipeId: recipeId.recipeId,
-        tagId,
-      })));
-    }
-  );
+    if (!recipeId) throw new Error('Failed to create recipe');
+
+    await tx.insert(RecipesToTagsTable).values(tagIds.map(tagId => ({
+      recipeId: recipeId.recipeId,
+      tagId,
+    })));
+
+    await tx.insert(RecipeIngredientsTable).values(ingredients.map(({ ingredientId, quantity }) => ({
+      recipeId: recipeId.recipeId,
+      ingredientId,
+      quantity,
+    })));
+  });
 
   revalidatePath('/', 'layout');
 }

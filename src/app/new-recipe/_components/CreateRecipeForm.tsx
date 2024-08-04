@@ -31,8 +31,8 @@ import { LoadingSpinner } from "~/components/ui/loading-spinner";
 export const CreateRecipeFormSchema = z.object({
   name: string().min(3).max(256),
   description: string().min(3).max(1024),
-  steps: z.unknown(),
   heroImageId: z.number().nullable(),
+  steps: z.unknown().nullable(),
 });
 
 export default function CreateRecipeForm() {
@@ -41,8 +41,21 @@ export default function CreateRecipeForm() {
     defaultValues: {
       name: "",
       description: "",
-      steps: [],
       heroImageId: null,
+      steps: {
+        type: "doc",
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "Enter instructions here...",
+              },
+            ],
+          },
+        ],
+      },
     },
   });
 

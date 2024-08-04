@@ -51,11 +51,11 @@ export type SelectRecipe = {
 export const RecipesTable = createTable(
   "recipes",
   {
-    id: serial("id").primaryKey(),
+    id: serial("id").primaryKey().notNull(),
     name: varchar("name", { length: 256 }).notNull(),
     description: varchar("description", { length: 1024 }).notNull(),
     heroImageId: integer("hero_image_id").references(() => ImagesTable.id),
-    steps: json("steps").notNull(),
+    steps: json("steps"),
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
