@@ -54,7 +54,12 @@ export default async function FullRecipePage(props: { id: number }) {
 
   async function publishRecipe() {
     "use server";
-    await onPublishRecipe(recipe.id);
+    await onPublishRecipe(recipe.id, true);
+  }
+
+  async function unpublishRecipe() {
+    "use server";
+    await onPublishRecipe(recipe.id, false);
   }
 
   return (
@@ -178,7 +183,7 @@ export default async function FullRecipePage(props: { id: number }) {
           </Card>
           <Card>
             <CardHeader className="relative">
-              <CardTitle>Steps:</CardTitle>
+              <CardTitle>Steps</CardTitle>
             </CardHeader>
             <CardContent>
               <EditorRoot>
@@ -186,6 +191,35 @@ export default async function FullRecipePage(props: { id: number }) {
               </EditorRoot>
             </CardContent>
           </Card>
+          <SignedIn>
+            <Card>
+              <CardHeader>
+                <CardTitle>Personal Notes</CardTitle>
+              </CardHeader>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Danger Zone</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {recipe.published && (
+                  <>
+                    <CardDescription>
+                      Unpublishing this recipe will make it invisible to others.
+                    </CardDescription>
+                    <form action={unpublishRecipe}>
+                      <Button variant="destructive">Unpublish Recipe</Button>
+                    </form>
+                  </>
+                )}
+                <CardDescription>
+                  This action is irreversible. Are you sure you want to delete?
+                </CardDescription>
+                <Button variant="destructive">Delete Recipe</Button>
+              </CardContent>
+            </Card>
+          </SignedIn>
         </div>
       </div>
     </>

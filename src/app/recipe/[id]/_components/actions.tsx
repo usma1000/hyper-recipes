@@ -5,7 +5,7 @@ import {
   assignTagsToRecipe,
   removeAllTagsFromRecipe,
   createIngredientForRecipe,
-  publishRecipe,
+  setPublishRecipe,
 } from "~/server/queries";
 import { AssignTagsFormSchema } from "./AssignTagsForm";
 import { saveStepsForRecipeId } from "~/server/queries";
@@ -36,7 +36,7 @@ export async function onSaveSteps(recipeId: number, steps: any) {
   return { success: true };
 }
 
-export async function onPublishRecipe(recipeId: number) {
-  await publishRecipe(recipeId);
+export async function onPublishRecipe(recipeId: number, publish: boolean) {
+  await setPublishRecipe(recipeId, publish);
   return { success: true };
 }
