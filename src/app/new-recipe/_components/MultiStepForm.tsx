@@ -2,6 +2,9 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
+import StepperIndicator from "./StepperIndicator";
+
+const MAX_STEPS = 3;
 
 function getStepContent(step: number) {
   switch (step) {
@@ -17,19 +20,25 @@ function getStepContent(step: number) {
 }
 
 function MultiStepForm() {
-  const [currentStep, setCurrentStep] = React.useState(1);
+  const [activeStep, setActiveStep] = React.useState(1);
 
   return (
     <div>
-      {getStepContent(currentStep)}
+      <StepperIndicator activeStep={activeStep} maxSteps={MAX_STEPS} />
+      {getStepContent(activeStep)}
       <div className="flex justify-between gap-4">
         <Button
-          onClick={() => setCurrentStep(currentStep - 1)}
-          disabled={currentStep === 1}
+          onClick={() => setActiveStep(activeStep - 1)}
+          disabled={activeStep === 1}
         >
           Back
         </Button>
-        <Button onClick={() => setCurrentStep(currentStep + 1)}>Next</Button>
+        <Button
+          onClick={() => setActiveStep(activeStep + 1)}
+          disabled={activeStep === MAX_STEPS}
+        >
+          Next
+        </Button>
       </div>
     </div>
   );
