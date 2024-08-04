@@ -28,6 +28,7 @@ import { useEffect } from "react";
 import { toast } from "sonner";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { onNewRecipeSubmit } from "./actions";
+import { MultiSelect } from "~/components/ui/multi-select";
 
 export const CreateRecipeFormSchema = z.object({
   name: string().min(3).max(256),
@@ -47,14 +48,17 @@ export const AssignIngredientsFormSchema = z
   )
   .min(1);
 
-// merge all form schemas
 export const NewRecipeFormSchema = z.object({
   recipe: CreateRecipeFormSchema,
   tags: AssignTagsFormSchema,
   ingredients: AssignIngredientsFormSchema,
 });
 
-export default function CreateRecipeForm() {
+type CreateRecipeFormProps = {
+  allTags: { value: string; label: string }[];
+};
+
+export default function CreateRecipeForm({ allTags }: CreateRecipeFormProps) {
   const form = useForm<z.infer<typeof NewRecipeFormSchema>>({
     resolver: zodResolver(NewRecipeFormSchema),
     defaultValues: {
@@ -148,6 +152,7 @@ export default function CreateRecipeForm() {
               )}
             />
             <div>
+              <FormDescription>Image upload doesn't work yet.</FormDescription>
               <Label htmlFor="image">Image</Label>
               <Input id="picture" type="file" />
             </div>
@@ -157,10 +162,27 @@ export default function CreateRecipeForm() {
           router.refresh();
         }}
       /> */}
-            <div>
-              <Label htmlFor="tags">Tags</Label>
-              <Input id="tags" placeholder="Japanese, Breakfast, etc." />
-            </div>
+            <FormField
+              control={form.control}
+              name="tags"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tags</FormLabel>
+                  <FormControl>
+                    <MultiSelect
+                      options={allTags}
+                      onValueChange={field.onChange}
+                      defaultValue={field.value.map((tag) => tag.toString())}
+                      placeholder="Select tags"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Select which tag(s) to apply to this recipe.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </CardContent>
         </Card>
 
@@ -211,7 +233,7 @@ export default function CreateRecipeForm() {
             <p>Combine flour and sugar in a bowl</p>
           </CardContent>
         </Card>
-        <Button className="self-start">Publish Recipe</Button>
+        <Button className="self-start">Create Recipe</Button>
       </form>
     </Form>
   );

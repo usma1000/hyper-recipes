@@ -23,7 +23,7 @@ export const AssignTagsFormSchema = z.object({
   tags: z.array(z.string()).min(1),
 });
 
-type PropTypes = {
+type AssignTagsFormProps = {
   allTags: { value: string; label: string }[];
   allAssignedTags: { id: number }[];
   recipeId: number;
@@ -33,7 +33,7 @@ export default function AssignTagsForm({
   allTags,
   allAssignedTags,
   recipeId,
-}: PropTypes) {
+}: AssignTagsFormProps) {
   const form = useForm<z.infer<typeof AssignTagsFormSchema>>({
     resolver: zodResolver(AssignTagsFormSchema),
     defaultValues: {
