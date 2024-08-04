@@ -17,7 +17,7 @@ function StepperIndicator({ activeStep, maxSteps }: StepperIndicatorProps) {
         <Fragment key={step}>
           <div
             className={clsx(
-              "m-2 flex h-10 w-10 items-center justify-center rounded-full border-[2px]",
+              "m-2 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-[2px]",
               step < activeStep && "bg-primary text-white",
               step === activeStep && "border-primary text-primary",
             )}
@@ -28,7 +28,7 @@ function StepperIndicator({ activeStep, maxSteps }: StepperIndicatorProps) {
             <Separator
               orientation="horizontal"
               className={clsx(
-                "h-[2px] w-24 bg-gray-200",
+                "h-[2px] max-w-24 shrink bg-gray-200",
                 step <= activeStep - 1 && "bg-primary",
               )}
             />
