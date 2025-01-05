@@ -90,10 +90,30 @@ export default async function RecipeDialog({
       <DialogPortal>
         <DialogOverlay />
         <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <div className="flex w-full flex-row gap-4">
+              <Link
+                href={`/recipe/${recipe.id}`}
+                className={buttonVariants({ variant: "default" })}
+              >
+                View Full Recipe
+              </Link>
+              <SignedIn>
+                <form action={toggleFavorite}>
+                  <Button type="submit" variant="secondary" size="default">
+                    <Star
+                      className={`mr-2 h-5 w-5 transition-all active:-translate-y-1 ${isFavorite ? "fill-amber-400" : ""}`}
+                    />
+                    Favorite
+                  </Button>
+                </form>
+              </SignedIn>
+            </div>
+          </DialogHeader>
           <div className="flex gap-4">
             <Card className="grow-[999] basis-0">
               {recipe.heroImage?.url ? (
-                <DialogHeader className="relative h-64">
+                <div className="relative flex h-64 flex-col space-y-1.5">
                   <Image
                     src={recipe.heroImage.url}
                     alt={recipe.heroImage.name}
@@ -102,7 +122,7 @@ export default async function RecipeDialog({
                     className="mb-4 h-auto overflow-hidden rounded-t-md shadow-sm"
                     style={{ objectFit: "cover" }}
                   />
-                </DialogHeader>
+                </div>
               ) : (
                 <div className="mb-4 flex h-auto min-h-40 items-center justify-center bg-gray-200">
                   <Soup size={64} className="m-auto text-gray-400" />
@@ -168,25 +188,6 @@ export default async function RecipeDialog({
               </CardContent>
             </Card>
           </div>
-          <DialogFooter>
-            <div className="flex w-full flex-row justify-between">
-              <Link
-                href={`/recipe/${recipe.id}`}
-                className={buttonVariants({ variant: "default" })}
-              >
-                View Recipe
-              </Link>
-              <SignedIn>
-                <form action={toggleFavorite}>
-                  <Button type="submit" variant="ghost" size="sm">
-                    <Star
-                      className={`h-5 w-5 transition-all active:-translate-y-1 ${isFavorite ? "fill-amber-400" : ""}`}
-                    />
-                  </Button>
-                </form>
-              </SignedIn>
-            </div>
-          </DialogFooter>
         </DialogContent>
       </DialogPortal>
     </Dialog>
