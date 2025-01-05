@@ -34,6 +34,7 @@ export const ImagesTable = createTable(
 export type SelectRecipe = {
   id: number;
   name: string;
+  published: boolean;
   createdAt: Date;
   updatedAt: Date | null;
   description: string;
