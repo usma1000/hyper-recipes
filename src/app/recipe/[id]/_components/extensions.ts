@@ -1,5 +1,42 @@
-import {StarterKit, CharacterCount} from "novel/extensions";
+import {
+  TiptapLink,
+  TaskList,
+  TaskItem,
+  HorizontalRule,
+  StarterKit,
+  Placeholder,
+  CharacterCount,
+} from "novel/extensions";
+
 import { cx } from "class-variance-authority";
+
+// You can overwrite the placeholder with your own configuration
+const placeholder = Placeholder;
+const tiptapLink = TiptapLink.configure({
+  HTMLAttributes: {
+    class: cx(
+      "text-muted-foreground underline underline-offset-[3px] hover:text-primary transition-colors cursor-pointer",
+    ),
+  },
+});
+
+const taskList = TaskList.configure({
+  HTMLAttributes: {
+    class: cx("not-prose pl-2"),
+  },
+});
+const taskItem = TaskItem.configure({
+  HTMLAttributes: {
+    class: cx("flex items-start my-4"),
+  },
+  nested: true,
+});
+
+const horizontalRule = HorizontalRule.configure({
+  HTMLAttributes: {
+    class: cx("mt-4 mb-6 border-t border-muted-foreground"),
+  },
+});
 
 const starterKit = StarterKit.configure({
   bulletList: {
@@ -24,7 +61,7 @@ const starterKit = StarterKit.configure({
   },
   codeBlock: {
     HTMLAttributes: {
-      class: cx("rounded-md bg-muted text-muted-foreground border p-5 font-mono font-medium"),
+      class: cx("rounded-sm bg-muted border p-5 font-mono font-medium"),
     },
   },
   code: {
@@ -41,8 +78,12 @@ const starterKit = StarterKit.configure({
   gapcursor: false,
 });
 
-const characterCount = CharacterCount.configure();
-
 export const defaultExtensions = [
-  starterKit, characterCount
-]
+  starterKit,
+  placeholder,
+  tiptapLink,
+  taskList,
+  taskItem,
+  horizontalRule,
+  CharacterCount
+];

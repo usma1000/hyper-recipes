@@ -137,13 +137,14 @@ export async function getStepsByRecipeId(id: number): Promise<JSONContent> {
   return recipe.steps as JSONContent;
 }
 
-export async function saveStepsForRecipeId(id: number, steps: any) {
+export async function saveStepsForRecipeId(id: number, steps: string) {
   const user = auth();
 
   if (!user.userId) throw new Error('Not authenticated');
 
+  const parsedSteps = JSON.parse(steps);
   await db.update(RecipesTable).set({
-    steps,
+    steps: parsedSteps,
   }).where(eq(RecipesTable.id, id));
 
   revalidatePath('/recipe/[slug]', 'page');

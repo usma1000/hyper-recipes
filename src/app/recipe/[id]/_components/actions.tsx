@@ -9,6 +9,7 @@ import {
 } from "~/server/queries";
 import { AssignTagsFormSchema } from "./AssignTagsForm";
 import { saveStepsForRecipeId } from "~/server/queries";
+import { JSONContent } from "novel";
 
 export async function onTagSubmit(
   recipeId: number,
@@ -31,7 +32,7 @@ export async function onIngredientSubmit(
   return { success: true };
 }
 
-export async function onSaveSteps(recipeId: number, steps: any) {
+export async function onSaveSteps(recipeId: number, steps: string) {
   await saveStepsForRecipeId(recipeId, steps);
   return { success: true };
 }
