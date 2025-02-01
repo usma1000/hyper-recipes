@@ -16,6 +16,7 @@ import { slashCommand, suggestionItems } from "./slash-command";
 import { useParams } from "next/navigation";
 import { onSaveSteps } from "./actions";
 import { useUser } from "@clerk/nextjs";
+import { handleCommandNavigation } from "novel/extensions";
 
 const extensions = [...defaultExtensions, slashCommand];
 
@@ -76,9 +77,11 @@ export default function Editor({ steps }: { steps: JSONContent }) {
         }}
         editable={isSignedIn}
         editorProps={{
+          handleDOMEvents: {
+            keydown: (_view, event) => handleCommandNavigation(event),
+          },
           attributes: {
-            class:
-              "prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full p-0",
+            class: `prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full`,
           },
         }}
       >
