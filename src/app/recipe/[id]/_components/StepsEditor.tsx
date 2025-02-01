@@ -77,7 +77,7 @@ export default function Editor({ steps }: { steps: JSONContent }) {
   return (
     <div className="relative w-full">
       {isSignedIn && (
-        <div className="absolute -top-14 right-0 z-10 mb-5 flex gap-2">
+        <div className="absolute right-0 top-0 z-10 mb-5 flex gap-2">
           <div className="rounded-lg bg-accent px-2 py-1 text-sm text-muted-foreground">
             {saveStatus}
           </div>
@@ -105,7 +105,7 @@ export default function Editor({ steps }: { steps: JSONContent }) {
             keydown: (_view, event) => handleCommandNavigation(event),
           },
           attributes: {
-            class: `prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full`,
+            class: `prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full [&_h3:not(:first-child)]:mt-4`,
           },
         }}
       >
