@@ -9,7 +9,6 @@ import {
 } from "~/server/queries";
 import { AssignTagsFormSchema } from "./AssignTagsForm";
 import { saveStepsForRecipeId } from "~/server/queries";
-import { JSONContent } from "novel";
 
 export async function onTagSubmit(
   recipeId: number,
