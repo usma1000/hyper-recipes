@@ -38,9 +38,12 @@ import {
 import { EditorRoot } from "novel";
 import { onPublishRecipe } from "./actions";
 import DangerZoneDialog from "./DangerZoneDialog";
+import { checkRole } from "~/utils/roles";
 
 export default async function FullRecipePage(props: { id: number }) {
   const { userId } = auth();
+  const isAdmin = await checkRole("admin");
+
   const recipe = await getRecipe(props.id);
   const ingredients = await getIngredientsForRecipe(props.id);
   const tags = await getAllTagsForRecipe(recipe.id);
@@ -143,7 +146,7 @@ export default async function FullRecipePage(props: { id: number }) {
               </CardFooter>
             </Card>
             <SignedIn>
-              <DangerZoneDialog recipe={recipe} />
+              {isAdmin && <DangerZoneDialog recipe={recipe} />}
             </SignedIn>
           </div>
         </div>

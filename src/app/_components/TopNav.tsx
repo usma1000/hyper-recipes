@@ -1,6 +1,12 @@
 "use client";
 
-import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import {
+  SignInButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+  useUser,
+} from "@clerk/nextjs";
 import Link from "next/link";
 // import { useRouter } from "next/navigation";
 // import { UploadButton } from "~/utils/uploadthing";
@@ -11,6 +17,9 @@ import { LayoutDashboard, PlusCircle, Zap } from "lucide-react";
 
 export default function TopNav() {
   // const router = useRouter();
+  const { user } = useUser();
+  const isAdmin = user?.publicMetadata?.role === "admin";
+
   return (
     <div className="border-b border-slate-200 bg-white py-4 text-slate-950 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50">
       <nav className="container flex items-center justify-between font-semibold">
@@ -35,25 +44,29 @@ export default function TopNav() {
               router.refresh();
             }}
           /> */}
-            <Link
-              href="/new-recipe"
-              className={buttonVariants({
-                variant: "default",
-                size: "sm",
-              })}
-            >
-              <PlusCircle size={16} className="mr-2" />
-              New Recipe
-            </Link>
-            <Link
-              href="/dashboard"
-              className={buttonVariants({
-                variant: "ghost",
-                size: "sm",
-              })}
-            >
-              <LayoutDashboard size={24} />
-            </Link>
+            {isAdmin && (
+              <>
+                <Link
+                  href="/new-recipe"
+                  className={buttonVariants({
+                    variant: "default",
+                    size: "sm",
+                  })}
+                >
+                  <PlusCircle size={16} className="mr-2" />
+                  New Recipe
+                </Link>
+                <Link
+                  href="/dashboard"
+                  className={buttonVariants({
+                    variant: "ghost",
+                    size: "sm",
+                  })}
+                >
+                  <LayoutDashboard size={24} />
+                </Link>
+              </>
+            )}
             <div className="h-6 w-6 rounded-full bg-slate-500">
               <UserButton />
             </div>
