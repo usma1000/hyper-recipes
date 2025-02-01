@@ -191,7 +191,7 @@ export async function setPublishRecipe(id: number, published: boolean) {
   revalidatePath('/', 'layout');
 }
 
-export type RecipeWithoutHeroImage = Omit<newRecipe, 'heroImage'>;
+export type RecipeWithoutHeroImage = Omit<Recipe, 'heroImage'>;
 
 export async function getUnpublishedRecipes(): Promise<RecipeWithoutHeroImage[]> {
   const unpublishedRecipes = await db.query.RecipesTable.findMany({
