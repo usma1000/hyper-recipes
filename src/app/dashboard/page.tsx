@@ -24,8 +24,19 @@ export default async function Page() {
     <div className="flex flex-col gap-8">
       <h1>Dashboard</h1>
       <section>
-        <h2 className="mb-2">Unpublished Recipes</h2>
-        <UnpublishedRecipesTable recipes={unpublishedRecipes} />
+        <h2 className="mb-2">Manage Recipes</h2>
+        <Card className="flex basis-1/2 flex-col">
+          <CardHeader>
+            <CardTitle>Unpublished Recipes</CardTitle>
+            <CardDescription>
+              These recipes will only be visible to you until they are
+              published.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex-1">
+            <UnpublishedRecipesTable recipes={unpublishedRecipes} />
+          </CardContent>
+        </Card>
       </section>
       <section>
         <h2 className="mb-2">Manage Ingredients</h2>
