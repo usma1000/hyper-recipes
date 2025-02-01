@@ -12,6 +12,8 @@ declare global {
     heroImage: HeroImage | null;
   };
 
+  // Define custom roles
+  type Roles = 'admin' | 'editor';
 
   // Augment the global namespace with custom types
   interface CustomJwtSessionClaims {
