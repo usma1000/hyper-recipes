@@ -1,12 +1,22 @@
-export {}
+import { type InferSelectModel } from "drizzle-orm";
+import { ImagesTable, RecipesTable, IngredientsTable, TagsTable } from "~/server/db/schemas";
 
-// Create a type for the roles
-export type Roles = 'admin' | 'editor'
+export {};
 
 declare global {
+  // Infer types from your database schemas
+  type HeroImage = InferSelectModel<typeof ImagesTable>;
+  type Ingredient = InferSelectModel<typeof IngredientsTable>;
+  type Tag = InferSelectModel<typeof TagsTable>;
+  type Recipe = InferSelectModel<typeof RecipesTable> & {
+    heroImage: HeroImage | null;
+  };
+
+
+  // Augment the global namespace with custom types
   interface CustomJwtSessionClaims {
     metadata: {
-      role?: Roles
-    }
+      role?: 'admin' | 'editor';
+    };
   }
 }

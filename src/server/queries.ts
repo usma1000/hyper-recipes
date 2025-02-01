@@ -1,10 +1,10 @@
 import 'server-only';
 import { db } from './db';
 import { auth } from '@clerk/nextjs/server';
-import { FavoritesTable, IngredientsTable, RecipeIngredientsTable, RecipesTable, RecipesToTagsTable, TagsTable } from './db/schema';
 import { revalidatePath } from 'next/cache';
 import { and, eq, inArray } from 'drizzle-orm';
 import { type JSONContent } from 'novel';
+import { RecipesTable, TagsTable, FavoritesTable, RecipesToTagsTable, IngredientsTable, RecipeIngredientsTable } from './db/schemas';
 
 // Image queries
 
@@ -85,6 +85,18 @@ export async function getAllRecipeNames() {
   });
   return recipes;
 }
+
+// export async function searchRecipesByName(query: string) {
+//   const recipes = await db.query.RecipesTable.findMany({
+//     where: (model, { like }) => like(model.name, `%${query}%`),
+//     orderBy: (model, { asc }) => asc(model.name),
+//     columns: {
+//       id: true,
+//       name: true,
+//     },
+//   });
+//   return recipes;
+// }
 
 export async function getSliderRecipes() {
   const recipes = await db.query.RecipesTable.findMany({

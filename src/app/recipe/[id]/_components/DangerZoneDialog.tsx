@@ -8,7 +8,6 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { onPublishRecipe } from "./actions";
-import { SelectRecipe } from "~/server/db/schema";
 import {
   Dialog,
   DialogClose,
@@ -23,7 +22,7 @@ import {
 } from "~/components/ui/dialog";
 
 type Props = {
-  recipe: SelectRecipe;
+  recipe: Recipe;
 };
 
 export default function DangerZoneDialog({ recipe }: Props) {

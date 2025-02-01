@@ -21,7 +21,6 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { SelectRecipe } from "~/server/db/schema";
 import {
   createFavoriteRecipe,
   getAllTagsForRecipe,
@@ -37,11 +36,7 @@ import {
 import { SignedIn } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
 
-export default async function RecipeDialog({
-  recipe,
-}: {
-  recipe: SelectRecipe;
-}) {
+export default async function RecipeDialog({ recipe }: { recipe: Recipe }) {
   const user = await currentUser();
 
   let isFavorite = false;
