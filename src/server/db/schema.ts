@@ -78,7 +78,7 @@ export const FavoritesTable = createTable(
   }
 );
 
-export const tagTypes = pgEnum("tag_types", ["Cuisine", "Meal"]);
+export const tagTypes = pgEnum("tag_types", ["Cuisine", "Meal", "Diet"]);
 
 export const TagsTable = createTable(
   "tag",

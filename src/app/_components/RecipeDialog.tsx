@@ -148,6 +148,13 @@ export default async function RecipeDialog({
                         {tag.name}
                       </Badge>
                     ))}
+                  {tags
+                    .filter((tag) => tag.tagType === "Diet")
+                    .map((tag) => (
+                      <Badge key={tag.id} variant="outline">
+                        {tag.name}
+                      </Badge>
+                    ))}
                 </div>
               </CardContent>
             </Card>

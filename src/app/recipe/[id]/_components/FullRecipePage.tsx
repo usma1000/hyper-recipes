@@ -192,6 +192,13 @@ export default async function FullRecipePage(props: { id: number }) {
                       {tag.name}
                     </Badge>
                   ))}
+                {tags
+                  .filter((tag) => tag.tagType === "Diet")
+                  .map((tag) => (
+                    <Badge key={tag.id} variant="outline">
+                      {tag.name}
+                    </Badge>
+                  ))}
               </div>
             </CardHeader>
           </Card>
