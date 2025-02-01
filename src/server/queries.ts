@@ -34,9 +34,11 @@ export async function createNewRecipe(recipe: newRecipe) {
 
   if (!user.userId) throw new Error('Not authenticated');
 
-  await db.insert(RecipesTable).values(recipe);
+  const [newRecipe] = await db.insert(RecipesTable).values(recipe).returning();
 
   revalidatePath('/', 'layout');
+
+  return newRecipe;
 }
 
 // export async function createFullRecipe(recipe: newRecipe, tagIds: number[], ingredients: { ingredientId: number, quantity: string }[]) {

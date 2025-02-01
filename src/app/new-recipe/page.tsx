@@ -14,7 +14,7 @@ const NewRecipePage: NextPage = async () => {
   // const router = useRouter();
 
   return (
-    <div>
+    <div className="mx-auto max-w-lg">
       <h1 className="mb-8">Add New Recipe</h1>
       <CreateRecipeForm />
     </div>

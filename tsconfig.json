@@ -29,7 +29,8 @@
       "~/*": ["./src/*"],
       "@/components/*": ["./src/components/*"],
       "@types/*": ["./src/types/*"]
-    }
+    },
+    "typeRoots": ["./node_modules/@types", "./src/types"]
   },
   "include": [
     ".eslintrc.cjs",
