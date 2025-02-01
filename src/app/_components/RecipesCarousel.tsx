@@ -5,7 +5,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { SelectRecipe } from "~/server/db/schema";
 import RecipeDialog from "./RecipeDialog";
 import { Suspense } from "react";
 import RecipeCardSkeleton from "./RecipeCardSkeleton";
@@ -13,7 +12,7 @@ import RecipeCardSkeleton from "./RecipeCardSkeleton";
 export default async function RecipesCarousel({
   recipes,
 }: {
-  recipes: SelectRecipe[];
+  recipes: Recipe[];
 }) {
   return (
     <div>

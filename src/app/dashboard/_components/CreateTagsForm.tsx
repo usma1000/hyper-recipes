@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { tagTypes } from "~/server/db/schema";
+import { tagTypes } from "~/server/db/schemas";
 import { onNewTagSubmit } from "./actions";
 import { Input } from "@/components/ui/input";
 import { useEffect } from "react";
