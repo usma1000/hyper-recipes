@@ -191,6 +191,17 @@ export async function setPublishRecipe(id: number, published: boolean) {
   revalidatePath('/', 'layout');
 }
 
+export type RecipeWithoutHeroImage = Omit<newRecipe, 'heroImage'>;
+
+export async function getUnpublishedRecipes(): Promise<RecipeWithoutHeroImage[]> {
+  const unpublishedRecipes = await db.query.RecipesTable.findMany({
+    where: (model, { eq }) => eq(model.published, false),
+    orderBy: (model, { desc }) => desc(model.createdAt)
+  });
+
+  return unpublishedRecipes;
+}
+
 // Favorite recipes queries
 
 export async function getMyFavoriteRecipes() {

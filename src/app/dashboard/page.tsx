@@ -7,8 +7,9 @@ import {
 } from "@/components/ui/card";
 import CreateTagsForm from "./_components/CreateTagsForm";
 import DeleteTagsForm from "./_components/DeleteTagsForm";
-import { getAllTagNames } from "~/server/queries";
+import { getAllTagNames, getUnpublishedRecipes } from "~/server/queries";
 import CreateIngredientForm from "./_components/CreateIngredientForm";
+import UnpublishedRecipesTable from "./_components/UnpublishedRecipesTable";
 
 export default async function Page() {
   const rawTags = await getAllTagNames();
@@ -17,9 +18,15 @@ export default async function Page() {
     label: tag.name,
   }));
 
+  const unpublishedRecipes = await getUnpublishedRecipes();
+
   return (
     <div className="flex flex-col gap-8">
       <h1>Dashboard</h1>
+      <section>
+        <h2 className="mb-2">Unpublished Recipes</h2>
+        <UnpublishedRecipesTable recipes={unpublishedRecipes} />
+      </section>
       <section>
         <h2 className="mb-2">Manage Ingredients</h2>
         <div className="flex gap-8">
