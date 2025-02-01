@@ -11,9 +11,11 @@ import {
   getAllTagsForRecipe,
   getAllIngredients,
   getIngredientsForRecipe,
+  getRecipeNameAndDescription,
 } from "~/server/queries";
 import AssignTagsForm from "./AssignTagsForm";
 import IngredientsForm from "./IngredientsForm";
+import EditRecipeForm from "./EditRecipeForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default async function FullRecipeSheet({
@@ -43,6 +45,8 @@ export default async function FullRecipeSheet({
     id: ingredient.ingredient.id,
   }));
 
+  const { name, description } = await getRecipeNameAndDescription(recipeId);
+
   return (
     <Sheet>
       <SheetTrigger
@@ -56,6 +60,18 @@ export default async function FullRecipeSheet({
       <SheetContent>
         <SheetHeader>Edit Recipe</SheetHeader>
         <div className="flex flex-col gap-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Edit Recipe Details</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <EditRecipeForm
+                recipeId={recipeId}
+                initialName={name}
+                initialDescription={description}
+              />
+            </CardContent>
+          </Card>
           <Card>
             <CardHeader>
               <CardTitle>Assign Tags</CardTitle>

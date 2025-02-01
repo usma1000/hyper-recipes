@@ -29,7 +29,7 @@ export default async function HomePage() {
           ) : (
             <div className="mt-4 h-full w-full rounded-lg border border-slate-200 bg-white p-6 text-center text-xl font-semibold text-slate-950 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50">
               <p className="text-slate-500">
-                You haven't favorited any recipes yet.
+                You haven&apos;t favorited any recipes yet.
               </p>
             </div>
           )}

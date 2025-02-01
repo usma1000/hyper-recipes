@@ -139,6 +139,20 @@ export async function getRecipeNameAndDescription(id: number) {
   return recipe;
 }
 
+export async function updateRecipeNameAndDescription(id: number, name: string, description: string) {
+  const user = auth();
+
+  if (!user.userId) throw new Error('Not authenticated');
+
+  await db.update(RecipesTable).set({
+    name,
+    description,
+  }).where(eq(RecipesTable.id, id));
+
+  revalidatePath('/recipe/[slug]', 'page');
+  revalidatePath('/', 'layout');
+}
+
 export async function getStepsByRecipeId(id: number): Promise<JSONContent> {
   const recipe = await db.query.RecipesTable.findFirst({ 
     where: (model, { eq }) => eq(model.id, id),

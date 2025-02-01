@@ -6,9 +6,10 @@ import {
   removeAllTagsFromRecipe,
   createIngredientForRecipe,
   setPublishRecipe,
+  updateRecipeNameAndDescription,
+  saveStepsForRecipeId,
 } from "~/server/queries";
 import { AssignTagsFormSchema } from "./AssignTagsForm";
-import { saveStepsForRecipeId } from "~/server/queries";
 
 export async function onTagSubmit(
   recipeId: number,
@@ -38,5 +39,14 @@ export async function onSaveSteps(recipeId: number, steps: string) {
 
 export async function onPublishRecipe(recipeId: number, publish: boolean) {
   await setPublishRecipe(recipeId, publish);
+  return { success: true };
+}
+
+export async function onUpdateRecipeNameAndDescription(
+  recipeId: number,
+  name: string,
+  description: string,
+) {
+  await updateRecipeNameAndDescription(recipeId, name, description);
   return { success: true };
 }
