@@ -28,31 +28,16 @@ type PropTypes = {
 };
 
 const Ingredients = ({ ingredients, showCheckboxes = false }: PropTypes) => {
-  // Initialize state with false for all ingredients
   const [checkedStatus, setCheckedStatus] = useState<{
     [key: string]: boolean;
-  }>(() => {
+  }>({});
+
+  useEffect(() => {
     const savedStatus = localStorage.getItem("ingredientCheckboxStatus");
     if (savedStatus) {
-      const parsed = JSON.parse(savedStatus);
-      // Merge saved status with initial false values for all ingredients
-      return ingredients.reduce(
-        (acc, { ingredient }) => ({
-          ...acc,
-          [ingredient.id]: parsed[ingredient.id] || false,
-        }),
-        {},
-      );
+      setCheckedStatus(JSON.parse(savedStatus));
     }
-    // Initialize all ingredients with false if no saved status
-    return ingredients.reduce(
-      (acc, { ingredient }) => ({
-        ...acc,
-        [ingredient.id]: false,
-      }),
-      {},
-    );
-  });
+  }, []);
 
   useEffect(() => {
     localStorage.setItem(
