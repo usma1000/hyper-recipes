@@ -80,28 +80,35 @@ const Ingredients = ({ ingredients }: PropTypes) => {
           )}
           {ingredients.map(({ ingredient, quantity }) => (
             <li
-              className="flex list-none items-center text-sm leading-tight"
+              className="my-4 flex list-none items-start text-sm leading-tight"
               key={ingredient.id}
             >
               <input
                 type="checkbox"
+                className="mr-2 mt-1"
                 checked={checkedStatus[ingredient.id.toString()]}
                 onChange={() => handleCheckboxChange(ingredient.id.toString())}
               />
-              <HoverCard>
-                <HoverCardTrigger asChild>
-                  <Button variant="link" size="sm" className="font-semibold">
-                    {ingredient.name}
-                  </Button>
-                </HoverCardTrigger>
-                <HoverCardContent className="w-80">
-                  <div>{ingredient.description}</div>
-                  <Button className="mt-4" size="sm">
-                    <Plus size={16} /> Shopping List
-                  </Button>
-                </HoverCardContent>
-              </HoverCard>
-              <span>{quantity}</span>
+              <div>
+                <HoverCard>
+                  <HoverCardTrigger asChild>
+                    <Button
+                      variant="link"
+                      size="sm"
+                      className="mr-2 h-auto px-0 font-semibold"
+                    >
+                      {ingredient.name}
+                    </Button>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="w-80">
+                    <div>{ingredient.description}</div>
+                    <Button className="mt-4" size="sm">
+                      <Plus size={16} /> Shopping List
+                    </Button>
+                  </HoverCardContent>
+                </HoverCard>
+                <span>{quantity}</span>
+              </div>
             </li>
           ))}
         </ul>
