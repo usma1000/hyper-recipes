@@ -9,7 +9,7 @@ import {
 } from "~/server/queries";
 import Image from "next/image";
 import Link from "next/link";
-import { AlertTriangle, ArrowLeft, Star } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Soup, Star } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -100,9 +100,8 @@ export default async function FullRecipePage(props: { id: number }) {
         <div className="flex grow-[999] basis-0 flex-col gap-8">
           <Card>
             <CardHeader>
-              {recipe.heroImage?.url && (
-                <div className="relative mb-8 h-96">
-                  {/* update "sizes" when mobile is fixed */}
+              <div className="relative mb-8 h-96">
+                {recipe.heroImage?.url ? (
                   <Image
                     src={recipe.heroImage.url}
                     alt={recipe.heroImage.name}
@@ -112,8 +111,12 @@ export default async function FullRecipePage(props: { id: number }) {
                     className="rounded-lg"
                     style={{ objectFit: "cover" }}
                   />
-                </div>
-              )}
+                ) : (
+                  <div className="flex h-full items-center justify-center rounded-lg bg-gray-200">
+                    <Soup size={64} className="m-auto text-gray-400" />
+                  </div>
+                )}
+              </div>
               <div className="flex items-end gap-2">
                 <h1>{recipe.name}</h1>
                 <SignedIn>
@@ -131,21 +134,21 @@ export default async function FullRecipePage(props: { id: number }) {
                 {tags
                   .filter((tag) => tag.tagType === "Cuisine")
                   .map((tag) => (
-                    <Badge key={tag.id} variant="outline">
+                    <Badge className="my-3" key={tag.id} variant="outline">
                       {tag.name}
                     </Badge>
                   ))}
                 {tags
                   .filter((tag) => tag.tagType === "Meal")
                   .map((tag) => (
-                    <Badge key={tag.id} variant="outline">
+                    <Badge className="my-3" key={tag.id} variant="outline">
                       {tag.name}
                     </Badge>
                   ))}
                 {tags
                   .filter((tag) => tag.tagType === "Diet")
                   .map((tag) => (
-                    <Badge key={tag.id} variant="outline">
+                    <Badge className="my-3" key={tag.id} variant="outline">
                       {tag.name}
                     </Badge>
                   ))}
