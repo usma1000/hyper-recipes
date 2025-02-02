@@ -9,7 +9,7 @@ import {
 } from "~/server/queries";
 import Image from "next/image";
 import Link from "next/link";
-import { AlertTriangle, ArrowLeft, Soup, Star } from "lucide-react";
+import { AlertTriangle, ArrowLeft, ImageIcon, Soup, Star } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -102,17 +102,38 @@ export default async function FullRecipePage(props: { id: number }) {
             <CardHeader>
               <div className="relative mb-8 h-96">
                 {recipe.heroImage?.url ? (
-                  <Image
-                    src={recipe.heroImage.url}
-                    alt={recipe.heroImage.name}
-                    fill={true}
-                    priority={true}
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 510px"
-                    className="rounded-lg"
-                    style={{ objectFit: "cover" }}
-                  />
+                  <>
+                    <Image
+                      src={recipe.heroImage.url}
+                      alt={recipe.heroImage.name}
+                      fill={true}
+                      priority={true}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 510px"
+                      className="rounded-lg"
+                      style={{ objectFit: "cover" }}
+                    />
+                    {isAdmin && (
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="absolute right-4 top-4 bg-white/80 backdrop-blur-sm"
+                      >
+                        <ImageIcon size={16} className="mr-1" />
+                        Change Image
+                      </Button>
+                    )}
+                  </>
                 ) : (
-                  <div className="flex h-full items-center justify-center rounded-lg bg-gray-200">
+                  <div className="relative flex h-full items-center justify-center rounded-lg bg-gray-200">
+                    {isAdmin && (
+                      <Button
+                        className="absolute right-4 top-4"
+                        variant="outline"
+                      >
+                        <ImageIcon size={16} className="mr-1" />
+                        Upload Image
+                      </Button>
+                    )}
                     <Soup size={64} className="m-auto text-gray-400" />
                   </div>
                 )}
