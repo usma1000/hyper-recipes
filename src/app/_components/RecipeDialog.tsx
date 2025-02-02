@@ -9,7 +9,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Plus, Soup, Star } from "lucide-react";
@@ -35,6 +34,7 @@ import {
 } from "@/components/ui/hover-card";
 import { SignedIn } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
+import Ingredients from "./Ingredients";
 
 export default async function RecipeDialog({ recipe }: { recipe: Recipe }) {
   const user = await currentUser();
@@ -153,42 +153,7 @@ export default async function RecipeDialog({ recipe }: { recipe: Recipe }) {
                 </div>
               </CardContent>
             </Card>
-            <Card className="sticky top-8 flex-grow-[1] basis-64">
-              <CardHeader>
-                <CardTitle>Ingredients</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="m-0">
-                  {ingredients.length === 0 && (
-                    <span className="text-sm">
-                      Oops. Someone forgot to add the ingredients.
-                    </span>
-                  )}
-                  {ingredients.map(({ ingredient, quantity }) => (
-                    <li className="flex list-none items-center text-sm leading-tight">
-                      <HoverCard>
-                        <HoverCardTrigger asChild>
-                          <Button
-                            variant="link"
-                            size="sm"
-                            className="font-semibold"
-                          >
-                            {ingredient.name}
-                          </Button>
-                        </HoverCardTrigger>
-                        <HoverCardContent className="w-80">
-                          <div>{ingredient.description}</div>
-                          <Button className="mt-4" size="sm">
-                            <Plus size={16} /> Shopping List
-                          </Button>
-                        </HoverCardContent>
-                      </HoverCard>
-                      <span>{quantity}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
+            <Ingredients ingredients={ingredients} />
           </div>
         </DialogContent>
       </DialogPortal>

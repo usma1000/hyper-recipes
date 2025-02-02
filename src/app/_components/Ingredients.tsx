@@ -1,5 +1,6 @@
 "use client";
 
+import { SignedIn } from "@clerk/nextjs";
 import { Plus, ShoppingCart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
@@ -23,9 +24,10 @@ type PropTypes = {
     ingredientId: number;
     ingredient: Ingredient;
   }[];
+  showCheckboxes?: boolean;
 };
 
-const Ingredients = ({ ingredients }: PropTypes) => {
+const Ingredients = ({ ingredients, showCheckboxes = false }: PropTypes) => {
   // Initialize state with false for all ingredients
   const [checkedStatus, setCheckedStatus] = useState<{
     [key: string]: boolean;
@@ -83,12 +85,16 @@ const Ingredients = ({ ingredients }: PropTypes) => {
               className="my-4 flex list-none items-start text-sm leading-tight"
               key={ingredient.id}
             >
-              <input
-                type="checkbox"
-                className="mr-2 mt-1"
-                checked={checkedStatus[ingredient.id.toString()]}
-                onChange={() => handleCheckboxChange(ingredient.id.toString())}
-              />
+              {showCheckboxes && (
+                <input
+                  type="checkbox"
+                  className="mr-2 mt-1"
+                  checked={checkedStatus[ingredient.id.toString()]}
+                  onChange={() =>
+                    handleCheckboxChange(ingredient.id.toString())
+                  }
+                />
+              )}
               <div>
                 <HoverCard>
                   <HoverCardTrigger asChild>
@@ -102,9 +108,11 @@ const Ingredients = ({ ingredients }: PropTypes) => {
                   </HoverCardTrigger>
                   <HoverCardContent className="w-80">
                     <div>{ingredient.description}</div>
-                    <Button className="mt-4" size="sm">
-                      <Plus size={16} /> Shopping List
-                    </Button>
+                    <SignedIn>
+                      <Button className="mt-4" size="sm">
+                        <Plus size={16} /> Grocery List
+                      </Button>
+                    </SignedIn>
                   </HoverCardContent>
                 </HoverCard>
                 <span>{quantity}</span>
@@ -113,12 +121,14 @@ const Ingredients = ({ ingredients }: PropTypes) => {
           ))}
         </ul>
       </CardContent>
-      <CardFooter>
-        <Button>
-          <ShoppingCart size={16} className="mr-2" />
-          My Shopping List
-        </Button>
-      </CardFooter>
+      <SignedIn>
+        <CardFooter>
+          <Button>
+            <ShoppingCart size={16} className="mr-2" />
+            My Grocery List
+          </Button>
+        </CardFooter>
+      </SignedIn>
     </Card>
   );
 };

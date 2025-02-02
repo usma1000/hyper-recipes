@@ -27,7 +27,7 @@ import { EditorRoot } from "novel";
 import { onPublishRecipe } from "./actions";
 import DangerZoneDialog from "./DangerZoneDialog";
 import { checkRole } from "~/utils/roles";
-import Ingredients from "./Ingredients";
+import Ingredients from "../../../_components/Ingredients";
 
 export default async function FullRecipePage(props: { id: number }) {
   const { userId } = auth();
@@ -91,7 +91,7 @@ export default async function FullRecipePage(props: { id: number }) {
             </SignedIn>
           </div>
           <div className="sticky top-8">
-            <Ingredients ingredients={ingredients} />
+            <Ingredients ingredients={ingredients} showCheckboxes={true} />
             <SignedIn>
               {isAdmin && <DangerZoneDialog recipe={recipe} />}
             </SignedIn>
