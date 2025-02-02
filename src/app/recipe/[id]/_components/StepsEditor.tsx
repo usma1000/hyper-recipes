@@ -32,7 +32,6 @@ export default function Editor({ steps }: { steps: JSONContent }) {
   const debouncedUpdates = useDebouncedCallback(
     async (editor: EditorInstance) => {
       const json = editor.getJSON();
-      console.log(json);
       setCharsCount(editor.storage.characterCount.words());
       await onSaveSteps(Number(id), JSON.stringify(json));
       return setSaveStatus("Saved");
@@ -93,6 +92,7 @@ export default function Editor({ steps }: { steps: JSONContent }) {
         </div>
       )}
       <EditorContent
+        immediatelyRender={false}
         initialContent={initialContent}
         extensions={extensions}
         onUpdate={({ editor }) => {
