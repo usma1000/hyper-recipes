@@ -177,7 +177,7 @@ export default async function FullRecipePage(props: { id: number }) {
             </CardHeader>
           </Card>
           <Card>
-            <CardHeader className="mb-4 border-b border-slate-200 bg-slate-50">
+            <CardHeader className="mb-4 border-b border-slate-200">
               <CardTitle as="h2" className="text-3xl">
                 Steps
               </CardTitle>

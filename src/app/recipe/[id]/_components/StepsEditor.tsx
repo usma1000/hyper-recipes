@@ -53,7 +53,7 @@ export default function Editor({ steps }: { steps: JSONContent }) {
   return (
     <div className="relative w-full">
       {isSignedIn && (
-        <div className="absolute right-0 top-0 z-10 mb-5 flex gap-2">
+        <div className="absolute -top-[74px] right-0 z-10 mb-5 flex gap-2">
           <div className="rounded-lg bg-accent px-2 py-1 text-sm text-muted-foreground">
             {saveStatus}
           </div>
