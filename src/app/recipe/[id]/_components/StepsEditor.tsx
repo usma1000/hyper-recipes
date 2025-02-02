@@ -9,7 +9,7 @@ import {
   EditorCommandList,
   EditorCommandItem,
 } from "novel";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { defaultExtensions } from "./extensions";
 import { useDebouncedCallback } from "use-debounce";
 import { slashCommand, suggestionItems } from "./slash-command";
@@ -38,29 +38,6 @@ export default function Editor({ steps }: { steps: JSONContent }) {
     },
     500,
   );
-
-  useEffect(() => {
-    const savedCheckboxes = JSON.parse(
-      localStorage.getItem("checkboxes") || "{}",
-    );
-    Object.keys(savedCheckboxes).forEach((key) => {
-      const checkbox = document.querySelector(
-        `input[type="checkbox"][data-id="${key}"]`,
-      ) as HTMLInputElement;
-      if (checkbox) {
-        checkbox.checked = savedCheckboxes[key];
-      }
-    });
-  }, []);
-
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, checked } = event.target;
-    const savedCheckboxes = JSON.parse(
-      localStorage.getItem("checkboxes") || "{}",
-    );
-    savedCheckboxes[id] = checked;
-    localStorage.setItem("checkboxes", JSON.stringify(savedCheckboxes));
-  };
 
   if (!initialContent)
     setInitialContent({

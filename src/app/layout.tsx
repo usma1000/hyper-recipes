@@ -6,7 +6,6 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { ThemeProvider } from "~/components/theme-provider";
 import { extractRouterConfig } from "uploadthing/server";
-import { GeistSans } from "geist/font/sans";
 import TopNav from "./_components/TopNav";
 import { ourFileRouter } from "./api/uploadthing/core";
 import { cn } from "~/lib/utils";
@@ -31,7 +30,11 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${GeistSans.variable}`}>
+      <html
+        lang="en"
+        style={{ colorScheme: "light" }}
+        className={`${fontSans.variable} light`}
+      >
         <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
         <body
           className={cn(
@@ -39,12 +42,7 @@ export default function RootLayout({
             fontSans.variable,
           )}
         >
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
+          <ThemeProvider attribute="class">
             <TopNav />
             <main className="container h-full grow py-8">{children}</main>
             <Toaster />
