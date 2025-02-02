@@ -9,20 +9,13 @@ import {
 } from "~/server/queries";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  AlertTriangle,
-  ArrowLeft,
-  Plus,
-  ShoppingCart,
-  Star,
-} from "lucide-react";
+import { AlertTriangle, ArrowLeft, Star } from "lucide-react";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
-  CardFooter,
 } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -30,15 +23,11 @@ import { SignedIn } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import FullRecipeSheet from "./FullRecipeSheet";
 import StepsEditor from "./StepsEditor";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
 import { EditorRoot } from "novel";
 import { onPublishRecipe } from "./actions";
 import DangerZoneDialog from "./DangerZoneDialog";
 import { checkRole } from "~/utils/roles";
+import Ingredients from "./Ingredients";
 
 export default async function FullRecipePage(props: { id: number }) {
   const { userId } = auth();
@@ -102,49 +91,7 @@ export default async function FullRecipePage(props: { id: number }) {
             </SignedIn>
           </div>
           <div className="sticky top-8">
-            <Card>
-              <CardHeader>
-                <CardTitle>Ingredients</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="m-0">
-                  {ingredients.length === 0 && (
-                    <span className="text-sm">
-                      Oops. Someone forgot to add the ingredients.
-                    </span>
-                  )}
-                  {ingredients.map(({ ingredient, quantity }) => (
-                    <li className="flex list-none items-center text-sm leading-tight">
-                      <input type="checkbox" className="mr-2" />
-                      <HoverCard>
-                        <HoverCardTrigger asChild>
-                          <Button
-                            variant="link"
-                            size="sm"
-                            className="font-semibold"
-                          >
-                            {ingredient.name}
-                          </Button>
-                        </HoverCardTrigger>
-                        <HoverCardContent className="w-80">
-                          <div>{ingredient.description}</div>
-                          <Button className="mt-4" size="sm">
-                            <Plus size={16} /> Shopping List
-                          </Button>
-                        </HoverCardContent>
-                      </HoverCard>
-                      <span>{quantity}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-              <CardFooter>
-                <Button>
-                  <ShoppingCart size={16} className="mr-2" />
-                  My Shopping List
-                </Button>
-              </CardFooter>
-            </Card>
+            <Ingredients ingredients={ingredients} />
             <SignedIn>
               {isAdmin && <DangerZoneDialog recipe={recipe} />}
             </SignedIn>
