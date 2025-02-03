@@ -8,6 +8,7 @@ import {
   setPublishRecipe,
   updateRecipeNameAndDescription,
   saveStepsForRecipeId,
+  removeIngredientFromRecipe,
 } from "~/server/queries";
 import { AssignTagsFormSchema } from "./AssignTagsForm";
 
@@ -48,5 +49,13 @@ export async function onUpdateRecipeNameAndDescription(
   description: string,
 ) {
   await updateRecipeNameAndDescription(recipeId, name, description);
+  return { success: true };
+}
+
+export async function onRemoveIngredient(
+  recipeId: number,
+  ingredientId: number,
+) {
+  await removeIngredientFromRecipe(recipeId, ingredientId);
   return { success: true };
 }

@@ -397,3 +397,14 @@ export async function createIngredientForRecipe(recipeId: number, ingredientId: 
   revalidatePath('/', 'layout');
   revalidatePath('/recipe/[slug]', 'page');
 }
+
+export async function removeIngredientFromRecipe(recipeId: number, ingredientId: number) {
+  const user = auth();
+
+  if (!user.userId) throw new Error('Not authenticated');
+
+  await db.delete(RecipeIngredientsTable).where(and(eq(RecipeIngredientsTable.recipeId, recipeId), eq(RecipeIngredientsTable.ingredientId, ingredientId)));
+
+  revalidatePath('/', 'layout');
+  revalidatePath('/recipe/[slug]', 'page');
+}

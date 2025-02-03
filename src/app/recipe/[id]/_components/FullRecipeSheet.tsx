@@ -43,6 +43,7 @@ export default async function FullRecipeSheet({
   const rawAssignedIngredients = await getIngredientsForRecipe(recipeId);
   const allAssignedIngredients = rawAssignedIngredients.map((ingredient) => ({
     id: ingredient.ingredient.id,
+    name: ingredient.ingredient.name,
   }));
 
   const { name, description } = await getRecipeNameAndDescription(recipeId);
