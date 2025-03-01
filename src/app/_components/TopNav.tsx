@@ -25,7 +25,7 @@ export default function TopNav() {
       <nav className="container flex items-center justify-between font-semibold">
         <Link href="/" className="flex align-middle text-xl font-semibold">
           <Zap size={16} className="fill-yellow-300" />
-          Hyper Recipes
+          Hyper Recipe
         </Link>
 
         <CommandSearch />

@@ -20,7 +20,7 @@ const fontSans = FontSans({
 export const metadata = {
   title: "Hyper Recipes",
   description: "Super charged recipes with more context",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: [{ rel: "icon", url: "/favicon-32x32.png", sizes: "32x32" }],
 };
 
 export default function RootLayout({
