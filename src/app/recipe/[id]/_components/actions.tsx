@@ -10,6 +10,7 @@ import {
   saveStepsForRecipeId,
   removeIngredientFromRecipe,
   updateRecipeHeroImage,
+  getAllImages,
 } from "~/server/queries";
 import { AssignTagsFormSchema } from "./AssignTagsForm";
 
@@ -64,4 +65,8 @@ export async function onRemoveIngredient(
 export async function updateRecipeImage(recipeId: number, imageId: number) {
   await updateRecipeHeroImage(recipeId, imageId);
   return { success: true };
+}
+
+export async function fetchAllImages() {
+  return await getAllImages();
 }
