@@ -88,7 +88,7 @@ export default async function RecipeDialog({ recipe }: { recipe: Recipe }) {
           <DialogHeader>
             <div className="flex w-full flex-row gap-4">
               <Link
-                href={`/recipe/${recipe.id}`}
+                href={`/recipe/${recipe.slug}`}
                 className={buttonVariants({ variant: "default" })}
               >
                 View Full Recipe

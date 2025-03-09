@@ -2,7 +2,7 @@ import "server-only";
 import { db } from "./db";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, count } from "drizzle-orm";
 import { type JSONContent } from "novel";
 import {
   RecipesTable,
@@ -12,6 +12,7 @@ import {
   IngredientsTable,
   RecipeIngredientsTable,
 } from "./db/schemas";
+import { slugify } from "~/lib/utils";
 
 // Image queries
 
@@ -36,15 +37,40 @@ export async function getImage(id: number) {
 
 type newRecipe = typeof RecipesTable.$inferInsert;
 
+export async function getRecipeIdFromSlug(slug: string) {
+  const recipe = await db.query.RecipesTable.findFirst({
+    where: (model, { eq }) => eq(model.slug, slug),
+    columns: {
+      id: true,
+    },
+  });
+
+  if (!recipe) throw new Error("Recipe not found");
+
+  return recipe.id;
+}
+
 export async function createNewRecipe(recipe: newRecipe) {
   const user = auth();
-
   if (!user.userId) throw new Error("Not authenticated");
 
-  const [newRecipe] = await db.insert(RecipesTable).values(recipe).returning();
+  const slug = slugify(recipe.name);
+
+  // handle slug uniqueness
+  const [result] = await db
+    .select({ value: count() })
+    .from(RecipesTable)
+    .where(eq(RecipesTable.slug, slug));
+
+  const finalSlug =
+    (result?.value ?? 0) > 0 ? `${slug}-${(result?.value ?? 0) + 1}` : slug;
+
+  const [newRecipe] = await db
+    .insert(RecipesTable)
+    .values({ ...recipe, slug: finalSlug })
+    .returning();
 
   revalidatePath("/", "layout");
-
   return newRecipe;
 }
 

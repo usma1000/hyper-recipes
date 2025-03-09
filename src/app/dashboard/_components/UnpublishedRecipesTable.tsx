@@ -55,7 +55,7 @@ const UnpublishedRecipesTable: React.FC<UnpublishedRecipesTableProps> = ({
           <TableRow key={recipe.id}>
             <TableCell className="whitespace-nowrap">
               <Link
-                href={`/recipe/${recipe.id}`}
+                href={`/recipe/${recipe.slug}`}
                 className="text-primary underline"
               >
                 {recipe.name}
