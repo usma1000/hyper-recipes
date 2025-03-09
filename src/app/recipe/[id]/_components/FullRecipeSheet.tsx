@@ -2,6 +2,7 @@ import {
   Sheet,
   SheetContent,
   SheetHeader,
+  SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { buttonVariants } from "@/components/ui/button";
@@ -59,7 +60,9 @@ export default async function FullRecipeSheet({
         Quick Edit
       </SheetTrigger>
       <SheetContent>
-        <SheetHeader>Edit Recipe</SheetHeader>
+        <SheetHeader>
+          <SheetTitle>Edit Recipe</SheetTitle>
+        </SheetHeader>
         <div className="flex flex-col gap-8">
           <Card>
             <CardHeader>
