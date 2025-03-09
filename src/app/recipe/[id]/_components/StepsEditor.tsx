@@ -15,17 +15,20 @@ import { useDebouncedCallback } from "use-debounce";
 import { slashCommand, suggestionItems } from "./slash-command";
 import { useParams } from "next/navigation";
 import { onSaveSteps } from "./actions";
-import { useUser } from "@clerk/nextjs";
 import { handleCommandNavigation } from "novel/extensions";
 
 const extensions = [...defaultExtensions, slashCommand];
 
-export default function Editor({ steps }: { steps: JSONContent }) {
+export default function Editor({
+  steps,
+  isAdmin,
+}: {
+  steps: JSONContent;
+  isAdmin: boolean;
+}) {
   const [initialContent, setInitialContent] = useState<JSONContent>(steps);
   const [saveStatus, setSaveStatus] = useState("Saved");
   const [charsCount, setCharsCount] = useState();
-
-  const { isSignedIn } = useUser();
 
   const { id } = useParams();
 
@@ -52,7 +55,7 @@ export default function Editor({ steps }: { steps: JSONContent }) {
 
   return (
     <div className="relative w-full">
-      {isSignedIn && (
+      {isAdmin && (
         <div className="absolute -top-[74px] right-0 z-10 mb-5 flex gap-2">
           <div className="rounded-lg bg-accent px-2 py-1 text-sm text-muted-foreground">
             {saveStatus}
@@ -76,7 +79,7 @@ export default function Editor({ steps }: { steps: JSONContent }) {
           debouncedUpdates(editor);
           setSaveStatus("Unsaved");
         }}
-        editable={isSignedIn}
+        editable={isAdmin}
         editorProps={{
           handleDOMEvents: {
             keydown: (_view, event) => handleCommandNavigation(event),

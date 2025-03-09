@@ -86,9 +86,8 @@ export default async function FullRecipePage(props: { id: number }) {
             >
               <ArrowLeft size={16} /> Back
             </Link>
-            {/* TODO: Update to admin only */}
             <SignedIn>
-              <FullRecipeSheet recipeId={props.id} />
+              {isAdmin && <FullRecipeSheet recipeId={props.id} />}
             </SignedIn>
           </div>
           <div className="sticky top-8">
@@ -176,7 +175,7 @@ export default async function FullRecipePage(props: { id: number }) {
             </CardHeader>
             <CardContent>
               <EditorRoot>
-                <StepsEditor steps={steps} />
+                <StepsEditor steps={steps} isAdmin={isAdmin} />
               </EditorRoot>
             </CardContent>
           </Card>
@@ -188,7 +187,7 @@ export default async function FullRecipePage(props: { id: number }) {
                   Notes are private and only visible to you.
                 </CardDescription>
               </CardHeader>
-              <CardContent>Nothing here yet.</CardContent>
+              <CardContent>Feature coming soon.</CardContent>
             </Card>
           </SignedIn>
         </div>

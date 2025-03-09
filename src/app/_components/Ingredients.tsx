@@ -16,6 +16,14 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "~/components/ui/hover-card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 type PropTypes = {
   ingredients: {
@@ -108,10 +116,23 @@ const Ingredients = ({ ingredients, showCheckboxes = false }: PropTypes) => {
       </CardContent>
       <SignedIn>
         <CardFooter>
-          <Button>
-            <ShoppingCart size={16} className="mr-2" />
-            My Grocery List
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button>
+                <ShoppingCart size={16} className="mr-2" />
+                My Grocery List
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Coming Soon!</DialogTitle>
+                <DialogDescription>
+                  The grocery list feature is currently under development. Check
+                  back soon!
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
         </CardFooter>
       </SignedIn>
     </Card>
