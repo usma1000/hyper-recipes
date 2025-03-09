@@ -11,7 +11,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { onPublishRecipe } from "~/app/recipe/[id]/_components/actions";
+import { onPublishRecipe } from "~/app/recipe/[slug]/_components/actions";
 import { Button } from "~/components/ui/button";
 import { RecipeWithoutHeroImage } from "~/server/queries";
 
