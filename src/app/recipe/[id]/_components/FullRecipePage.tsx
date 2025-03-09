@@ -28,6 +28,7 @@ import { onPublishRecipe } from "./actions";
 import DangerZoneDialog from "./DangerZoneDialog";
 import { checkRole } from "~/utils/roles";
 import Ingredients from "../../../_components/Ingredients";
+import UploadImageDialog from "./ImageDialogue";
 
 export default async function FullRecipePage(props: { id: number }) {
   const { userId } = auth();
@@ -113,26 +114,17 @@ export default async function FullRecipePage(props: { id: number }) {
                       style={{ objectFit: "cover" }}
                     />
                     {isAdmin && (
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        className="absolute right-4 top-4 bg-white/80 backdrop-blur-sm"
-                      >
-                        <ImageIcon size={16} className="mr-1" />
-                        Change Image
-                      </Button>
+                      <div className="absolute right-4 top-4">
+                        <UploadImageDialog recipeId={recipe.id} />
+                      </div>
                     )}
                   </>
                 ) : (
                   <div className="relative flex h-full items-center justify-center rounded-lg bg-gray-200">
                     {isAdmin && (
-                      <Button
-                        className="absolute right-4 top-4"
-                        variant="outline"
-                      >
-                        <ImageIcon size={16} className="mr-1" />
-                        Upload Image
-                      </Button>
+                      <div className="absolute right-4 top-4">
+                        <UploadImageDialog recipeId={recipe.id} />
+                      </div>
                     )}
                     <Soup size={64} className="m-auto text-gray-400" />
                   </div>

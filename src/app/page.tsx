@@ -13,7 +13,7 @@ export default async function HomePage() {
   return (
     <div className="flex flex-col gap-8">
       <SignedOut>
-        <div className="h-full w-full rounded-lg border border-slate-200 bg-white p-6 text-center text-xl font-semibold text-slate-950 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50">
+        <div className="h-full w-full rounded-lg bg-yellow-50 p-6 text-center text-xl font-semibold text-yellow-950 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50">
           Sign in to start saving recipes to your book.
         </div>
       </SignedOut>

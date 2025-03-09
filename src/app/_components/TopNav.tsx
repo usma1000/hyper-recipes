@@ -8,15 +8,11 @@ import {
   useUser,
 } from "@clerk/nextjs";
 import Link from "next/link";
-// import { useRouter } from "next/navigation";
-// import { UploadButton } from "~/utils/uploadthing";
-// import { ModeToggle } from "./ModeToggle";
 import { CommandSearch } from "./CommandSearch";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { LayoutDashboard, PlusCircle, Zap } from "lucide-react";
 
 export default function TopNav() {
-  // const router = useRouter();
   const { user } = useUser();
   const isAdmin = user?.publicMetadata?.role === "admin";
 
@@ -37,13 +33,6 @@ export default function TopNav() {
             </Button>
           </SignedOut>
           <SignedIn>
-            {/* <Link href="/dashboard">Add New Recipe</Link> */}
-            {/* <UploadButton
-            endpoint="imageUploader"
-            onClientUploadComplete={() => {
-              router.refresh();
-            }}
-          /> */}
             {isAdmin && (
               <>
                 <Link
@@ -71,7 +60,6 @@ export default function TopNav() {
               <UserButton />
             </div>
           </SignedIn>
-          {/* <ModeToggle /> */}
         </div>
       </nav>
     </div>
