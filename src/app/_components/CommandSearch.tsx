@@ -15,9 +15,9 @@ import { Soup } from "lucide-react";
 
 export function CommandSearch() {
   const [open, setOpen] = React.useState(false);
-  const [recipes, setRecipes] = React.useState<{ id: number; name: string }[]>(
-    [],
-  );
+  const [recipes, setRecipes] = React.useState<
+    { id: number; name: string; slug: string }[]
+  >([]);
   const router = useRouter();
 
   const handleOpen = async () => {
@@ -26,8 +26,8 @@ export function CommandSearch() {
     setRecipes(data);
   };
 
-  const handleNavigate = (id: number) => {
-    router.push(`/recipe/${id}`);
+  const handleNavigate = (slug: string) => {
+    router.push(`/recipe/${slug}`);
     setOpen(false);
   };
 
@@ -63,7 +63,7 @@ export function CommandSearch() {
             {recipes.map((recipe) => (
               <CommandItem
                 key={recipe.id}
-                onSelect={() => handleNavigate(recipe.id)}
+                onSelect={() => handleNavigate(recipe.slug)}
               >
                 <Soup className="mr-2 h-4 w-4" />
                 <span>{recipe.name}</span>

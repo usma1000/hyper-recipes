@@ -116,6 +116,7 @@ export async function getAllRecipeNames() {
     columns: {
       id: true,
       name: true,
+      slug: true,
     },
   });
   return recipes;
