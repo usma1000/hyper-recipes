@@ -8,16 +8,16 @@ export default function Footer() {
       <div className="container flex items-center justify-between font-semibold">
         <Link href="/" className="text-md flex align-middle font-semibold">
           <Zap size={16} className="fill-yellow-300" />
-          Hyper Recipes
+          Hyper Recipe
         </Link>
         <div className="flex items-center gap-4">
           <span className="text-sm font-normal">
-            © {currentYear} Hyper Recipes. All rights reserved.{" "}
-            <Link href="/" className="underline">
+            © {currentYear} Hyper Recipe. All rights reserved.{" "}
+            <Link href="/privacy" className="underline">
               Privacy Policy
             </Link>{" "}
             |{" "}
-            <Link href="/" className="underline">
+            <Link href="/terms" className="underline">
               Terms and Conditions
             </Link>
           </span>
