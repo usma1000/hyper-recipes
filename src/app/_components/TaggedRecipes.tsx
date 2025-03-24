@@ -11,15 +11,7 @@ type TaggedRecipesProps = {
     name: string;
     tagType: "Cuisine" | "Meal" | "Diet";
   }[];
-  recipesByTag: Record<
-    number,
-    Array<{
-      id: number;
-      name: string;
-      description: string;
-      heroImage: { url: string; name: string } | null;
-    }>
-  >;
+  recipesByTag: Record<number, Recipe[]>;
 };
 
 export default function TaggedRecipes({
@@ -61,7 +53,7 @@ export default function TaggedRecipes({
               ))}
           </div>
           {hasRecipes ? (
-            <p>coming soon.</p>
+            <RecipesCarousel recipes={recipesByTag[activeTagId!]} />
           ) : (
             <p className="text-sm text-slate-500">
               {activeTagId
