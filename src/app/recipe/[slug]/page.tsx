@@ -1,8 +1,10 @@
+import { Suspense } from "react";
 import {
   getRecipeIdFromSlug,
   getRecipeNameAndDescription,
 } from "~/server/queries";
 import FullRecipePage from "./_components/FullRecipePage";
+import RecipeLoading from "./loading";
 
 type Props = {
   params: { slug: string };
@@ -22,7 +24,9 @@ export default async function RecipePage({ params: { slug } }: Props) {
 
   return (
     <div>
-      <FullRecipePage id={id} />
+      <Suspense fallback={<RecipeLoading />}>
+        <FullRecipePage id={id} />
+      </Suspense>
     </div>
   );
 }
