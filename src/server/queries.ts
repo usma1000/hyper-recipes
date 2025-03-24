@@ -298,6 +298,27 @@ export async function getMyFavoriteRecipes() {
   return recipes;
 }
 
+export async function getRecipesByTag(tagId: number) {
+  const recipes = await db.query.RecipesToTagsTable.findMany({
+    where: (recipesToTags, { eq }) => eq(recipesToTags.tagId, tagId),
+    with: {
+      recipe: {
+        with: {
+          heroImage: true,
+        },
+      },
+    },
+  });
+
+  // Filter out any recipes that aren't published
+  return recipes
+    .map((relation) => relation.recipe)
+    .filter(
+      (recipe): recipe is NonNullable<typeof recipe> =>
+        recipe !== null && recipe.published === true,
+    );
+}
+
 export async function isFavoriteRecipe(recipeId: number) {
   const user = auth();
 
@@ -365,6 +386,14 @@ export async function getAllTagsForRecipe(recipeId: number) {
   });
 
   return tags.map((tag) => tag.tag);
+}
+
+export async function getAllTagsByType() {
+  const tags = await db.query.TagsTable.findMany({
+    orderBy: (model, { asc }) => [asc(model.tagType), asc(model.name)],
+  });
+
+  return tags;
 }
 
 type newTag = typeof TagsTable.$inferInsert;

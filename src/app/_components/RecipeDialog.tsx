@@ -11,7 +11,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Plus, Soup, Star } from "lucide-react";
+import { Soup, Star } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -20,42 +20,25 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  createFavoriteRecipe,
-  getAllTagsForRecipe,
-  getIngredientsForRecipe,
-  isFavoriteRecipe,
-  removeFavoriteRecipe,
-} from "~/server/queries";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
 import { SignedIn } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
 import Ingredients from "./Ingredients";
+import { checkIfFavorite, toggleFavorite } from "../_actions/favorites";
+import { fetchTagsForRecipe } from "../_actions/tags";
+import { fetchIngredientsForRecipe } from "../_actions/ingredients";
 
 export default async function RecipeDialog({ recipe }: { recipe: Recipe }) {
   const user = await currentUser();
 
   let isFavorite = false;
   if (user) {
-    isFavorite = await isFavoriteRecipe(recipe.id);
+    isFavorite = await checkIfFavorite(recipe.id);
   }
 
-  const tags = await getAllTagsForRecipe(recipe.id);
-
-  const ingredients = await getIngredientsForRecipe(recipe.id);
-
-  async function toggleFavorite() {
-    "use server";
-    if (isFavorite) {
-      await removeFavoriteRecipe(recipe.id);
-    } else {
-      await createFavoriteRecipe(recipe.id);
-    }
-  }
+  const [tags, ingredients] = await Promise.all([
+    fetchTagsForRecipe(recipe.id),
+    fetchIngredientsForRecipe(recipe.id),
+  ]);
 
   return (
     <Dialog>
@@ -94,7 +77,7 @@ export default async function RecipeDialog({ recipe }: { recipe: Recipe }) {
                 View Full Recipe
               </Link>
               <SignedIn>
-                <form action={toggleFavorite}>
+                <form action={() => toggleFavorite(recipe.id, isFavorite)}>
                   <Button type="submit" variant="secondary" size="default">
                     <Star
                       className={`mr-2 h-5 w-5 transition-all active:-translate-y-1 ${isFavorite ? "fill-amber-400" : ""}`}
