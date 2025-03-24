@@ -1,14 +1,16 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { Card } from "@/components/ui/card";
 
 export default function RecipeCardSkeleton() {
   return (
-    <div className="flex flex-col">
-      <Skeleton className="h-48 rounded-xl" />
-      <div className="space-y-1.5 p-6">
-        <Skeleton className="h-6" />
-        <Skeleton className="h-4" />
-        <Skeleton className="h-4 w-[250px]" />
+    <Card className="h-full overflow-hidden">
+      <div className="relative h-48">
+        <Skeleton className="h-full w-full" />
       </div>
-    </div>
+      <div className="p-6">
+        <Skeleton className="mb-2 h-4 w-2/3" />
+        <Skeleton className="h-4 w-full" />
+      </div>
+    </Card>
   );
 }
