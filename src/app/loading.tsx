@@ -3,9 +3,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function Loading() {
   return (
     <div className="flex flex-col gap-8">
-      {/* Hero Section Skeleton */}
-      <div className="h-full w-full rounded-lg bg-yellow-50/50 p-6" />
-
       <h1>Browse Recipes</h1>
 
       {/* Favorites Section Skeleton */}
