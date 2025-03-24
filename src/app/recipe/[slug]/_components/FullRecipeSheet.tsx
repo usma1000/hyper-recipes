@@ -36,11 +36,11 @@ export default async function FullRecipeSheet({
       >
         Quick Edit
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent className="overflow-y-auto">
         <SheetHeader>
           <SheetTitle>Edit Recipe</SheetTitle>
         </SheetHeader>
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-8 pb-8">
           <Suspense
             fallback={
               <Card>
