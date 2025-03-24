@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import RecipesCarousel from "./_components/RecipesCarousel";
 import { fetchSliderRecipes } from "./_actions/recipes";
@@ -5,6 +6,7 @@ import { fetchAllTagsByType, fetchRecipesByTag } from "./_actions/tags";
 import { fetchMyFavoriteRecipes } from "./_actions/favorites";
 import { auth } from "@clerk/nextjs/server";
 import TaggedRecipes from "./_components/TaggedRecipes";
+import RecipeCardSkeleton from "./_components/RecipeCardSkeleton";
 
 export default async function HomePage() {
   const { userId } = auth();
@@ -38,15 +40,25 @@ export default async function HomePage() {
           <p className="text-sm text-slate-500">
             You can save any recipe to your favorites by clicking the star icon.
           </p>
-          {myFavoriteRecipes?.length ? (
-            <RecipesCarousel recipes={myFavoriteRecipes} />
-          ) : (
-            <div className="mt-4 h-full w-full rounded-lg border border-slate-200 bg-white p-6 text-center text-xl font-semibold text-slate-950 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50">
-              <p className="text-slate-500">
-                You haven&apos;t favorited any recipes yet.
-              </p>
-            </div>
-          )}
+          <Suspense
+            fallback={
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {[...Array(3)].map((_, i) => (
+                  <RecipeCardSkeleton key={i} />
+                ))}
+              </div>
+            }
+          >
+            {myFavoriteRecipes?.length ? (
+              <RecipesCarousel recipes={myFavoriteRecipes} />
+            ) : (
+              <div className="mt-4 h-full w-full rounded-lg border border-slate-200 bg-white p-6 text-center text-xl font-semibold text-slate-950 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50">
+                <p className="text-slate-500">
+                  You haven&apos;t favorited any recipes yet.
+                </p>
+              </div>
+            )}
+          </Suspense>
         </section>
       </SignedIn>
       <section>
@@ -55,7 +67,17 @@ export default async function HomePage() {
           Discover recipes by cuisine, meal type, or dietary preference.
         </p>
         <div className="mt-4">
-          <TaggedRecipes tags={tags} recipesByTag={recipesByTag} />
+          <Suspense
+            fallback={
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {[...Array(3)].map((_, i) => (
+                  <RecipeCardSkeleton key={i} />
+                ))}
+              </div>
+            }
+          >
+            <TaggedRecipes tags={tags} recipesByTag={recipesByTag} />
+          </Suspense>
         </div>
       </section>
       <section>
@@ -63,7 +85,17 @@ export default async function HomePage() {
         <p className="text-sm text-slate-500">
           Some of our favorites, hand picked for you.
         </p>
-        <RecipesCarousel recipes={allRecipes} />
+        <Suspense
+          fallback={
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {[...Array(3)].map((_, i) => (
+                <RecipeCardSkeleton key={i} />
+              ))}
+            </div>
+          }
+        >
+          <RecipesCarousel recipes={allRecipes} />
+        </Suspense>
       </section>
     </div>
   );
