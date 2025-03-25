@@ -10,7 +10,7 @@ import {
 import Link from "next/link";
 import { CommandSearch } from "./CommandSearch";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { LayoutDashboard, PlusCircle, Zap } from "lucide-react";
+import { LayoutDashboard, PlusCircle, Trophy, Zap } from "lucide-react";
 
 export default function TopNav() {
   const { user } = useUser();
@@ -56,7 +56,18 @@ export default function TopNav() {
                 </Link>
               </>
             )}
-            <div className="h-6 w-6 rounded-full bg-slate-500">
+            <Link
+              href="/kitchen-journey"
+              className="group relative flex h-9 w-9 items-center justify-center rounded-full"
+              style={{
+                background: `conic-gradient(rgb(34 197 94) 24%, rgb(226 232 240) 24%)`,
+              }}
+            >
+              <div className="absolute inset-[2px] flex items-center justify-center rounded-full bg-white transition-transform dark:bg-slate-950">
+                <Trophy className="h-5 w-5 text-emerald-500 dark:text-emerald-400" />
+              </div>
+            </Link>
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-500">
               <UserButton />
             </div>
           </SignedIn>
