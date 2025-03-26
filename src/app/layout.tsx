@@ -38,7 +38,7 @@ export default function RootLayout({
         <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
         <body
           className={cn(
-            "flex min-h-screen flex-col font-sans antialiased",
+            "flex min-h-screen flex-col font-sans antialiased dark:bg-slate-950",
             fontSans.variable,
           )}
         >

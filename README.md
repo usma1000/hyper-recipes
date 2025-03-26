@@ -39,3 +39,9 @@
 - Follow friends to see what they’re cooking.
 - Create a "Cook Together" mode where friends try the same recipe and compare results.
 - Leaderboards for most recipes cooked, highest-rated dishes, etc.
+
+## Future Ideas
+
+- Add a start/pause/finish timer button so users can record how long it takes them to make a recipe.
+- Badge for cooking the same recipe multiple times.
+- Badge for beating your previous time on the same recipe.

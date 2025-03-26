@@ -64,7 +64,7 @@ export default function TopNav() {
               }}
             >
               <div className="absolute inset-[2px] flex items-center justify-center rounded-full bg-white transition-transform dark:bg-slate-950">
-                <Trophy className="h-5 w-5 text-emerald-500 dark:text-emerald-400" />
+                <Trophy className="h-5 w-5 fill-yellow-300 dark:text-emerald-400" />
               </div>
             </Link>
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-500">

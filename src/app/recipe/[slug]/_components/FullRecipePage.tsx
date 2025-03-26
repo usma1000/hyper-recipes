@@ -85,7 +85,7 @@ export default async function FullRecipePage(props: { id: number }) {
                 size: "sm",
               })}`}
             >
-              <ArrowLeft size={16} /> Back
+              <ArrowLeft size={16} className="mr-2" /> Back
             </Link>
             <SignedIn>
               {isAdmin && <FullRecipeSheet recipeId={props.id} />}
