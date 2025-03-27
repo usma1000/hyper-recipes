@@ -32,12 +32,18 @@ import UploadImageDialog from "./ImageDialogue";
 import { Suspense } from "react";
 import CookingHistory from "./CookingHistory";
 
-export default async function FullRecipePage(props: { id: number }) {
+export default async function FullRecipePage({
+  id,
+  slug,
+}: {
+  id: number;
+  slug: string;
+}) {
   const { userId } = auth();
   const isAdmin = await checkRole("admin");
 
-  const recipe = await getRecipe(props.id);
-  const ingredients = await getIngredientsForRecipe(props.id);
+  const recipe = await getRecipe(id);
+  const ingredients = await getIngredientsForRecipe(id);
   const tags = await getAllTagsForRecipe(recipe.id);
   const steps = await getStepsByRecipeId(recipe.id);
   let isFavorite = false;
@@ -88,13 +94,11 @@ export default async function FullRecipePage(props: { id: number }) {
             >
               <ArrowLeft size={16} className="mr-2" /> Back
             </Link>
-            <SignedIn>
-              {isAdmin && <FullRecipeSheet recipeId={props.id} />}
-            </SignedIn>
+            <SignedIn>{isAdmin && <FullRecipeSheet recipeId={id} />}</SignedIn>
           </div>
           <div className="flex flex-col gap-8">
             <SignedIn>
-              <CookingHistory />
+              <CookingHistory recipeSlug={slug} />
             </SignedIn>
             <Suspense
               fallback={

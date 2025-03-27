@@ -13,6 +13,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Pause, Play, Square, Timer } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type TimerState = {
   seconds: number;
@@ -21,7 +22,8 @@ type TimerState = {
   lastTickTime: number;
 };
 
-export default function CookingTimer() {
+export default function CookingTimer({ recipeSlug }: { recipeSlug: string }) {
+  const router = useRouter();
   const [timerState, setTimerState] = useState<TimerState>(() => {
     // Try to restore state from localStorage on initial load
     if (typeof window !== "undefined") {
@@ -94,15 +96,10 @@ export default function CookingTimer() {
   const handleStop = () => setShowConfirmStop(true);
 
   const confirmStop = () => {
-    setTimerState({
-      seconds: 0,
-      isRunning: false,
-      startTime: 0,
-      lastTickTime: Date.now(),
-    });
+    const roundedMinutes = Math.round(seconds / 60);
     localStorage.removeItem("cookingTimer");
     setShowConfirmStop(false);
-    // TODO: Save cooking session
+    router.push(`/recipe/${recipeSlug}/rate?time=${roundedMinutes}`);
   };
 
   return (
@@ -129,7 +126,8 @@ export default function CookingTimer() {
             </div>
           </div>
           <p className="text-center text-xs text-muted-foreground">
-            Don't stress, this timer is just for your reference!
+            Don't stress! It's not a race. This timer is just for your
+            reference!
           </p>
         </div>
       ) : (

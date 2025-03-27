@@ -47,7 +47,11 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
-export default function CookingHistory() {
+interface CookingHistoryProps {
+  recipeSlug: string;
+}
+
+export default function CookingHistory({ recipeSlug }: CookingHistoryProps) {
   const hasPreviousCooks = dummyData.length > 0;
 
   return (
@@ -93,7 +97,7 @@ export default function CookingHistory() {
             </AccordionItem>
           </Accordion>
         )}
-        <CookingTimer />
+        <CookingTimer recipeSlug={recipeSlug} />
       </CardContent>
     </Card>
   );
