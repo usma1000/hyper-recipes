@@ -14,6 +14,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import CookingTimer from "./CookingTimer";
 
 type Cook = {
   date: string;
@@ -51,57 +52,48 @@ export default function CookingHistory() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Your Past Cooks</CardTitle>
+      <CardHeader className="space-y-1.5">
+        <CardTitle>Cook Tracker</CardTitle>
         <CardDescription>
           {hasPreviousCooks
-            ? `You've cooked this recipe ${dummyData.length} ${dummyData.length === 1 ? "time" : "times"}`
-            : "You haven't cooked this recipe yet. Let's fix that today!"}
+            ? `Cooked ${dummyData.length} ${dummyData.length === 1 ? "time" : "times"}`
+            : "Ready to cook?"}
         </CardDescription>
       </CardHeader>
       <CardContent>
         {hasPreviousCooks && (
           <Accordion type="single" collapsible className="mb-4">
-            <AccordionItem value="cooking-history">
-              <AccordionTrigger>View History</AccordionTrigger>
+            <AccordionItem value="cooking-history" className="border-none">
+              <AccordionTrigger className="py-2">History</AccordionTrigger>
               <AccordionContent>
-                <div className="grid grid-cols-[1fr_auto_auto_auto] gap-4">
-                  <div className="text-sm font-medium text-muted-foreground">
-                    Date
-                  </div>
-                  <div className="text-sm font-medium text-muted-foreground">
-                    Time
-                  </div>
-                  <div className="text-sm font-medium text-muted-foreground">
-                    Rating
-                  </div>
-                  <div className="text-sm font-medium text-muted-foreground">
-                    Notes
-                  </div>
+                <div className="space-y-2">
                   {dummyData.map((cook, i) => (
-                    <>
-                      <span className="py-2 text-sm">
-                        {format(new Date(cook.date), "MMM d, yyyy")}
-                      </span>
-                      <span className="py-2 text-sm">{cook.time}</span>
-                      <div className="py-2">
-                        <StarRating rating={cook.rating} />
+                    <div
+                      key={i}
+                      className="flex flex-col space-y-1 border-b border-slate-100 pb-2 last:border-0"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">
+                          {format(new Date(cook.date), "MMM d")}
+                        </span>
+                        <span className="text-sm">{cook.time}</span>
                       </div>
-                      <div className="py-2">
+                      <div className="flex items-center justify-between">
+                        <StarRating rating={cook.rating} />
                         {cook.hasNotes && (
-                          <Button variant="link" className="h-auto p-0">
-                            View
+                          <Button variant="link" className="h-6 p-0 text-xs">
+                            Notes
                           </Button>
                         )}
                       </div>
-                    </>
+                    </div>
                   ))}
                 </div>
               </AccordionContent>
             </AccordionItem>
           </Accordion>
         )}
-        <Button>{hasPreviousCooks ? "Cook Again" : "Start Cooking"}</Button>
+        <CookingTimer />
       </CardContent>
     </Card>
   );

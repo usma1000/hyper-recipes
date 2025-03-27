@@ -92,7 +92,10 @@ export default async function FullRecipePage(props: { id: number }) {
               {isAdmin && <FullRecipeSheet recipeId={props.id} />}
             </SignedIn>
           </div>
-          <div className="sticky top-8">
+          <div className="flex flex-col gap-8">
+            <SignedIn>
+              <CookingHistory />
+            </SignedIn>
             <Suspense
               fallback={
                 <Card>
@@ -199,8 +202,6 @@ export default async function FullRecipePage(props: { id: number }) {
               </CardHeader>
             </Card>
           </Suspense>
-
-          <CookingHistory />
 
           <Suspense
             fallback={
