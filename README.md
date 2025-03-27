@@ -45,3 +45,4 @@
 - Add a start/pause/finish timer button so users can record how long it takes them to make a recipe.
 - Badge for cooking the same recipe multiple times.
 - Badge for beating your previous time on the same recipe.
+- For steps that require timing (cook pasta for 8 min), include a button to start timer. Timer makes noise, but in case user doesn't have sound on, cover the entire screen in an overlay with animation.

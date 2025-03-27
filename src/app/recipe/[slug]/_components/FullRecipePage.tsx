@@ -30,6 +30,7 @@ import { checkRole } from "~/utils/roles";
 import Ingredients from "../../../_components/Ingredients";
 import UploadImageDialog from "./ImageDialogue";
 import { Suspense } from "react";
+import CookingHistory from "./CookingHistory";
 
 export default async function FullRecipePage(props: { id: number }) {
   const { userId } = auth();
@@ -171,7 +172,6 @@ export default async function FullRecipePage(props: { id: number }) {
                     </form>
                   </SignedIn>
                 </div>
-                <CardDescription>{recipe.description}</CardDescription>
                 <div className="flex flex-row gap-2">
                   {tags
                     .filter((tag) => tag.tagType === "Cuisine")
@@ -195,9 +195,12 @@ export default async function FullRecipePage(props: { id: number }) {
                       </Badge>
                     ))}
                 </div>
+                <CardDescription>{recipe.description}</CardDescription>
               </CardHeader>
             </Card>
           </Suspense>
+
+          <CookingHistory />
 
           <Suspense
             fallback={
