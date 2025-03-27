@@ -14,16 +14,53 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Pause, Play, Square, Timer } from "lucide-react";
 
+type TimerState = {
+  seconds: number;
+  isRunning: boolean;
+  startTime: number;
+  lastTickTime: number;
+};
+
 export default function CookingTimer() {
-  const [isRunning, setIsRunning] = useState(false);
-  const [seconds, setSeconds] = useState(0);
+  const [timerState, setTimerState] = useState<TimerState>(() => {
+    // Try to restore state from localStorage on initial load
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("cookingTimer");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const elapsed = Math.floor((Date.now() - parsed.lastTickTime) / 1000);
+        return {
+          ...parsed,
+          seconds: parsed.seconds + (parsed.isRunning ? elapsed : 0),
+          lastTickTime: Date.now(),
+        };
+      }
+    }
+    return {
+      seconds: 0,
+      isRunning: false,
+      startTime: 0,
+      lastTickTime: Date.now(),
+    };
+  });
   const [showConfirmStop, setShowConfirmStop] = useState(false);
+
+  const { seconds, isRunning } = timerState;
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isRunning) {
       interval = setInterval(() => {
-        setSeconds((s) => s + 1);
+        setTimerState((prev) => {
+          const newState = {
+            ...prev,
+            seconds: prev.seconds + 1,
+            lastTickTime: Date.now(),
+          };
+          // Save to localStorage on each tick
+          localStorage.setItem("cookingTimer", JSON.stringify(newState));
+          return newState;
+        });
       }, 1000);
     }
     return () => clearInterval(interval);
@@ -38,13 +75,32 @@ export default function CookingTimer() {
       .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  const handleStart = () => setIsRunning(true);
-  const handlePause = () => setIsRunning(false);
+  const handleStart = () => {
+    const newState = {
+      ...timerState,
+      isRunning: true,
+      startTime: timerState.seconds === 0 ? Date.now() : timerState.startTime,
+    };
+    setTimerState(newState);
+    localStorage.setItem("cookingTimer", JSON.stringify(newState));
+  };
+
+  const handlePause = () => {
+    const newState = { ...timerState, isRunning: false };
+    setTimerState(newState);
+    localStorage.setItem("cookingTimer", JSON.stringify(newState));
+  };
+
   const handleStop = () => setShowConfirmStop(true);
 
   const confirmStop = () => {
-    setIsRunning(false);
-    setSeconds(0);
+    setTimerState({
+      seconds: 0,
+      isRunning: false,
+      startTime: 0,
+      lastTickTime: Date.now(),
+    });
+    localStorage.removeItem("cookingTimer");
     setShowConfirmStop(false);
     // TODO: Save cooking session
   };
