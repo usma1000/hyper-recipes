@@ -30,13 +30,20 @@ import { checkRole } from "~/utils/roles";
 import Ingredients from "../../../_components/Ingredients";
 import UploadImageDialog from "./ImageDialogue";
 import { Suspense } from "react";
+import CookingHistory from "./CookingHistory";
 
-export default async function FullRecipePage(props: { id: number }) {
+export default async function FullRecipePage({
+  id,
+  slug,
+}: {
+  id: number;
+  slug: string;
+}) {
   const { userId } = auth();
   const isAdmin = await checkRole("admin");
 
-  const recipe = await getRecipe(props.id);
-  const ingredients = await getIngredientsForRecipe(props.id);
+  const recipe = await getRecipe(id);
+  const ingredients = await getIngredientsForRecipe(id);
   const tags = await getAllTagsForRecipe(recipe.id);
   const steps = await getStepsByRecipeId(recipe.id);
   let isFavorite = false;
@@ -85,13 +92,14 @@ export default async function FullRecipePage(props: { id: number }) {
                 size: "sm",
               })}`}
             >
-              <ArrowLeft size={16} /> Back
+              <ArrowLeft size={16} className="mr-2" /> Back
             </Link>
-            <SignedIn>
-              {isAdmin && <FullRecipeSheet recipeId={props.id} />}
-            </SignedIn>
+            <SignedIn>{isAdmin && <FullRecipeSheet recipeId={id} />}</SignedIn>
           </div>
-          <div className="sticky top-8">
+          <div className="flex flex-col gap-8">
+            <SignedIn>
+              <CookingHistory recipeSlug={slug} />
+            </SignedIn>
             <Suspense
               fallback={
                 <Card>
@@ -171,7 +179,6 @@ export default async function FullRecipePage(props: { id: number }) {
                     </form>
                   </SignedIn>
                 </div>
-                <CardDescription>{recipe.description}</CardDescription>
                 <div className="flex flex-row gap-2">
                   {tags
                     .filter((tag) => tag.tagType === "Cuisine")
@@ -195,6 +202,7 @@ export default async function FullRecipePage(props: { id: number }) {
                       </Badge>
                     ))}
                 </div>
+                <CardDescription>{recipe.description}</CardDescription>
               </CardHeader>
             </Card>
           </Suspense>

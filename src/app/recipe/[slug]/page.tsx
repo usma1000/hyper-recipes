@@ -25,7 +25,7 @@ export default async function RecipePage({ params: { slug } }: Props) {
   return (
     <div>
       <Suspense fallback={<RecipeLoading />}>
-        <FullRecipePage id={id} />
+        <FullRecipePage id={id} slug={slug} />
       </Suspense>
     </div>
   );

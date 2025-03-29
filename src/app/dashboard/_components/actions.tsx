@@ -1,13 +1,11 @@
 "use server";
 
 import { z } from "zod";
+import { createNewTag, deleteTag, getAllTagNames } from "~/server/queries/tags";
 import {
   createNewIngredient,
-  createNewTag,
-  deleteTag,
   getAllIngredientNames,
-  getAllTagNames,
-} from "~/server/queries";
+} from "~/server/queries/ingredients";
 import { CreateTagsFormSchema } from "./CreateTagsForm";
 import { CreateIngredientFormSchema } from "./CreateIngredientForm";
 

@@ -6,7 +6,7 @@ import {
   createIngredientForRecipe,
   removeIngredientFromRecipe,
   createNewIngredient,
-} from "~/server/queries";
+} from "~/server/queries/ingredients";
 
 export async function fetchAllIngredients() {
   return await getAllIngredients();

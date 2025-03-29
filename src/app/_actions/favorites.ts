@@ -5,7 +5,7 @@ import {
   removeFavoriteRecipe,
   isFavoriteRecipe,
   getMyFavoriteRecipes,
-} from "~/server/queries";
+} from "~/server/queries/favorites";
 
 export async function toggleFavorite(recipeId: number, isFavorite: boolean) {
   if (isFavorite) {

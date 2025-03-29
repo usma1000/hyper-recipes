@@ -8,7 +8,7 @@ import {
   removeAllTagsFromRecipe,
   createNewTag,
   deleteTag,
-} from "~/server/queries";
+} from "~/server/queries/tags";
 
 export async function fetchAllTagsByType() {
   return await getAllTagsByType();
