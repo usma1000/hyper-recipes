@@ -11,6 +11,9 @@ import {
   RecipesToTagsTable,
   IngredientsTable,
   RecipeIngredientsTable,
+  PointsTable,
+  AchievementsTable,
+  BadgesTable,
 } from "./db/schemas";
 import { slugify } from "~/lib/utils";
 
@@ -525,4 +528,53 @@ export async function removeIngredientFromRecipe(
 
   revalidatePath("/", "layout");
   revalidatePath("/recipe/[slug]", "page");
+}
+
+// Points queries
+export async function getUserPoints(userId: string) {
+  const points = await db.query.PointsTable.findFirst({
+    where: (model, { eq }) => eq(model.userId, userId),
+  });
+  return points?.points ?? 0;
+}
+
+export async function addUserPoints(userId: string, pointsToAdd: number) {
+  const existingPoints = await getUserPoints(userId);
+  await db
+    .update(PointsTable)
+    .set({ points: existingPoints + pointsToAdd })
+    .where(eq(PointsTable.userId, userId));
+}
+
+// Achievements queries
+export async function getUserAchievements(userId: string) {
+  return await db.query.AchievementsTable.findMany({
+    where: (model, { eq }) => eq(model.userId, userId),
+  });
+}
+
+export async function addUserAchievement(
+  userId: string,
+  title: string,
+  description?: string,
+) {
+  await db.insert(AchievementsTable).values({
+    userId,
+    title,
+    description,
+  });
+}
+
+// Badges queries
+export async function getUserBadges(userId: string) {
+  return await db.query.BadgesTable.findMany({
+    where: (model, { eq }) => eq(model.userId, userId),
+  });
+}
+
+export async function addUserBadge(userId: string, badgeName: string) {
+  await db.insert(BadgesTable).values({
+    userId,
+    badgeName,
+  });
 }
