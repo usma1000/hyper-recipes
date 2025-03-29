@@ -18,6 +18,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import KitchenJourneyBadge from "./KitchenJourneyBadge";
 
 // This would typically come from your API
 async function fetchUserProgress() {
@@ -103,46 +104,7 @@ export default function TopNav() {
                 </Link>
               </>
             )}
-            <TooltipProvider delayDuration={300}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link
-                    href="/kitchen-journey"
-                    className="flex items-center gap-1.5"
-                  >
-                    <div
-                      className="group relative flex h-9 w-9 items-center justify-center rounded-full"
-                      style={{
-                        background: `conic-gradient(rgb(34 197 94) ${progress.percentage}%, rgb(226 232 240) ${progress.percentage}%)`,
-                      }}
-                    >
-                      <div className="absolute inset-[2px] flex items-center justify-center rounded-full bg-white transition-transform dark:bg-slate-950">
-                        <Trophy className="h-5 w-5 fill-yellow-300 dark:fill-yellow-300" />
-                      </div>
-                    </div>
-                    <span className="text-sm font-semibold">
-                      Lvl {progress.level}
-                    </span>
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent side="bottom" className="py-2 text-center">
-                  <div className="space-y-1">
-                    <p className="text-sm font-semibold">
-                      Level {progress.level}
-                    </p>
-                    <p className="-mt-0.5 text-xs text-muted-foreground">
-                      {progress.xp}/{progress.nextLevelXp} XP
-                    </p>
-                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
-                      <div
-                        className="h-full rounded-full bg-emerald-500"
-                        style={{ width: `${progress.percentage}%` }}
-                      />
-                    </div>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <KitchenJourneyBadge />
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-500">
               <UserButton />
             </div>
