@@ -10,9 +10,33 @@ function calculateRequiredXp(level: number): number {
   return Math.floor(100 * Math.pow(level, 1.5));
 }
 
+// Initialize a user in the points table if they don't exist
+export async function initializeUserPoints(userId: string) {
+  const existingEntry = await db.query.PointsTable.findFirst({
+    where: (model, { eq }) => eq(model.userId, userId),
+  });
+
+  if (!existingEntry) {
+    // Create new entry with 0 points, level 1
+    await db.insert(PointsTable).values({
+      userId,
+      points: 0,
+      level: 1,
+      xpForCurrentLevel: 0,
+      nextLevelXp: 100,
+    });
+    return true; // Indicates a new entry was created
+  }
+
+  return false; // No new entry was needed
+}
+
 // Points queries
 export async function getUserPoints(userId: string) {
-  // First check if user entry exists
+  // Make sure user exists in points table
+  await initializeUserPoints(userId);
+
+  // Then get their points
   const points = await db.query.PointsTable.findFirst({
     where: (model, { eq }) => eq(model.userId, userId),
     columns: { points: true }, // Only select the points column
@@ -21,11 +45,15 @@ export async function getUserPoints(userId: string) {
 }
 
 export async function getUserProgress(userId: string) {
+  // Make sure user exists in points table
+  await initializeUserPoints(userId);
+
   // Get user progress entry
   const progress = await db.query.PointsTable.findFirst({
     where: (model, { eq }) => eq(model.userId, userId),
   });
 
+  // This should never be null now, but keeping the check for safety
   if (!progress) {
     // Return default values for new users
     return {

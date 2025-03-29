@@ -1,7 +1,21 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { getUserProgress, addUserPoints } from "~/server/queries/gamification";
+import {
+  getUserProgress,
+  addUserPoints,
+  initializeUserPoints,
+} from "~/server/queries/gamification";
+
+export async function initializeUser() {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  return await initializeUserPoints(userId);
+}
 
 export async function fetchUserProgress() {
   const { userId } = auth();
