@@ -10,7 +10,7 @@ import {
   updateRecipeHeroImage,
   getRecipe,
   getUnpublishedRecipes,
-} from "~/server/queries";
+} from "~/server/queries/recipes";
 
 export async function fetchAllRecipeNames() {
   return await getAllRecipeNames();
