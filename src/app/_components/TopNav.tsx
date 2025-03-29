@@ -19,25 +19,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import KitchenJourneyBadge from "./KitchenJourneyBadge";
-
-// This would typically come from your API
-async function fetchUserProgress() {
-  // Replace with actual API call
-  // Example: return await fetch('/api/user-progress').then(res => res.json());
-
-  // Mocked response for now
-  return new Promise<{ xp: number; level: number; nextLevelXp: number }>(
-    (resolve) => {
-      setTimeout(() => {
-        resolve({
-          xp: 240,
-          level: 5,
-          nextLevelXp: 1000,
-        });
-      }, 500);
-    },
-  );
-}
+import { fetchUserProgress } from "~/app/_actions/gamification";
 
 export default function TopNav() {
   const { user } = useUser();
@@ -48,19 +30,28 @@ export default function TopNav() {
     nextLevelXp: 100,
     percentage: 0,
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
-      fetchUserProgress().then((data) => {
-        const percentage = Math.min(
-          100,
-          Math.max(0, Math.round((data.xp / data.nextLevelXp) * 100)),
-        );
-        setProgress({
-          ...data,
-          percentage,
+      setIsLoading(true);
+      fetchUserProgress()
+        .then((data) => {
+          const percentage = Math.min(
+            100,
+            Math.max(0, Math.round((data.xp / data.nextLevelXp) * 100)),
+          );
+          setProgress({
+            ...data,
+            percentage,
+          });
+        })
+        .catch((error) => {
+          console.error("Error fetching user progress:", error);
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
-      });
     }
   }, [user]);
 

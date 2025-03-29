@@ -114,6 +114,48 @@ export async function addUserPoints(userId: string, pointsToAdd: number) {
   revalidatePath("/", "layout"); // For the badge in the layout
 }
 
+// Admin function to manually set a user's points
+export async function setUserPoints(userId: string, newPointsTotal: number) {
+  // Make sure user exists in points table
+  await initializeUserPoints(userId);
+
+  // Get current user data to calculate level
+  const user = await db.query.PointsTable.findFirst({
+    where: (model, { eq }) => eq(model.userId, userId),
+  });
+
+  if (!user) return; // Should never happen due to initializeUserPoints
+
+  // Calculate new level and xp
+  let level = 1;
+  let remainingPoints = newPointsTotal;
+  let nextLevelXp = calculateRequiredXp(level);
+
+  // Find the appropriate level based on total points
+  while (remainingPoints >= nextLevelXp) {
+    remainingPoints -= nextLevelXp;
+    level += 1;
+    nextLevelXp = calculateRequiredXp(level);
+  }
+
+  // Update with new values
+  await db
+    .update(PointsTable)
+    .set({
+      points: newPointsTotal,
+      level,
+      xpForCurrentLevel: remainingPoints,
+      nextLevelXp,
+    })
+    .where(eq(PointsTable.userId, userId));
+
+  // Revalidate paths
+  revalidatePath("/profile", "page");
+  revalidatePath("/kitchen-journey", "page");
+  revalidatePath("/", "layout"); // For the badge in the layout
+  revalidatePath("/", "page"); // Ensure the top nav is refreshed
+}
+
 // Achievements queries
 export async function getUserAchievements(userId: string) {
   return await db.query.AchievementsTable.findMany({

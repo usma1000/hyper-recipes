@@ -1,5 +1,10 @@
 import { type InferSelectModel } from "drizzle-orm";
-import { ImagesTable, RecipesTable, IngredientsTable, TagsTable } from "~/server/db/schemas";
+import {
+  ImagesTable,
+  RecipesTable,
+  IngredientsTable,
+  TagsTable,
+} from "~/server/db/schemas";
 
 export {};
 
@@ -13,12 +18,12 @@ declare global {
   };
 
   // Define custom roles
-  type Roles = 'admin' | 'editor';
+  type Roles = "admin" | "editor" | "user";
 
   // Augment the global namespace with custom types
   interface CustomJwtSessionClaims {
     metadata: {
-      role?: 'admin' | 'editor';
+      role?: "admin" | "editor" | "user";
     };
   }
 }
