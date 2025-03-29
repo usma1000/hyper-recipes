@@ -17,6 +17,12 @@ import {
 } from "./db/schemas";
 import { slugify } from "~/lib/utils";
 
+// Helper function for path revalidation to avoid repetition
+const revalidateRecipePaths = () => {
+  revalidatePath("/", "layout");
+  revalidatePath("/recipe/[slug]", "page");
+};
+
 // Image queries
 
 export async function getAllImages() {
@@ -499,14 +505,19 @@ export async function createIngredientForRecipe(
 
   if (!user.userId) throw new Error("Not authenticated");
 
-  await db.insert(RecipeIngredientsTable).values({
-    recipeId,
-    ingredientId,
-    quantity,
-  });
+  try {
+    await db.insert(RecipeIngredientsTable).values({
+      recipeId,
+      ingredientId,
+      quantity,
+    });
 
-  revalidatePath("/", "layout");
-  revalidatePath("/recipe/[slug]", "page");
+    revalidateRecipePaths();
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to create ingredient for recipe:", error);
+    throw new Error("Failed to add ingredient to recipe");
+  }
 }
 
 export async function removeIngredientFromRecipe(
@@ -517,17 +528,54 @@ export async function removeIngredientFromRecipe(
 
   if (!user.userId) throw new Error("Not authenticated");
 
-  await db
-    .delete(RecipeIngredientsTable)
-    .where(
-      and(
-        eq(RecipeIngredientsTable.recipeId, recipeId),
-        eq(RecipeIngredientsTable.ingredientId, ingredientId),
-      ),
-    );
+  try {
+    await db
+      .delete(RecipeIngredientsTable)
+      .where(
+        and(
+          eq(RecipeIngredientsTable.recipeId, recipeId),
+          eq(RecipeIngredientsTable.ingredientId, ingredientId),
+        ),
+      );
 
-  revalidatePath("/", "layout");
-  revalidatePath("/recipe/[slug]", "page");
+    revalidateRecipePaths();
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to remove ingredient from recipe:", error);
+    throw new Error("Failed to remove ingredient from recipe");
+  }
+}
+
+/**
+ * Batch add multiple ingredients to a recipe in a single transaction
+ */
+export async function batchAddIngredientsToRecipe(
+  recipeId: number,
+  ingredients: { ingredientId: number; quantity: string }[],
+) {
+  const user = auth();
+
+  if (!user.userId) throw new Error("Not authenticated");
+
+  if (!ingredients.length) return { success: true, count: 0 };
+
+  try {
+    await db.transaction(async (tx) => {
+      await tx.insert(RecipeIngredientsTable).values(
+        ingredients.map(({ ingredientId, quantity }) => ({
+          recipeId,
+          ingredientId,
+          quantity,
+        })),
+      );
+    });
+
+    revalidateRecipePaths();
+    return { success: true, count: ingredients.length };
+  } catch (error) {
+    console.error("Failed to batch add ingredients:", error);
+    throw new Error("Failed to add ingredients to recipe");
+  }
 }
 
 // Points queries
