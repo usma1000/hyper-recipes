@@ -46,3 +46,7 @@
 - Badge for cooking the same recipe multiple times.
 - Badge for beating your previous time on the same recipe.
 - For steps that require timing (cook pasta for 8 min), include a button to start timer. Timer makes noise, but in case user doesn't have sound on, cover the entire screen in an overlay with animation.
+
+## Sentry
+
+warn - It seems like you don't have a global error handler set up. It is recommended that you add a global-error.js file with Sentry instrumentation so that React rendering errors are reported to Sentry. Read more: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#react-render-errors-in-app-router (you can suppress this warning by setting SENTRY_SUPPRESS_GLOBAL_ERROR_HANDLER_FILE_WARNING=1 as environment variable)

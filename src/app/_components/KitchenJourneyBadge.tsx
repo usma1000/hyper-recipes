@@ -11,25 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useUser } from "@clerk/nextjs";
 import { Skeleton } from "@/components/ui/skeleton";
-
-// This would typically come from your API
-async function fetchUserProgress() {
-  // Replace with actual API call
-  // Example: return await fetch('/api/user-progress').then(res => res.json());
-
-  // Mocked response for now
-  return new Promise<{ xp: number; level: number; nextLevelXp: number }>(
-    (resolve) => {
-      setTimeout(() => {
-        resolve({
-          xp: 240,
-          level: 5,
-          nextLevelXp: 1000,
-        });
-      }, 500);
-    },
-  );
-}
+import { fetchUserProgress } from "../_actions/gamification";
 
 export default function KitchenJourneyBadge() {
   const { user } = useUser();
@@ -54,6 +36,9 @@ export default function KitchenJourneyBadge() {
             ...data,
             percentage,
           });
+        })
+        .catch((error) => {
+          console.error("Failed to fetch user progress:", error);
         })
         .finally(() => {
           setIsLoading(false);

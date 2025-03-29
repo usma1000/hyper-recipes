@@ -6,6 +6,9 @@ export const PointsTable = createTable(
   {
     userId: text("user_id").notNull(),
     points: integer("points").default(0).notNull(),
+    level: integer("level").default(1).notNull(),
+    xpForCurrentLevel: integer("xp_for_current_level").default(0).notNull(),
+    nextLevelXp: integer("next_level_xp").default(100).notNull(),
   },
   (table) => ({
     userIdIdx: index("points_user_id_idx").on(table.userId),
