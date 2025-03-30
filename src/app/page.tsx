@@ -244,17 +244,26 @@ export default async function HomePage() {
         <div className="mb-8">
           <h2 className="mb-2 text-3xl font-bold">Explore by Category</h2>
           <p className="text-slate-500">
-            Find recipes based on cuisine, meal type, or dietary preference
+            Discover recipes by cuisine, meal type, or dietary preference
           </p>
         </div>
-        <div className="mt-4">
+        <div className="mt-6">
           <Suspense
             fallback={
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {[...Array(3)].map((_, i) => (
-                  <RecipeCardSkeleton key={i} />
-                ))}
-              </div>
+              <Card className="w-full overflow-hidden border-2 border-amber-50 shadow-sm">
+                <CardHeader className="bg-amber-50/50 pb-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="h-6 w-40 animate-pulse rounded bg-slate-200"></div>
+                      <div className="mt-2 h-4 w-56 animate-pulse rounded bg-slate-200"></div>
+                    </div>
+                    <div className="h-10 w-[200px] animate-pulse rounded bg-slate-200"></div>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="h-48 animate-pulse rounded-lg bg-slate-100"></div>
+                </CardContent>
+              </Card>
             }
           >
             <TaggedRecipes tags={tags} recipesByTag={recipesByTag} />
