@@ -14,18 +14,26 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useEffect } from "react";
+import { useState } from "react";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { toast } from "sonner";
 import { onNewIngredientSubmit } from "./actions";
 import { Textarea } from "@/components/ui/textarea";
 
 export const CreateIngredientFormSchema = z.object({
-  name: z.string().min(3).max(256),
-  description: z.string().min(3).max(1024),
+  name: z
+    .string()
+    .min(2, "Name must be at least 2 characters")
+    .max(256, "Name must be less than 256 characters"),
+  description: z
+    .string()
+    .min(3, "Description must be at least 3 characters")
+    .max(1024, "Description must be less than 1024 characters"),
 });
 
 export default function CreateIngredientForm() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const form = useForm<z.infer<typeof CreateIngredientFormSchema>>({
     resolver: zodResolver(CreateIngredientFormSchema),
     defaultValues: {
@@ -34,31 +42,26 @@ export default function CreateIngredientForm() {
     },
   });
 
-  const {
-    formState: { isLoading, isSubmitting, isSubmitSuccessful },
-  } = form;
-
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      toast(`${form.getValues("name")} successfully created.`);
+  const handleSubmit = async (
+    values: z.infer<typeof CreateIngredientFormSchema>,
+  ) => {
+    try {
+      setIsSubmitting(true);
+      await onNewIngredientSubmit(values);
+      toast.success(`${values.name} successfully created.`);
       form.reset();
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to create ingredient",
+      );
+    } finally {
+      setIsSubmitting(false);
     }
-  }, [isSubmitSuccessful]);
+  };
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit((e) => onNewIngredientSubmit(e))}
-        className="relative flex flex-col gap-4"
-      >
-        {isLoading ||
-          (isSubmitting && (
-            <div className="absolute left-0 top-0 z-10 h-full w-full bg-white bg-opacity-50">
-              <div className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
-                <LoadingSpinner />
-              </div>
-            </div>
-          ))}
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="name"
@@ -66,10 +69,14 @@ export default function CreateIngredientForm() {
             <FormItem>
               <FormLabel>Ingredient Name</FormLabel>
               <FormControl>
-                <Input placeholder="Onions, garlic, etc." {...field} />
+                <Input
+                  placeholder="e.g. Onions, garlic, olive oil"
+                  {...field}
+                  disabled={isSubmitting}
+                />
               </FormControl>
               <FormDescription>
-                This is the name of the ingredient you are adding.
+                Enter a clear, specific ingredient name
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -83,19 +90,27 @@ export default function CreateIngredientForm() {
               <FormLabel>Ingredient Description</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="e.g. A white, pungent vegetable."
+                  placeholder="e.g. A pungent vegetable used as a base in many cuisines"
+                  className="resize-none"
                   {...field}
+                  disabled={isSubmitting}
+                  rows={3}
                 />
               </FormControl>
               <FormDescription>
-                This will show up when you hover over the ingredient.
+                Add helpful information about this ingredient
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={isLoading || isSubmitting}>
-          Create New Tag
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full sm:w-auto"
+        >
+          {isSubmitting ? <LoadingSpinner className="mr-2" /> : null}
+          {isSubmitting ? "Creating..." : "Create Ingredient"}
         </Button>
       </form>
     </Form>

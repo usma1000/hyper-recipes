@@ -10,91 +10,125 @@ import DeleteTagsForm from "./_components/DeleteTagsForm";
 import { getAllTagNames, getUnpublishedRecipes } from "~/server/queries";
 import CreateIngredientForm from "./_components/CreateIngredientForm";
 import UnpublishedRecipesTable from "./_components/UnpublishedRecipesTable";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ChefHat, Plus, Server, Tags } from "lucide-react";
 
 export default async function Page() {
-  const rawTags = await getAllTagNames();
+  // Fetch data in parallel to improve loading time
+  const [rawTags, unpublishedRecipes] = await Promise.all([
+    getAllTagNames(),
+    getUnpublishedRecipes(),
+  ]);
+
   const allTags = rawTags.map((tag) => ({
     value: tag.id,
     label: tag.name,
   }));
 
-  const unpublishedRecipes = await getUnpublishedRecipes();
-
   return (
-    <div className="flex flex-col gap-8">
-      <h1>Dashboard</h1>
+    <div className="flex flex-col gap-6">
+      <div className="flex items-center gap-2">
+        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+      </div>
+
       <section>
-        <h2 className="mb-2">Manage Recipes</h2>
-        <Card className="flex basis-1/2 flex-col">
-          <CardHeader>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="flex items-center gap-2 text-xl font-semibold">
+            <ChefHat className="h-5 w-5" />
+            Recipe Management
+          </h2>
+        </div>
+        <Card>
+          <CardHeader className="pb-3">
             <CardTitle>Unpublished Recipes</CardTitle>
             <CardDescription>
-              These recipes will only be visible to you until they are
-              published.
+              These recipes will only be visible to you until they are published
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex-1">
+          <CardContent>
             <UnpublishedRecipesTable recipes={unpublishedRecipes} />
           </CardContent>
         </Card>
       </section>
+
       <section>
-        <h2 className="mb-2">Manage Ingredients</h2>
-        <div className="flex gap-8">
-          <Card className="flex basis-1/2 flex-col">
-            <CardHeader>
-              <CardTitle>Create New Ingredient</CardTitle>
-              <CardDescription>
-                Create a new ingredient that can be applied to a recipe.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex-1">
-              <CreateIngredientForm />
-            </CardContent>
-          </Card>
-          <Card className="flex basis-1/2 flex-col">
-            <CardHeader>
-              <CardTitle>Delete an Ingredient</CardTitle>
-              <CardDescription>
-                Delete an ingredient that is no longer needed. This will remove
-                the ingredient from all recipes that it is applied.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex-1">
-              {/* <CreateIngredientForm /> */}
-              <p>Coming soon...</p>
-            </CardContent>
-          </Card>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="flex items-center gap-2 text-xl font-semibold">
+            <Server className="h-5 w-5" />
+            Ingredient Management
+          </h2>
         </div>
+        <Card>
+          <Tabs defaultValue="create">
+            <CardHeader className="pb-3">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <CardTitle>Ingredients</CardTitle>
+                  <CardDescription>
+                    Create and manage ingredients for your recipes
+                  </CardDescription>
+                </div>
+                <TabsList>
+                  <TabsTrigger value="create">
+                    <Plus className="mr-1 h-4 w-4" />
+                    Create
+                  </TabsTrigger>
+                  <TabsTrigger value="delete" disabled>
+                    Delete
+                  </TabsTrigger>
+                </TabsList>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <TabsContent value="create" className="mt-0 pt-0">
+                <CreateIngredientForm />
+              </TabsContent>
+              <TabsContent value="delete" className="mt-0 pt-0">
+                <p className="text-sm italic text-muted-foreground">
+                  Coming soon...
+                </p>
+              </TabsContent>
+            </CardContent>
+          </Tabs>
+        </Card>
       </section>
+
       <section>
-        <h2 className="mb-2">Manage Tags</h2>
-        <div className="flex gap-8">
-          <Card className="flex basis-1/2 flex-col">
-            <CardHeader>
-              <CardTitle>Create New Tag</CardTitle>
-              <CardDescription>
-                Create a new tag of type "Cuisine" or "Meal" which can be
-                applied to a recipe.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex-1">
-              <CreateTagsForm />
-            </CardContent>
-          </Card>
-          <Card className="flex basis-1/2 flex-col">
-            <CardHeader>
-              <CardTitle>Delete a Tag</CardTitle>
-              <CardDescription>
-                Delete a tag that is no longer needed. This will remove the tag
-                from all recipes that it is applied.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex-1">
-              <DeleteTagsForm tags={allTags} />
-            </CardContent>
-          </Card>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="flex items-center gap-2 text-xl font-semibold">
+            <Tags className="h-5 w-5" />
+            Tag Management
+          </h2>
         </div>
+        <Card>
+          <Tabs defaultValue="create">
+            <CardHeader className="pb-3">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <CardTitle>Tags</CardTitle>
+                  <CardDescription>
+                    Create and manage tags for organizing your recipes
+                  </CardDescription>
+                </div>
+                <TabsList>
+                  <TabsTrigger value="create">
+                    <Plus className="mr-1 h-4 w-4" />
+                    Create
+                  </TabsTrigger>
+                  <TabsTrigger value="delete">Delete</TabsTrigger>
+                </TabsList>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <TabsContent value="create" className="mt-0 pt-0">
+                <CreateTagsForm />
+              </TabsContent>
+              <TabsContent value="delete" className="mt-0 pt-0">
+                <DeleteTagsForm tags={allTags} />
+              </TabsContent>
+            </CardContent>
+          </Tabs>
+        </Card>
       </section>
     </div>
   );

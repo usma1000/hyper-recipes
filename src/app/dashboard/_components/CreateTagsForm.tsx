@@ -23,17 +23,23 @@ import {
 import { tagTypes } from "~/server/db/schemas";
 import { onNewTagSubmit } from "./actions";
 import { Input } from "@/components/ui/input";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { toast } from "sonner";
+import { CookingPot, UtensilsCrossed } from "lucide-react";
 
 export const CreateTagsFormSchema = z.object({
   recipeId: z.number(),
   tagType: z.enum(tagTypes.enumValues),
-  name: z.string(),
+  name: z
+    .string()
+    .min(2, "Tag name must be at least 2 characters")
+    .max(50, "Tag name must be less than 50 characters"),
 });
 
 export default function CreateTagsForm() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const form = useForm<z.infer<typeof CreateTagsFormSchema>>({
     resolver: zodResolver(CreateTagsFormSchema),
     defaultValues: {
@@ -43,31 +49,26 @@ export default function CreateTagsForm() {
     },
   });
 
-  const {
-    formState: { isLoading, isSubmitting, isSubmitSuccessful },
-  } = form;
+  const { isSubmitSuccessful } = form.formState;
 
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      toast(`${form.getValues("name")} successfully created.`);
-      form.reset();
+  const handleSubmit = async (values: z.infer<typeof CreateTagsFormSchema>) => {
+    try {
+      setIsSubmitting(true);
+      await onNewTagSubmit(values);
+      toast.success(`${values.name} successfully created.`);
+      form.reset({ recipeId: 0, tagType: values.tagType, name: "" });
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to create tag",
+      );
+    } finally {
+      setIsSubmitting(false);
     }
-  }, [isSubmitSuccessful]);
+  };
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit((e) => onNewTagSubmit(e))}
-        className="relative flex flex-col gap-4"
-      >
-        {isLoading ||
-          (isSubmitting && (
-            <div className="absolute left-0 top-0 z-10 h-full w-full bg-white bg-opacity-50">
-              <div className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
-                <LoadingSpinner />
-              </div>
-            </div>
-          ))}
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="tagType"
@@ -80,6 +81,7 @@ export default function CreateTagsForm() {
                   form.setValue("name", "");
                 }}
                 defaultValue={field.value}
+                disabled={isSubmitting}
               >
                 <FormControl>
                   <SelectTrigger>
@@ -89,12 +91,25 @@ export default function CreateTagsForm() {
                 <SelectContent>
                   {tagTypes.enumValues.map((tagType) => (
                     <SelectItem key={tagType} value={tagType}>
-                      {tagType}
+                      {tagType === "Cuisine" ? (
+                        <div className="flex items-center">
+                          <CookingPot className="mr-2 h-4 w-4" />
+                          {tagType}
+                        </div>
+                      ) : (
+                        <div className="flex items-center">
+                          <UtensilsCrossed className="mr-2 h-4 w-4" />
+                          {tagType}
+                        </div>
+                      )}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              <FormDescription>Select a tag type.</FormDescription>
+              <FormDescription>
+                Choose between Cuisine (Italian, Mexican) or Meal (Breakfast,
+                Lunch)
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -110,23 +125,26 @@ export default function CreateTagsForm() {
                   placeholder={
                     form.watch("tagType") === "Cuisine"
                       ? "e.g. Italian, Mexican"
-                      : form.watch("tagType") === "Meal"
-                        ? "e.g. Breakfast, Lunch"
-                        : "Enter a Tag Name"
+                      : "e.g. Breakfast, Lunch"
                   }
                   {...field}
+                  disabled={isSubmitting}
                 />
               </FormControl>
               <FormDescription>
-                Enter a unique tag name. Cuisine examples: Italian, Mexican.
-                Meal examples: Breakfast, Lunch.
+                Enter a unique, descriptive name for this tag
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={isLoading || isSubmitting}>
-          Create New Tag
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full sm:w-auto"
+        >
+          {isSubmitting ? <LoadingSpinner className="mr-2" /> : null}
+          {isSubmitting ? "Creating..." : "Create Tag"}
         </Button>
       </form>
     </Form>
