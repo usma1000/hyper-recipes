@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, Suspense } from "react";
+import { useState, useMemo, useCallback } from "react";
 import RecipesCarousel from "./RecipesCarousel";
 import RecipeCardSkeleton from "./RecipeCardSkeleton";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,7 @@ import {
   UtensilsCrossed,
   Globe,
   Leaf,
+  Loader2,
 } from "lucide-react";
 
 type TaggedRecipesProps = {
@@ -53,6 +54,12 @@ export default function TaggedRecipes({
     name: string;
     tagType: string;
   } | null>(null);
+  const [isChanging, setIsChanging] = useState(false);
+
+  // Cache rendered carousels to prevent re-rendering
+  const [renderedCarousels, setRenderedCarousels] = useState<
+    Record<number, JSX.Element>
+  >({});
 
   // Filter tags to only include those with recipes
   const tagsWithRecipes = useMemo(() => {
@@ -88,6 +95,38 @@ export default function TaggedRecipes({
         return <Leaf className="mr-2 h-4 w-4" />;
       default:
         return null;
+    }
+  };
+
+  // Create cached carousel
+  const getOrCreateCarousel = useCallback(
+    (tagId: number) => {
+      if (!renderedCarousels[tagId]) {
+        setRenderedCarousels((prev) => ({
+          ...prev,
+          [tagId]: <RecipesCarousel recipes={recipesByTag[tagId] || []} />,
+        }));
+      }
+      return renderedCarousels[tagId];
+    },
+    [recipesByTag, renderedCarousels],
+  );
+
+  // Handle tag selection
+  const handleSelectTag = (tag: typeof selectedTag) => {
+    setOpen(false);
+
+    if (tag?.id !== selectedTag?.id) {
+      // Only show loading when changing to a new tag
+      setIsChanging(true);
+
+      // Simulate a short delay to prevent flickering
+      setTimeout(() => {
+        setSelectedTag(tag);
+        // Pre-render the carousel if needed
+        if (tag) getOrCreateCarousel(tag.id);
+        setIsChanging(false);
+      }, 100);
     }
   };
 
@@ -127,10 +166,7 @@ export default function TaggedRecipes({
                           <CommandItem
                             key={tag.id}
                             value={`${tag.tagType}-${tag.name}`}
-                            onSelect={() => {
-                              setSelectedTag(tag);
-                              setOpen(false);
-                            }}
+                            onSelect={() => handleSelectTag(tag)}
                           >
                             <Check
                               className={cn(
@@ -155,10 +191,7 @@ export default function TaggedRecipes({
                           <CommandItem
                             key={tag.id}
                             value={`${tag.tagType}-${tag.name}`}
-                            onSelect={() => {
-                              setSelectedTag(tag);
-                              setOpen(false);
-                            }}
+                            onSelect={() => handleSelectTag(tag)}
                           >
                             <Check
                               className={cn(
@@ -182,10 +215,7 @@ export default function TaggedRecipes({
                         <CommandItem
                           key={tag.id}
                           value={`${tag.tagType}-${tag.name}`}
-                          onSelect={() => {
-                            setSelectedTag(tag);
-                            setOpen(false);
-                          }}
+                          onSelect={() => handleSelectTag(tag)}
                         >
                           <Check
                             className={cn(
@@ -212,19 +242,18 @@ export default function TaggedRecipes({
           </div>
         )}
       </CardHeader>
-      <CardContent className="p-6">
+      <CardContent className="min-h-[250px] p-6">
         {selectedTag ? (
-          <Suspense
-            fallback={
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {[...Array(3)].map((_, i) => (
-                  <RecipeCardSkeleton key={i} />
-                ))}
-              </div>
-            }
-          >
-            <RecipesCarousel recipes={recipesByTag[selectedTag.id] || []} />
-          </Suspense>
+          isChanging ? (
+            <div className="flex h-48 flex-col items-center justify-center rounded-lg border border-dashed bg-gray-50/50 p-12 text-center">
+              <Loader2 className="h-8 w-8 animate-spin text-amber-600" />
+              <p className="mt-2 text-sm text-slate-500">Loading recipes...</p>
+            </div>
+          ) : selectedTag.id in renderedCarousels ? (
+            renderedCarousels[selectedTag.id]
+          ) : (
+            getOrCreateCarousel(selectedTag.id)
+          )
         ) : (
           <div className="flex h-48 flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50 p-12 text-center">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-100">
