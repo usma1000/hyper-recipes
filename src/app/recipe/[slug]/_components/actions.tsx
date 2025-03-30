@@ -36,8 +36,19 @@ export async function onIngredientSubmit(
 }
 
 export async function onSaveSteps(recipeId: number, steps: string) {
-  await saveStepsForRecipeId(recipeId, steps);
-  return { success: true };
+  try {
+    if (!recipeId) {
+      throw new Error("Recipe ID is required");
+    }
+    await saveStepsForRecipeId(recipeId, steps);
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to save steps:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error occurred",
+    };
+  }
 }
 
 export async function onPublishRecipe(recipeId: number, publish: boolean) {

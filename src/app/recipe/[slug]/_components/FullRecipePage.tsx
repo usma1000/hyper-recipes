@@ -9,7 +9,7 @@ import {
 } from "~/server/queries";
 import Image from "next/image";
 import Link from "next/link";
-import { AlertTriangle, ArrowLeft, ImageIcon, Soup, Star } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Soup, Star, Pencil } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -21,7 +21,6 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SignedIn } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
-import FullRecipeSheet from "./FullRecipeSheet";
 import StepsEditor from "./StepsEditor";
 import { EditorRoot } from "novel";
 import { onPublishRecipe } from "./actions";
@@ -94,7 +93,19 @@ export default async function FullRecipePage({
             >
               <ArrowLeft size={16} className="mr-2" /> Back
             </Link>
-            <SignedIn>{isAdmin && <FullRecipeSheet recipeId={id} />}</SignedIn>
+            <SignedIn>
+              {isAdmin && (
+                <Link
+                  href={`/recipe/${slug}/edit`}
+                  className={buttonVariants({
+                    variant: "outline",
+                    size: "sm",
+                  })}
+                >
+                  <Pencil size={16} className="mr-2" /> Edit Recipe
+                </Link>
+              )}
+            </SignedIn>
           </div>
           <div className="flex flex-col gap-8">
             <SignedIn>
@@ -119,9 +130,6 @@ export default async function FullRecipePage({
             >
               <Ingredients ingredients={ingredients} showCheckboxes={true} />
             </Suspense>
-            <SignedIn>
-              {isAdmin && <DangerZoneDialog recipe={recipe} />}
-            </SignedIn>
           </div>
         </div>
         <div className="flex grow-[999] basis-0 flex-col gap-8">
@@ -234,7 +242,7 @@ export default async function FullRecipePage({
               </CardHeader>
               <CardContent>
                 <EditorRoot>
-                  <StepsEditor steps={steps} isAdmin={isAdmin} />
+                  <StepsEditor steps={steps} isAdmin={false} recipeId={id} />
                 </EditorRoot>
               </CardContent>
             </Card>

@@ -1,4 +1,3 @@
-import "server-only";
 import { db } from "../db";
 import { auth } from "@clerk/nextjs/server";
 import { and, eq, inArray } from "drizzle-orm";

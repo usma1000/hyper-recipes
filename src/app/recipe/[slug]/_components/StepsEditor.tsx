@@ -9,7 +9,7 @@ import {
   EditorCommandList,
   EditorCommandItem,
 } from "novel";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { defaultExtensions } from "./extensions";
 import { useDebouncedCallback } from "use-debounce";
 import { slashCommand, suggestionItems } from "./slash-command";
@@ -19,25 +19,49 @@ import { handleCommandNavigation } from "novel/extensions";
 
 const extensions = [...defaultExtensions, slashCommand];
 
-export default function Editor({
+export default function StepsEditor({
   steps,
   isAdmin,
+  recipeId, // Add optional direct recipeId prop
 }: {
   steps: JSONContent;
   isAdmin: boolean;
+  recipeId?: number; // Optional recipe ID that can be passed directly
 }) {
   const [initialContent, setInitialContent] = useState<JSONContent>(steps);
   const [saveStatus, setSaveStatus] = useState("Saved");
   const [charsCount, setCharsCount] = useState();
+  const [internalRecipeId, setInternalRecipeId] = useState<number | null>(
+    recipeId || null,
+  );
 
-  const { id } = useParams();
+  // Get the slug from URL params
+  const params = useParams();
+
+  // Use the recipeId that was passed in directly
+  useEffect(() => {
+    if (recipeId) {
+      setInternalRecipeId(recipeId);
+    }
+  }, [recipeId]);
 
   const debouncedUpdates = useDebouncedCallback(
     async (editor: EditorInstance) => {
+      if (!internalRecipeId) {
+        console.error("Recipe ID is not available");
+        setSaveStatus("Error: Missing recipe ID");
+        return;
+      }
+
       const json = editor.getJSON();
       setCharsCount(editor.storage.characterCount.words());
-      await onSaveSteps(Number(id), JSON.stringify(json));
-      return setSaveStatus("Saved");
+      try {
+        await onSaveSteps(internalRecipeId, JSON.stringify(json));
+        setSaveStatus("Saved");
+      } catch (error) {
+        console.error("Failed to save steps:", error);
+        setSaveStatus("Error saving");
+      }
     },
     500,
   );
@@ -76,8 +100,10 @@ export default function Editor({
         initialContent={initialContent}
         extensions={extensions}
         onUpdate={({ editor }) => {
-          debouncedUpdates(editor);
-          setSaveStatus("Unsaved");
+          if (isAdmin) {
+            debouncedUpdates(editor);
+            setSaveStatus("Unsaved");
+          }
         }}
         editable={isAdmin}
         editorProps={{
