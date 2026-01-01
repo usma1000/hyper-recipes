@@ -10,6 +10,7 @@ import {
   updateRecipeHeroImage,
   getRecipe,
   getUnpublishedRecipes,
+  getRecipeIdFromSlug,
 } from "~/server/queries/recipes";
 
 export async function fetchAllRecipeNames() {
@@ -52,4 +53,8 @@ export async function fetchRecipe(id: number) {
 
 export async function fetchUnpublishedRecipes() {
   return await getUnpublishedRecipes();
+}
+
+export async function getRecipeIdBySlug(slug: string) {
+  return await getRecipeIdFromSlug(slug);
 }

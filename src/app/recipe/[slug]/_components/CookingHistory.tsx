@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -15,6 +18,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import CookingTimer from "./CookingTimer";
+import { fetchCookingHistory } from "~/app/_actions/cookingHistory";
+import { getRecipeIdBySlug } from "~/app/_actions/recipes";
 
 type Cook = {
   date: string;
@@ -22,13 +27,6 @@ type Cook = {
   rating: number;
   hasNotes: boolean;
 };
-
-const dummyData: Cook[] = [
-  { date: "2024-01-15", time: "45m", rating: 4.5, hasNotes: true },
-  { date: "2023-12-24", time: "50m", rating: 3.5, hasNotes: false },
-  { date: "2023-11-30", time: "40m", rating: 5, hasNotes: true },
-  { date: "2023-10-12", time: "55m", rating: 3, hasNotes: true },
-];
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -52,16 +50,46 @@ interface CookingHistoryProps {
 }
 
 export default function CookingHistory({ recipeSlug }: CookingHistoryProps) {
-  const hasPreviousCooks = dummyData.length > 0;
+  const [cooks, setCooks] = useState<Cook[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadHistory() {
+      try {
+        const recipeId = await getRecipeIdBySlug(recipeSlug);
+        const sessions = await fetchCookingHistory(recipeId);
+
+        const transformedCooks: Cook[] = sessions.map((session) => ({
+          date: session.cookedAt.toISOString(),
+          time: `${session.timeMinutes}m`,
+          rating: session.rating,
+          hasNotes: !!session.notes,
+        }));
+
+        setCooks(transformedCooks);
+      } catch (error) {
+        console.error("Failed to fetch cooking history:", error);
+        setCooks([]);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadHistory();
+  }, [recipeSlug]);
+
+  const hasPreviousCooks = cooks.length > 0;
 
   return (
     <Card>
       <CardHeader className="space-y-1.5">
         <CardTitle>Cook Tracker</CardTitle>
         <CardDescription>
-          {hasPreviousCooks
-            ? `Cooked ${dummyData.length} ${dummyData.length === 1 ? "time" : "times"}`
-            : "Ready to cook?"}
+          {isLoading
+            ? "Loading..."
+            : hasPreviousCooks
+              ? `Cooked ${cooks.length} ${cooks.length === 1 ? "time" : "times"}`
+              : "Ready to cook?"}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -71,7 +99,7 @@ export default function CookingHistory({ recipeSlug }: CookingHistoryProps) {
               <AccordionTrigger className="py-2">History</AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-2">
-                  {dummyData.map((cook, i) => (
+                  {cooks.map((cook, i) => (
                     <div
                       key={i}
                       className="flex flex-col space-y-1 border-b border-slate-100 pb-2 last:border-0"

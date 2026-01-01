@@ -24,10 +24,11 @@ type TimerState = {
 
 export default function CookingTimer({ recipeSlug }: { recipeSlug: string }) {
   const router = useRouter();
+  const timerKey = `cookingTimer-${recipeSlug}`;
   const [timerState, setTimerState] = useState<TimerState>(() => {
     // Try to restore state from localStorage on initial load
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("cookingTimer");
+      const saved = localStorage.getItem(timerKey);
       if (saved) {
         const parsed = JSON.parse(saved);
         const elapsed = Math.floor((Date.now() - parsed.lastTickTime) / 1000);
@@ -60,13 +61,13 @@ export default function CookingTimer({ recipeSlug }: { recipeSlug: string }) {
             lastTickTime: Date.now(),
           };
           // Save to localStorage on each tick
-          localStorage.setItem("cookingTimer", JSON.stringify(newState));
+          localStorage.setItem(timerKey, JSON.stringify(newState));
           return newState;
         });
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [isRunning]);
+  }, [isRunning, timerKey]);
 
   const formatTime = (totalSeconds: number) => {
     const hours = Math.floor(totalSeconds / 3600);
@@ -84,20 +85,20 @@ export default function CookingTimer({ recipeSlug }: { recipeSlug: string }) {
       startTime: timerState.seconds === 0 ? Date.now() : timerState.startTime,
     };
     setTimerState(newState);
-    localStorage.setItem("cookingTimer", JSON.stringify(newState));
+    localStorage.setItem(timerKey, JSON.stringify(newState));
   };
 
   const handlePause = () => {
     const newState = { ...timerState, isRunning: false };
     setTimerState(newState);
-    localStorage.setItem("cookingTimer", JSON.stringify(newState));
+    localStorage.setItem(timerKey, JSON.stringify(newState));
   };
 
   const handleStop = () => setShowConfirmStop(true);
 
   const confirmStop = () => {
     const roundedMinutes = Math.round(seconds / 60);
-    localStorage.removeItem("cookingTimer");
+    localStorage.removeItem(timerKey);
     setShowConfirmStop(false);
     router.push(`/recipe/${recipeSlug}/rate?time=${roundedMinutes}`);
   };
