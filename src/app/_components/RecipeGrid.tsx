@@ -22,14 +22,14 @@ export function RecipeGrid({ recipes, columns = 3 }: RecipeGridProps): JSX.Eleme
 
   if (!recipes || recipes.length === 0) {
     return (
-      <div className="py-12 text-center text-slate-500">
-        No recipes found.
+      <div className="flex min-h-[200px] items-center justify-center rounded-2xl border border-dashed border-neutral-200 bg-neutral-50/50 dark:border-neutral-800 dark:bg-neutral-900/50">
+        <p className="text-[15px] text-neutral-400 dark:text-neutral-500">No recipes found</p>
       </div>
     );
   }
 
   return (
-    <div className={`grid gap-5 ${gridCols[columns]}`}>
+    <div className={`grid gap-6 ${gridCols[columns]}`}>
       {recipes.map((recipe) => (
         <Suspense key={recipe.id} fallback={<RecipeCardSkeleton />}>
           <RecipeCard recipe={recipe} />
@@ -58,11 +58,10 @@ export function RecipeGridSkeleton({
   };
 
   return (
-    <div className={`grid gap-5 ${gridCols[columns]}`}>
+    <div className={`grid gap-6 ${gridCols[columns]}`}>
       {[...Array(count)].map((_, i) => (
         <RecipeCardSkeleton key={i} />
       ))}
     </div>
   );
 }
-

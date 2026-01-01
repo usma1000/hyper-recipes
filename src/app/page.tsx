@@ -55,7 +55,7 @@ export default async function HomePage(): Promise<JSX.Element> {
           {/* Compact Hero - outside container for full width */}
           <CompactHero />
           
-          <div className="container space-y-10 py-8">
+          <div className="container space-y-16 py-12">
             {/* Recipe Grid with Category Pills */}
             <Suspense fallback={<RecipeGridSkeleton count={9} />}>
               <FilterableRecipeSection

@@ -54,8 +54,13 @@ export function FilterableRecipeSection({
 
   return (
     <section id="recipes" className="scroll-mt-8">
-      <div className="mb-6">
-        <h2 className="mb-4 text-xl font-semibold text-slate-900">Browse Recipes</h2>
+      <div className="mb-8">
+        <h2 className="mb-1 text-xl font-semibold tracking-tight text-neutral-900 dark:text-white">
+          Browse Recipes
+        </h2>
+        <p className="mb-5 text-[15px] text-neutral-500 dark:text-neutral-400">
+          Explore our collection of curated recipes
+        </p>
         <CategoryPills
           tags={tagsWithRecipes}
           onSelect={setSelectedTagId}
@@ -63,7 +68,7 @@ export function FilterableRecipeSection({
         />
       </div>
 
-      <div className="space-y-5">
+      <div className="space-y-6">
         <RecipeGrid recipes={firstHalf} />
         
         {showSignupPrompt && firstHalf.length >= 6 && (
@@ -79,4 +84,3 @@ export function FilterableRecipeSection({
     </section>
   );
 }
-

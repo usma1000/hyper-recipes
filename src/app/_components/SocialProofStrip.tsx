@@ -30,19 +30,18 @@ const STATS: StatItem[] = [
  */
 export function SocialProofStrip(): JSX.Element {
   return (
-    <div className="flex items-center justify-center gap-8 py-6 md:gap-16">
+    <div className="flex items-center justify-center gap-12 border-y border-neutral-100 py-8 dark:border-neutral-800 md:gap-20">
       {STATS.map((stat) => (
-        <div key={stat.label} className="flex items-center gap-2 text-slate-600">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-50 text-amber-600">
+        <div key={stat.label} className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
             {stat.icon}
           </div>
           <div>
-            <p className="font-semibold text-slate-900">{stat.value}</p>
-            <p className="text-xs text-slate-500">{stat.label}</p>
+            <p className="text-[15px] font-semibold text-neutral-900 dark:text-white">{stat.value}</p>
+            <p className="text-[13px] text-neutral-400 dark:text-neutral-500">{stat.label}</p>
           </div>
         </div>
       ))}
     </div>
   );
 }
-
