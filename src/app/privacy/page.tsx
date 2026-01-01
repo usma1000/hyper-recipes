@@ -1,6 +1,6 @@
 export default function PrivacyPolicyPage() {
   return (
-    <div className="prose dark:prose-invert max-w-none">
+    <div className="container py-8 prose dark:prose-invert max-w-none">
       <h1>Privacy Policy</h1>
       <p>Last updated: March 9, 2024</p>
 

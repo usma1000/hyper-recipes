@@ -52,7 +52,7 @@ export default async function RecipePage({ params: { slug } }: Props) {
   const id = await getCachedRecipeIdFromSlug(slug);
 
   return (
-    <div>
+    <div className="container py-8">
       <Suspense fallback={<RecipeLoading />}>
         <FullRecipePage id={id} slug={slug} />
       </Suspense>

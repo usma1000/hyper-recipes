@@ -44,7 +44,7 @@ export default function RootLayout({
         >
           <ThemeProvider attribute="class">
             <TopNav />
-            <main className="container h-full grow py-8">{children}</main>
+            <main className="h-full grow">{children}</main>
             <Toaster />
             <Footer />
           </ThemeProvider>
