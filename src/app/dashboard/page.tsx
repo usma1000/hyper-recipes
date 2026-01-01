@@ -26,7 +26,7 @@ export default async function Page() {
   }));
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="container flex flex-col gap-6 py-8">
       <div className="flex items-center gap-2">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
       </div>
