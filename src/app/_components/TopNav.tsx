@@ -25,7 +25,10 @@ export default function TopNav(): JSX.Element {
   return (
     <div className="border-b border-slate-200 bg-white py-3 text-slate-950 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50 md:py-4">
       <nav className="container flex items-center justify-between gap-2 font-semibold md:gap-4">
-        <Link href="/" className="flex shrink-0 items-center gap-1 text-base font-semibold md:text-xl">
+        <Link
+          href="/"
+          className="flex shrink-0 items-center gap-1 text-base font-semibold md:text-xl"
+        >
           <Zap size={16} className="fill-yellow-300" />
           <span className="hidden sm:inline">Hyper Recipe</span>
           <span className="sm:hidden">Hyper</span>

@@ -110,7 +110,7 @@
   }
 
   p {
-    @apply leading-relaxed text-muted-foreground [&:not(:first-child)]:mt-4;
+    @apply leading-relaxed text-muted-foreground;
   }
 
   blockquote {
