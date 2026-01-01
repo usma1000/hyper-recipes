@@ -1,4 +1,4 @@
-import { serial, varchar, integer } from 'drizzle-orm/pg-core';
+import { serial, varchar, integer, index } from 'drizzle-orm/pg-core';
 import { createTable } from '../tableCreator';
 import { RecipesTable } from './recipes';
 import { relations } from 'drizzle-orm';
@@ -9,7 +9,10 @@ export const FavoritesTable = createTable(
     id: serial("id").primaryKey(),
     userId: varchar("user_id", { length: 256 }).notNull(),
     recipeId: integer("recipe_id").references(() => RecipesTable.id).notNull(),
-  }
+  },
+  (table) => ({
+    userRecipeIdx: index("favorites_user_recipe_idx").on(table.userId, table.recipeId),
+  })
 );
 
 // Define relations for FavoritesTable
