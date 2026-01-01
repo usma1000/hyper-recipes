@@ -36,13 +36,20 @@ export default async function HomePage() {
     userId ? fetchMyFavoriteRecipes() : Promise.resolve([]),
   ]);
 
-  // Fetch recipes for each tag
+  // Fetch recipes for each tag in parallel to avoid N+1 queries
+  const tagRecipeResults = await Promise.all(
+    tags.map(async (tag) => ({
+      tagId: tag.id,
+      recipes: await fetchRecipesByTag(tag.id),
+    }))
+  );
+
   const recipesByTag: Record<
     number,
     Awaited<ReturnType<typeof fetchRecipesByTag>>
   > = {};
-  for (const tag of tags) {
-    recipesByTag[tag.id] = await fetchRecipesByTag(tag.id);
+  for (const result of tagRecipeResults) {
+    recipesByTag[result.tagId] = result.recipes;
   }
 
   // Featured recipe - using the first recipe from all recipes

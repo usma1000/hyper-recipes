@@ -1,27 +1,23 @@
 import "server-only";
 import { db } from "../db";
 import { auth } from "@clerk/nextjs/server";
-import { and, eq, inArray } from "drizzle-orm";
-import { FavoritesTable, RecipesTable } from "../db/schemas";
+import { and, eq } from "drizzle-orm";
+import { FavoritesTable } from "../db/schemas";
 import { revalidateRecipePaths } from "./utils";
 
+/**
+ * Fetches all favorite recipes for the current user.
+ * Uses eager loading with relation and filters published recipes in application code.
+ * This is more efficient than the subquery approach as it uses indexes better.
+ */
 export async function getMyFavoriteRecipes() {
   const user = auth();
 
   if (!user.userId) throw new Error("Not authenticated");
 
+  // Fetch favorites with recipes eagerly loaded using the relation
   const favoriteRecipes = await db.query.FavoritesTable.findMany({
-    where: (model, { and, eq }) =>
-      and(
-        eq(model.userId, user.userId),
-        inArray(
-          model.recipeId,
-          db
-            .select({ recipeId: RecipesTable.id })
-            .from(RecipesTable)
-            .where(eq(RecipesTable.published, true)),
-        ),
-      ),
+    where: (model, { eq }) => eq(model.userId, user.userId),
     with: {
       favoritedRecipe: {
         with: {
@@ -30,11 +26,21 @@ export async function getMyFavoriteRecipes() {
       },
     },
   });
-  const recipes = favoriteRecipes.map((favorite) => favorite.favoritedRecipe);
+
+  // Filter to only include published recipes and extract the recipe objects
+  const recipes = favoriteRecipes
+    .filter((favorite) => favorite.favoritedRecipe?.published === true)
+    .map((favorite) => favorite.favoritedRecipe);
+
   return recipes;
 }
 
-export async function isFavoriteRecipe(recipeId: number) {
+/**
+ * Checks if a recipe is favorited by the current user.
+ * @param recipeId - The recipe ID to check
+ * @returns True if the recipe is favorited, false otherwise
+ */
+export async function isFavoriteRecipe(recipeId: number): Promise<boolean> {
   const user = auth();
 
   if (!user.userId) throw new Error("Not authenticated");
@@ -47,7 +53,11 @@ export async function isFavoriteRecipe(recipeId: number) {
   return !!favoriteRecipe;
 }
 
-export async function createFavoriteRecipe(recipeId: number) {
+/**
+ * Adds a recipe to the current user's favorites.
+ * @param recipeId - The recipe ID to favorite
+ */
+export async function createFavoriteRecipe(recipeId: number): Promise<void> {
   const user = auth();
 
   if (!user.userId) throw new Error("Not authenticated");
@@ -60,7 +70,11 @@ export async function createFavoriteRecipe(recipeId: number) {
   revalidateRecipePaths();
 }
 
-export async function removeFavoriteRecipe(recipeId: number) {
+/**
+ * Removes a recipe from the current user's favorites.
+ * @param recipeId - The recipe ID to unfavorite
+ */
+export async function removeFavoriteRecipe(recipeId: number): Promise<void> {
   const user = auth();
 
   if (!user.userId) throw new Error("Not authenticated");

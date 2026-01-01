@@ -1,15 +1,7 @@
-import {
-  createFavoriteRecipe,
-  getIngredientsForRecipe,
-  getAllTagsForRecipe,
-  getRecipe,
-  isFavoriteRecipe,
-  removeFavoriteRecipe,
-  getStepsByRecipeId,
-} from "~/server/queries";
+import { getFullRecipeById } from "~/server/queries";
 import Image from "next/image";
 import Link from "next/link";
-import { AlertTriangle, ArrowLeft, ImageIcon, Soup, Star } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Soup } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -26,11 +18,13 @@ import StepsEditor from "./StepsEditor";
 import { EditorRoot } from "novel";
 import { onPublishRecipe } from "./actions";
 import DangerZoneDialog from "./DangerZoneDialog";
-import { checkRole } from "~/utils/roles";
 import Ingredients from "../../../_components/Ingredients";
 import UploadImageDialog from "./ImageDialogue";
 import { Suspense } from "react";
 import CookingHistory from "./CookingHistory";
+import { type JSONContent } from "novel";
+import { FavoriteButton } from "./FavoriteButton";
+import { AdminWrapper } from "./AdminWrapper";
 
 export default async function FullRecipePage({
   id,
@@ -40,28 +34,22 @@ export default async function FullRecipePage({
   slug: string;
 }) {
   const { userId } = auth();
-  const isAdmin = await checkRole("admin");
 
-  const recipe = await getRecipe(id);
-  const ingredients = await getIngredientsForRecipe(id);
-  const tags = await getAllTagsForRecipe(recipe.id);
-  const steps = await getStepsByRecipeId(recipe.id);
-  let isFavorite = false;
+  // Fetch recipe with all relations in a single cached query
+  const fullRecipe = await getFullRecipeById(id);
 
-  if (userId) {
-    isFavorite = await isFavoriteRecipe(recipe.id);
+  // Access control for unpublished recipes
+  if (!fullRecipe.published && !userId) {
+    throw new Error("Recipe is unpublished.");
   }
 
-  async function toggleFavorite() {
-    "use server";
-    if (isFavorite) {
-      await removeFavoriteRecipe(recipe.id);
-    } else {
-      await createFavoriteRecipe(recipe.id);
-    }
-  }
+  // Extract data from the consolidated query result
+  const recipe = fullRecipe;
+  const ingredients = fullRecipe.ingredients;
+  const tags = fullRecipe.tags.map((t) => t.tag);
+  const steps = fullRecipe.steps as JSONContent;
 
-  async function publishRecipe() {
+  async function publishRecipe(): Promise<void> {
     "use server";
     await onPublishRecipe(recipe.id, true);
   }
@@ -94,7 +82,9 @@ export default async function FullRecipePage({
             >
               <ArrowLeft size={16} className="mr-2" /> Back
             </Link>
-            <SignedIn>{isAdmin && <FullRecipeSheet recipeId={id} />}</SignedIn>
+            <AdminWrapper>
+              <FullRecipeSheet recipeId={id} />
+            </AdminWrapper>
           </div>
           <div className="flex flex-col gap-8">
             <SignedIn>
@@ -119,9 +109,9 @@ export default async function FullRecipePage({
             >
               <Ingredients ingredients={ingredients} showCheckboxes={true} />
             </Suspense>
-            <SignedIn>
-              {isAdmin && <DangerZoneDialog recipe={recipe} />}
-            </SignedIn>
+            <AdminWrapper>
+              <DangerZoneDialog recipe={recipe} />
+            </AdminWrapper>
           </div>
         </div>
         <div className="flex grow-[999] basis-0 flex-col gap-8">
@@ -150,34 +140,26 @@ export default async function FullRecipePage({
                         className="rounded-lg"
                         style={{ objectFit: "cover" }}
                       />
-                      {isAdmin && (
+                      <AdminWrapper>
                         <div className="absolute right-4 top-4">
                           <UploadImageDialog recipeId={recipe.id} />
                         </div>
-                      )}
+                      </AdminWrapper>
                     </>
                   ) : (
                     <div className="relative flex h-full items-center justify-center rounded-lg bg-gray-200">
-                      {isAdmin && (
+                      <AdminWrapper>
                         <div className="absolute right-4 top-4">
                           <UploadImageDialog recipeId={recipe.id} />
                         </div>
-                      )}
+                      </AdminWrapper>
                       <Soup size={64} className="m-auto text-gray-400" />
                     </div>
                   )}
                 </div>
                 <div className="flex items-end gap-2">
                   <h1>{recipe.name}</h1>
-                  <SignedIn>
-                    <form action={toggleFavorite}>
-                      <Button type="submit" variant="ghost" size="sm">
-                        <Star
-                          className={`h-5 w-5 transition-all active:-translate-y-1 ${isFavorite ? "fill-amber-400" : ""}`}
-                        />
-                      </Button>
-                    </form>
-                  </SignedIn>
+                  <FavoriteButton recipeId={recipe.id} />
                 </div>
                 <div className="flex flex-row gap-2">
                   {tags
@@ -234,7 +216,7 @@ export default async function FullRecipePage({
               </CardHeader>
               <CardContent>
                 <EditorRoot>
-                  <StepsEditor steps={steps} isAdmin={isAdmin} />
+                  <StepsEditor steps={steps} />
                 </EditorRoot>
               </CardContent>
             </Card>

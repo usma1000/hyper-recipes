@@ -1,4 +1,4 @@
-import { integer, primaryKey } from 'drizzle-orm/pg-core';
+import { integer, primaryKey, index } from 'drizzle-orm/pg-core';
 import { createTable } from '../tableCreator';
 import { RecipesTable } from './recipes';
 import { TagsTable } from './tags';
@@ -10,11 +10,10 @@ export const RecipesToTagsTable = createTable(
     recipeId: integer("recipe_id").references(() => RecipesTable.id).notNull(),
     tagId: integer("tag_id").references(() => TagsTable.id).notNull(),
   },
-  table => {
-    return {
-      pk: primaryKey({ columns: [table.recipeId, table.tagId] }),
-    }
-  }
+  (table) => ({
+    pk: primaryKey({ columns: [table.recipeId, table.tagId] }),
+    tagIdx: index("recipes_to_tags_tag_idx").on(table.tagId),
+  })
 );
 
 // Define relations for RecipesToTagsTable

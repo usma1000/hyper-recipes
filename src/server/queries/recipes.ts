@@ -1,7 +1,7 @@
 import "server-only";
 import { db } from "../db";
 import { auth } from "@clerk/nextjs/server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, unstable_cache } from "next/cache";
 import { eq, count } from "drizzle-orm";
 import { type JSONContent } from "novel";
 import { RecipesTable } from "../db/schemas";
@@ -10,18 +10,28 @@ import { revalidateRecipePaths } from "./utils";
 
 type newRecipe = typeof RecipesTable.$inferInsert;
 
-export async function getRecipeIdFromSlug(slug: string) {
-  const recipe = await db.query.RecipesTable.findFirst({
-    where: (model, { eq }) => eq(model.slug, slug),
-    columns: {
-      id: true,
-    },
-  });
+/**
+ * Fetches recipe ID from slug with caching.
+ * Cache invalidated when recipes are updated.
+ * @param slug - The recipe slug
+ * @returns The recipe ID
+ */
+export const getRecipeIdFromSlug = unstable_cache(
+  async (slug: string): Promise<number> => {
+    const recipe = await db.query.RecipesTable.findFirst({
+      where: (model, { eq }) => eq(model.slug, slug),
+      columns: {
+        id: true,
+      },
+    });
 
-  if (!recipe) throw new Error("Recipe not found");
+    if (!recipe) throw new Error("Recipe not found");
 
-  return recipe.id;
-}
+    return recipe.id;
+  },
+  ["recipe-id-from-slug"],
+  { revalidate: 60, tags: ["recipes"] }
+);
 
 export async function createNewRecipe(recipe: newRecipe) {
   const user = auth();
@@ -47,41 +57,65 @@ export async function createNewRecipe(recipe: newRecipe) {
   return newRecipe;
 }
 
-export async function getAllRecipes() {
-  const recipes = await db.query.RecipesTable.findMany({
-    where: (model, { eq }) => eq(model.published, true),
-    orderBy: (model, { desc }) => desc(model.id),
-    with: {
-      heroImage: true,
-    },
-  });
-  return recipes;
-}
+/**
+ * Fetches all published recipes with hero images.
+ * Cached for 60 seconds, invalidated via "recipes" tag.
+ */
+export const getAllRecipes = unstable_cache(
+  async () => {
+    const recipes = await db.query.RecipesTable.findMany({
+      where: (model, { eq }) => eq(model.published, true),
+      orderBy: (model, { desc }) => desc(model.id),
+      with: {
+        heroImage: true,
+      },
+    });
+    return recipes;
+  },
+  ["all-recipes"],
+  { revalidate: 60, tags: ["recipes"] }
+);
 
-export async function getAllRecipeNames() {
-  const recipes = await db.query.RecipesTable.findMany({
-    where: (model, { eq }) => eq(model.published, true),
-    orderBy: (model, { desc }) => desc(model.name),
-    columns: {
-      id: true,
-      name: true,
-      slug: true,
-    },
-  });
-  return recipes;
-}
+/**
+ * Fetches all published recipe names for search.
+ * Cached for 60 seconds, invalidated via "recipes" tag.
+ */
+export const getAllRecipeNames = unstable_cache(
+  async () => {
+    const recipes = await db.query.RecipesTable.findMany({
+      where: (model, { eq }) => eq(model.published, true),
+      orderBy: (model, { desc }) => desc(model.name),
+      columns: {
+        id: true,
+        name: true,
+        slug: true,
+      },
+    });
+    return recipes;
+  },
+  ["all-recipe-names"],
+  { revalidate: 60, tags: ["recipes"] }
+);
 
-export async function getSliderRecipes() {
-  const recipes = await db.query.RecipesTable.findMany({
-    where: (model, { eq }) => eq(model.published, true),
-    orderBy: (model, { desc }) => desc(model.id),
-    limit: 6,
-    with: {
-      heroImage: true,
-    },
-  });
-  return recipes;
-}
+/**
+ * Fetches recipes for the home page slider.
+ * Cached for 60 seconds, invalidated via "recipes" tag.
+ */
+export const getSliderRecipes = unstable_cache(
+  async () => {
+    const recipes = await db.query.RecipesTable.findMany({
+      where: (model, { eq }) => eq(model.published, true),
+      orderBy: (model, { desc }) => desc(model.id),
+      limit: 6,
+      with: {
+        heroImage: true,
+      },
+    });
+    return recipes;
+  },
+  ["slider-recipes"],
+  { revalidate: 60, tags: ["recipes"] }
+);
 
 export async function getRecipe(id: number) {
   const recipe = await db.query.RecipesTable.findFirst({
@@ -99,19 +133,61 @@ export async function getRecipe(id: number) {
   return recipe;
 }
 
-export async function getRecipeNameAndDescription(id: number) {
-  const recipe = await db.query.RecipesTable.findFirst({
-    where: (model, { eq }) => eq(model.id, id),
-    columns: {
-      name: true,
-      description: true,
-    },
-  });
+/**
+ * Fetches a complete recipe with all relations in a single query.
+ * Includes: heroImage, ingredients (with ingredient details), and tags (with tag details).
+ * Note: This does NOT check auth for unpublished recipes - caller must handle access control.
+ * @param id - The recipe ID
+ */
+export const getFullRecipeById = unstable_cache(
+  async (id: number) => {
+    const recipe = await db.query.RecipesTable.findFirst({
+      where: (model, { eq }) => eq(model.id, id),
+      with: {
+        heroImage: true,
+        ingredients: {
+          with: {
+            ingredient: true,
+          },
+        },
+        tags: {
+          with: {
+            tag: true,
+          },
+        },
+      },
+    });
 
-  if (!recipe) throw new Error("Recipe not found");
+    if (!recipe) throw new Error("Recipe not found");
 
-  return recipe;
-}
+    return recipe;
+  },
+  ["full-recipe-by-id"],
+  { revalidate: 60, tags: ["recipes", "ingredients", "tags"] }
+);
+
+/**
+ * Fetches recipe name and description for metadata generation.
+ * Cached for 60 seconds, invalidated via "recipes" tag.
+ * @param id - The recipe ID
+ */
+export const getRecipeNameAndDescription = unstable_cache(
+  async (id: number) => {
+    const recipe = await db.query.RecipesTable.findFirst({
+      where: (model, { eq }) => eq(model.id, id),
+      columns: {
+        name: true,
+        description: true,
+      },
+    });
+
+    if (!recipe) throw new Error("Recipe not found");
+
+    return recipe;
+  },
+  ["recipe-name-description"],
+  { revalidate: 60, tags: ["recipes"] }
+);
 
 export async function updateRecipeNameAndDescription(
   id: number,
@@ -133,15 +209,24 @@ export async function updateRecipeNameAndDescription(
   revalidateRecipePaths();
 }
 
-export async function getStepsByRecipeId(id: number): Promise<JSONContent> {
-  const recipe = await db.query.RecipesTable.findFirst({
-    where: (model, { eq }) => eq(model.id, id),
-  });
+/**
+ * Fetches recipe steps by ID.
+ * Cached for 60 seconds, invalidated via "recipes" tag.
+ * @param id - The recipe ID
+ */
+export const getStepsByRecipeId = unstable_cache(
+  async (id: number): Promise<JSONContent> => {
+    const recipe = await db.query.RecipesTable.findFirst({
+      where: (model, { eq }) => eq(model.id, id),
+    });
 
-  if (!recipe) throw new Error("Recipe not found");
+    if (!recipe) throw new Error("Recipe not found");
 
-  return recipe.steps as JSONContent;
-}
+    return recipe.steps as JSONContent;
+  },
+  ["recipe-steps"],
+  { revalidate: 60, tags: ["recipes"] }
+);
 
 export async function saveStepsForRecipeId(id: number, steps: string) {
   const user = auth();

@@ -16,16 +16,17 @@ import { slashCommand, suggestionItems } from "./slash-command";
 import { useParams } from "next/navigation";
 import { onSaveSteps } from "./actions";
 import { handleCommandNavigation } from "novel/extensions";
+import { useUser } from "@clerk/nextjs";
 
 const extensions = [...defaultExtensions, slashCommand];
 
-export default function Editor({
-  steps,
-  isAdmin,
-}: {
+interface StepsEditorProps {
   steps: JSONContent;
-  isAdmin: boolean;
-}) {
+}
+
+export default function StepsEditor({ steps }: StepsEditorProps): JSX.Element {
+  const { user, isLoaded } = useUser();
+  const isAdmin = isLoaded && user?.publicMetadata?.role === "admin";
   const [initialContent, setInitialContent] = useState<JSONContent>(steps);
   const [saveStatus, setSaveStatus] = useState("Saved");
   const [charsCount, setCharsCount] = useState();
