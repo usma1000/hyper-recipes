@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Star, StarHalf } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { saveCookingSessionAction } from "~/app/_actions/cookingHistory";
+import { getRecipeIdBySlug } from "~/app/_actions/recipes";
 
 export default function RateRecipePage({
   params,
@@ -54,12 +56,38 @@ export default function RateRecipePage({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Save rating
-    router.push(`/recipe/${params.slug}`);
+
+    if (rating === 0) {
+      alert("Please provide a rating");
+      return;
+    }
+
+    const timeMinutes = parseInt(time, 10);
+    if (isNaN(timeMinutes) || timeMinutes < 1) {
+      alert("Please provide a valid cooking time");
+      return;
+    }
+
+    try {
+      const recipeId = await getRecipeIdBySlug(params.slug);
+      await saveCookingSessionAction(
+        recipeId,
+        rating,
+        timeMinutes,
+        notes || undefined,
+      );
+      router.push(`/recipe/${params.slug}`);
+    } catch (error) {
+      console.error("Failed to save cooking session:", error);
+      alert("Failed to save rating. Please try again.");
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="container mx-auto max-w-md space-y-8 py-8">
+    <form
+      onSubmit={handleSubmit}
+      className="container mx-auto max-w-md space-y-8 py-8"
+    >
       <Card>
         <CardHeader>
           <CardTitle>Rate Your Cook</CardTitle>

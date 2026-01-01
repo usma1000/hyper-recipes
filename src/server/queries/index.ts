@@ -5,3 +5,4 @@ export * from "./favorites";
 export * from "./tags";
 export * from "./ingredients";
 export * from "./gamification";
+export * from "./cookingHistory";
