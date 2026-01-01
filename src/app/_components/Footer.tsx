@@ -1,5 +1,6 @@
 import { Zap } from "lucide-react";
 import Link from "next/link";
+import { ModeToggle } from "./ModeToggle";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -21,6 +22,7 @@ export default function Footer() {
               Terms and Conditions
             </Link>
           </span>
+          <ModeToggle />
         </div>
       </div>
     </footer>
