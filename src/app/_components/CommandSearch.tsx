@@ -46,7 +46,7 @@ export function CommandSearch() {
   return (
     <>
       <button
-        className="relative inline-flex h-8 w-full items-center justify-start whitespace-nowrap rounded-[0.5rem] border border-input bg-muted/50 px-4 py-2 text-sm font-normal text-muted-foreground shadow-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 sm:pr-12 md:w-40 lg:w-64"
+        className="relative inline-flex h-8 w-full max-w-[140px] items-center justify-start whitespace-nowrap rounded-[0.5rem] border border-input bg-muted/50 px-3 py-2 text-sm font-normal text-muted-foreground shadow-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 sm:max-w-xs sm:pr-12 md:w-40 lg:w-64"
         onClick={handleOpen}
       >
         <span className="hidden lg:inline-flex">Search recipes...</span>
