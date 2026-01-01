@@ -82,7 +82,7 @@ export default async function HomePage(): Promise<JSX.Element> {
 
       {/* Logged-In Homepage */}
       <SignedIn>
-        <div className="container space-y-8 py-4">
+        <div className="container space-y-6 py-6">
           {/* Greeting Bar */}
           <GreetingBar />
 

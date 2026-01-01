@@ -50,34 +50,35 @@ export function GreetingBar(): JSX.Element {
   return (
     <div className="flex items-center justify-between py-6">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-900 md:text-3xl">
+        <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white md:text-3xl">
           {greeting}, {displayName}
         </h1>
-        <p className="mt-1 text-slate-500">What are you cooking today?</p>
+        <p className="mt-1 text-[15px] text-neutral-500 dark:text-neutral-400">
+          What are you cooking today?
+        </p>
       </div>
       
       <Link 
         href="/kitchen-journey" 
-        className="flex items-center gap-3 rounded-full bg-slate-50 px-4 py-2 transition-colors hover:bg-slate-100"
+        className="flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-2.5 transition-all hover:border-neutral-300 hover:shadow-sm dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700"
       >
         <div
           className="relative flex h-10 w-10 items-center justify-center rounded-full"
           style={{
             background: isLoading
-              ? "rgb(226 232 240)"
-              : `conic-gradient(rgb(34 197 94) ${progress.percentage}%, rgb(226 232 240) ${progress.percentage}%)`,
+              ? "rgb(229 231 235)"
+              : `conic-gradient(rgb(34 197 94) ${progress.percentage}%, rgb(229 231 235) ${progress.percentage}%)`,
           }}
         >
-          <div className="absolute inset-[2px] flex items-center justify-center rounded-full bg-white">
-            <Trophy className="h-5 w-5 fill-yellow-300" />
+          <div className="absolute inset-[2px] flex items-center justify-center rounded-full bg-white dark:bg-neutral-900">
+            <Trophy className="h-5 w-5 text-amber-500" />
           </div>
         </div>
         <div className="hidden sm:block">
-          <p className="text-sm font-medium text-slate-900">Level {progress.level}</p>
-          <p className="text-xs text-slate-500">Kitchen Journey</p>
+          <p className="text-sm font-medium text-neutral-900 dark:text-white">Level {progress.level}</p>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">Kitchen Journey</p>
         </div>
       </Link>
     </div>
   );
 }
-

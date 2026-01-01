@@ -17,9 +17,11 @@ export function FavoritesSection({ favorites }: FavoritesSectionProps): JSX.Elem
   if (!favorites || favorites.length === 0) {
     return (
       <section id="favorites" className="py-4">
-        <p className="text-sm text-slate-500">
-          No favorites yet — browse below to find recipes you love
-        </p>
+        <div className="flex items-center justify-center rounded-2xl border border-dashed border-neutral-200 bg-neutral-50/50 py-8 dark:border-neutral-800 dark:bg-neutral-900/50">
+          <p className="text-[15px] text-neutral-500 dark:text-neutral-400">
+            No favorites yet — browse below to find recipes you love
+          </p>
+        </div>
       </section>
     );
   }
@@ -27,10 +29,10 @@ export function FavoritesSection({ favorites }: FavoritesSectionProps): JSX.Elem
   return (
     <section id="favorites" className="py-4">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-slate-900">Your Favorites</h2>
+        <h2 className="text-lg font-semibold tracking-tight text-neutral-900 dark:text-white">Your Favorites</h2>
         <Link
           href="/favorites"
-          className="flex items-center gap-1 text-sm font-medium text-amber-600 hover:text-amber-700"
+          className="flex items-center gap-1 text-[14px] font-medium text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
         >
           See all
           <ArrowRight className="h-4 w-4" />
@@ -57,8 +59,8 @@ export function FavoritesSectionSkeleton(): JSX.Element {
   return (
     <section className="py-4">
       <div className="mb-4 flex items-center justify-between">
-        <div className="h-6 w-32 animate-pulse rounded bg-slate-200" />
-        <div className="h-5 w-16 animate-pulse rounded bg-slate-200" />
+        <div className="h-6 w-32 animate-pulse rounded-md bg-neutral-100 dark:bg-neutral-800" />
+        <div className="h-5 w-16 animate-pulse rounded-md bg-neutral-100 dark:bg-neutral-800" />
       </div>
       <div className="flex gap-4 overflow-x-auto pb-2">
         {[...Array(4)].map((_, i) => (
@@ -70,4 +72,3 @@ export function FavoritesSectionSkeleton(): JSX.Element {
     </section>
   );
 }
-
