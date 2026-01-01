@@ -84,7 +84,10 @@ export default function RateRecipePage({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="container mx-auto max-w-md space-y-8 py-8">
+    <form
+      onSubmit={handleSubmit}
+      className="container mx-auto max-w-md space-y-8 py-8"
+    >
       <Card>
         <CardHeader>
           <CardTitle>Rate Your Cook</CardTitle>

@@ -49,4 +49,3 @@ export async function saveCookingSession(
 
   revalidatePath(`/recipe/[slug]`, "page");
 }
-
