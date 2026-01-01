@@ -8,7 +8,6 @@ import { fetchMyFavoriteRecipes } from "./_actions/favorites";
 
 import { CompactHero } from "./_components/CompactHero";
 import { GreetingBar } from "./_components/GreetingBar";
-import { QuickActions } from "./_components/QuickActions";
 import { FavoritesSection, FavoritesSectionSkeleton } from "./_components/FavoritesSection";
 import { FilterableRecipeSection } from "./_components/FilterableRecipeSection";
 import { FeaturedRecipeSpotlight } from "./_components/FeaturedRecipeSpotlight";
@@ -85,9 +84,6 @@ export default async function HomePage(): Promise<JSX.Element> {
         <div className="container space-y-6 py-6">
           {/* Greeting Bar */}
           <GreetingBar />
-
-          {/* Quick Actions */}
-          <QuickActions />
 
           {/* Favorites Section */}
           <Suspense fallback={<FavoritesSectionSkeleton />}>
