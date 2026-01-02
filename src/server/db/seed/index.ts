@@ -1,4 +1,5 @@
 import { seedTags } from "./tags";
+import { seedIngredients } from "./ingredients";
 
 /**
  * Main seed function that runs all seed operations.
@@ -11,6 +12,7 @@ export async function seed(): Promise<void> {
 
   try {
     await seedTags();
+    await seedIngredients();
     console.log("Database seed completed successfully.");
   } catch (error) {
     console.error("Error seeding database:", error);
