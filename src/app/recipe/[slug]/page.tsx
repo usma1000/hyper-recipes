@@ -7,6 +7,7 @@ import {
 import FullRecipePage from "./_components/FullRecipePage";
 import RecipeLoading from "./loading";
 import { env } from "~/env";
+import { RecipeViewTracker } from "~/app/_components/logged-in-homepage/RecipeViewTracker";
 
 /**
  * Enable ISR with 60 second revalidation for recipe pages.
@@ -97,6 +98,7 @@ export default async function RecipePage({ params: { slug } }: Props) {
 
   return (
     <div className="container py-8">
+      <RecipeViewTracker recipeId={id} />
       <Suspense fallback={<RecipeLoading />}>
         <FullRecipePage id={id} slug={slug} />
       </Suspense>
