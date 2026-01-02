@@ -2,7 +2,6 @@ import { getFullRecipeById, getAllRecipes } from "~/server/queries";
 import { auth } from "@clerk/nextjs/server";
 import { type JSONContent } from "novel";
 import { FullRecipePageClient } from "./FullRecipePage";
-import { onPublishRecipe } from "./actions";
 import FullRecipeSheet from "./FullRecipeSheet";
 import DangerZoneDialog from "./DangerZoneDialog";
 
@@ -73,16 +72,10 @@ export default async function FullRecipePageServer({
     })),
   };
 
-  async function handlePublish(): Promise<void> {
-    "use server";
-    await onPublishRecipe(id, true);
-  }
-
   return (
     <FullRecipePageClient
       recipe={recipe}
       relatedRecipes={relatedRecipes}
-      onPublish={handlePublish}
       adminEditSheet={<FullRecipeSheet recipeId={id} />}
       dangerZoneDialog={
         <DangerZoneDialog

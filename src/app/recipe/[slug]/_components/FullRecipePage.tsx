@@ -22,6 +22,7 @@ import { MobileStickyBar } from "./MobileStickyBar";
 import { MoreLikeThis } from "./MoreLikeThis";
 import { AdminWrapper } from "./AdminWrapper";
 import { checkIfFavorite, toggleFavorite } from "~/app/_actions/favorites";
+import { onPublishRecipe } from "./actions";
 
 interface FullRecipe {
   id: number;
@@ -66,7 +67,6 @@ interface RelatedRecipe {
 interface FullRecipePageProps {
   recipe: FullRecipe;
   relatedRecipes: RelatedRecipe[];
-  onPublish: () => Promise<void>;
   adminEditSheet?: ReactNode;
   dangerZoneDialog?: ReactNode;
 }
@@ -80,14 +80,12 @@ const DEFAULT_SERVINGS = 4;
  * Mobile: Single column with sticky bottom action bar.
  * @param recipe - The full recipe data
  * @param relatedRecipes - Related recipes for "More like this" section
- * @param onPublish - Server action to publish the recipe
  * @param adminEditSheet - Server component for admin edit functionality
  * @param dangerZoneDialog - Server component for danger zone dialog
  */
 export function FullRecipePageClient({
   recipe,
   relatedRecipes,
-  onPublish,
   adminEditSheet,
   dangerZoneDialog,
 }: FullRecipePageProps): JSX.Element {
@@ -139,7 +137,7 @@ export function FullRecipePageClient({
             />
             This recipe is not yet published. It will not be visible to others.
           </div>
-          <form action={onPublish}>
+          <form action={() => onPublishRecipe(recipe.id, true)}>
             <Button type="submit">Publish</Button>
           </form>
         </div>
