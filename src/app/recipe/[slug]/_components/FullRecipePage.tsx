@@ -24,6 +24,7 @@ import { Suspense } from "react";
 import CookingHistory from "./CookingHistory";
 import { type JSONContent } from "novel";
 import { FavoriteButton } from "./FavoriteButton";
+import { AddToCollectionButton } from "./AddToCollectionButton";
 import { AdminWrapper } from "./AdminWrapper";
 
 export default async function FullRecipePage({
@@ -160,6 +161,7 @@ export default async function FullRecipePage({
                 <div className="flex items-end gap-2">
                   <h1>{recipe.name}</h1>
                   <FavoriteButton recipeId={recipe.id} />
+                  <AddToCollectionButton recipeId={recipe.id} />
                 </div>
                 <div className="flex flex-row gap-2">
                   {tags
