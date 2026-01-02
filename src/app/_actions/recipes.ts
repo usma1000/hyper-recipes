@@ -2,6 +2,7 @@
 
 import {
   getAllRecipeNames,
+  getAllRecipes,
   getSliderRecipes,
   createNewRecipe,
   updateRecipeNameAndDescription,
@@ -19,6 +20,14 @@ export async function fetchAllRecipeNames() {
 
 export async function fetchSliderRecipes() {
   return await getSliderRecipes();
+}
+
+/**
+ * Fetches all published recipes for the explore grid.
+ * @returns Array of all published recipes with hero images
+ */
+export async function fetchAllRecipes() {
+  return await getAllRecipes();
 }
 
 export async function createRecipe(

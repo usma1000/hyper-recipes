@@ -1,8 +1,7 @@
-import { Suspense } from "react";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 
-import { fetchSliderRecipes } from "./_actions/recipes";
+import { fetchAllRecipes } from "./_actions/recipes";
 import { fetchAllTagsByType, fetchRecipesByTag } from "./_actions/tags";
 import { fetchMyFavoriteRecipes } from "./_actions/favorites";
 import { fetchMyCollections } from "./_actions/collections";
@@ -12,22 +11,18 @@ import { AdaptiveRecipePreview } from "./_components/AdaptiveRecipePreview";
 import { WhyBetterSection } from "./_components/WhyBetterSection";
 import { SocialProofStrip } from "./_components/SocialProofStrip";
 import { FooterCTA } from "./_components/FooterCTA";
-import { GreetingBar } from "./_components/GreetingBar";
-import { FavoritesSection, FavoritesSectionSkeleton } from "./_components/FavoritesSection";
-import { CollectionsSection } from "./_components/CollectionsSection";
-import { FilterableRecipeSection } from "./_components/FilterableRecipeSection";
-import { RecipeGridSkeleton } from "./_components/RecipeGrid";
+import { LoggedInHomepage } from "./_components/logged-in-homepage";
 
 /**
  * Homepage with distinct layouts for anonymous and logged-in users.
  * Anonymous: Product-focused landing page with adaptive recipe preview
- * Logged-in: Greeting bar, quick actions, favorites, browseable grid
+ * Logged-in: Two-column layout with Cook Now spotlight, Continue row, Explore grid, and sidebar
  */
 export default async function HomePage(): Promise<JSX.Element> {
   const { userId } = auth();
 
   const [allRecipes, tags, myFavoriteRecipes, myCollections] = await Promise.all([
-    fetchSliderRecipes(),
+    fetchAllRecipes(),
     fetchAllTagsByType(),
     userId ? fetchMyFavoriteRecipes() : Promise.resolve([]),
     userId ? fetchMyCollections() : Promise.resolve([]),
@@ -71,28 +66,15 @@ export default async function HomePage(): Promise<JSX.Element> {
         </div>
       </SignedOut>
 
-      {/* Logged-In Homepage */}
+      {/* Logged-In Homepage - Two-column layout per spec */}
       <SignedIn>
-        <div className="container space-y-6 py-6">
-          <GreetingBar />
-
-          <Suspense fallback={<FavoritesSectionSkeleton />}>
-            <FavoritesSection favorites={myFavoriteRecipes ?? []} />
-          </Suspense>
-
-          <Suspense fallback={<div className="py-4" />}>
-            <CollectionsSection collections={myCollections ?? []} />
-          </Suspense>
-
-          <Suspense fallback={<RecipeGridSkeleton count={9} />}>
-            <FilterableRecipeSection
-              recipes={allRecipes}
-              tags={tags}
-              recipesByTag={recipesByTag}
-              showSignupPrompt={false}
-            />
-          </Suspense>
-        </div>
+        <LoggedInHomepage
+          recipes={allRecipes}
+          favorites={myFavoriteRecipes ?? []}
+          collections={myCollections ?? []}
+          tags={tags}
+          recipesByTag={recipesByTag}
+        />
       </SignedIn>
     </>
   );
