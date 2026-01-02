@@ -189,7 +189,6 @@ describe("recipes queries", () => {
         createNewRecipe({
           name: "New Recipe",
           description: "A description",
-          slug: "new-recipe-slug",
         }),
       ).rejects.toThrow("Not authenticated");
     });

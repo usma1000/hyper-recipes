@@ -9,6 +9,7 @@ import { slugify } from "~/lib/utils";
 import { revalidateRecipePaths } from "./utils";
 
 type newRecipe = typeof RecipesTable.$inferInsert;
+type newRecipeInput = Omit<newRecipe, "slug">;
 
 /**
  * Fetches recipe ID from slug with caching.
@@ -33,7 +34,7 @@ export const getRecipeIdFromSlug = unstable_cache(
   { revalidate: 60, tags: ["recipes"] },
 );
 
-export async function createNewRecipe(recipe: newRecipe) {
+export async function createNewRecipe(recipe: newRecipeInput) {
   const user = auth();
   if (!user.userId) throw new Error("Not authenticated");
 
