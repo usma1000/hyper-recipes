@@ -1,11 +1,12 @@
 import { Suspense, cache } from "react";
 import {
   getRecipeIdFromSlug,
-  getRecipeNameAndDescription,
+  getRecipeMetadata,
   getAllRecipeNames,
 } from "~/server/queries";
 import FullRecipePage from "./_components/FullRecipePage";
 import RecipeLoading from "./loading";
+import { env } from "~/env";
 
 /**
  * Enable ISR with 60 second revalidation for recipe pages.
@@ -36,15 +37,58 @@ export async function generateStaticParams(): Promise<{ slug: string }[]> {
 const getCachedRecipeIdFromSlug = cache(
   async (slug: string): Promise<number> => {
     return getRecipeIdFromSlug(slug);
-  }
+  },
 );
+
+/**
+ * Gets the site URL for absolute OpenGraph image URLs.
+ * Falls back to localhost in development.
+ */
+function getSiteUrl(): string {
+  if (env.NEXT_PUBLIC_SITE_URL) {
+    return env.NEXT_PUBLIC_SITE_URL;
+  }
+  if (process.env.NODE_ENV === "production") {
+    return "https://hyper-recipes.vercel.app";
+  }
+  return "http://localhost:3000";
+}
 
 export async function generateMetadata({ params: { slug } }: Props) {
   const id = await getCachedRecipeIdFromSlug(slug);
-  const { name, description } = await getRecipeNameAndDescription(id);
+  const recipeMetadata = await getRecipeMetadata(id);
+  const siteUrl = getSiteUrl();
+  const recipeUrl = `${siteUrl}/recipe/${slug}`;
+
+  const openGraphImages = recipeMetadata.heroImageUrl
+    ? [
+        {
+          url: recipeMetadata.heroImageUrl,
+          width: 1200,
+          height: 630,
+          alt: recipeMetadata.name,
+        },
+      ]
+    : [];
+
   return {
-    title: `Recipe for ${name}`,
-    description: description,
+    title: `${recipeMetadata.name} | Hyper Recipes`,
+    description: recipeMetadata.description,
+    openGraph: {
+      title: recipeMetadata.name,
+      description: recipeMetadata.description,
+      url: recipeUrl,
+      siteName: "Hyper Recipes",
+      images: openGraphImages,
+      locale: "en_US",
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: recipeMetadata.name,
+      description: recipeMetadata.description,
+      images: recipeMetadata.heroImageUrl ? [recipeMetadata.heroImageUrl] : [],
+    },
   };
 }
 
