@@ -1,5 +1,3 @@
-"use client";
-
 import { cn } from "~/lib/utils";
 import { Globe, UtensilsCrossed, Leaf } from "lucide-react";
 
@@ -46,7 +44,7 @@ export function CategoryPills({
 
   return (
     <div className="relative -mx-1">
-      <div className="flex gap-2 overflow-x-auto px-1 pb-1 scrollbar-hide">
+      <div className="scrollbar-hide flex gap-2 overflow-x-auto px-1 pb-1">
         {showAllOption && (
           <button
             onClick={() => onSelect(null)}
@@ -54,7 +52,7 @@ export function CategoryPills({
               "flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-medium transition-all duration-150",
               selectedTagId === null
                 ? "bg-neutral-900 text-white shadow-sm dark:bg-white dark:text-neutral-900"
-                : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700 dark:hover:text-white"
+                : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700 dark:hover:text-white",
             )}
           >
             All Recipes
@@ -68,7 +66,7 @@ export function CategoryPills({
               "flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-medium transition-all duration-150",
               selectedTagId === tag.id
                 ? "bg-neutral-900 text-white shadow-sm dark:bg-white dark:text-neutral-900"
-                : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700 dark:hover:text-white"
+                : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700 dark:hover:text-white",
             )}
           >
             {getTagIcon(tag.tagType)}
@@ -86,7 +84,7 @@ export function CategoryPills({
 export function CategoryPillsSkeleton(): JSX.Element {
   return (
     <div className="flex gap-2 overflow-x-auto pb-1">
-      {[...Array(6)].map((_, i) => (
+      {Array.from({ length: 6 }, (_, i) => (
         <div
           key={i}
           className="h-9 w-24 shrink-0 animate-pulse rounded-full bg-neutral-100 dark:bg-neutral-800"

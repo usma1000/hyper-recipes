@@ -30,7 +30,7 @@ export default function RecipeLoading() {
                 <Skeleton className="h-6 w-32" />
               </CardHeader>
               <CardContent className="space-y-4">
-                {[...Array(6)].map((_, i) => (
+                {Array.from({ length: 6 }, (_, i) => (
                   <div key={i} className="flex items-center gap-2">
                     <Skeleton className="h-4 w-4" />
                     <Skeleton className="h-4 w-full" />
@@ -60,7 +60,7 @@ export default function RecipeLoading() {
 
               {/* Tags */}
               <div className="flex flex-row gap-2">
-                {[...Array(3)].map((_, i) => (
+                {Array.from({ length: 3 }, (_, i) => (
                   <Skeleton key={i} className="h-6 w-20" />
                 ))}
               </div>
@@ -75,7 +75,7 @@ export default function RecipeLoading() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              {[...Array(4)].map((_, i) => (
+              {Array.from({ length: 4 }, (_, i) => (
                 <div key={i} className="space-y-2">
                   <Skeleton className="h-4 w-full" />
                   <Skeleton className="h-4 w-5/6" />

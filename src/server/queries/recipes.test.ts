@@ -44,7 +44,8 @@ describe("recipes queries", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Default to authenticated user
-    vi.mocked(auth).mockReturnValue({ userId: "test-user-id" } as ReturnType<
+    const authMock = vi.mocked(auth);
+    authMock.mockReturnValue({ userId: "test-user-id" } as ReturnType<
       typeof auth
     >);
   });
@@ -52,22 +53,22 @@ describe("recipes queries", () => {
   describe("getRecipeIdFromSlug", () => {
     it("returns recipe id when recipe exists", async () => {
       const mockRecipe = { id: 123 };
-      vi.mocked(db.query.RecipesTable.findFirst).mockResolvedValue(
-        mockRecipe as never,
-      );
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      const findFirstMock = vi.mocked(db.query.RecipesTable.findFirst);
+      findFirstMock.mockResolvedValue(mockRecipe as never);
 
       // Import fresh to get the mocked version
       const { getRecipeIdFromSlug } = await import("./recipes");
       const result = await getRecipeIdFromSlug("test-recipe");
 
       expect(result).toBe(123);
-      expect(db.query.RecipesTable.findFirst).toHaveBeenCalled();
+      expect(findFirstMock).toHaveBeenCalled();
     });
 
     it("throws error when recipe not found", async () => {
-      vi.mocked(db.query.RecipesTable.findFirst).mockResolvedValue(
-        undefined as never,
-      );
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      const findFirstMock = vi.mocked(db.query.RecipesTable.findFirst);
+      findFirstMock.mockResolvedValue(undefined as never);
 
       const { getRecipeIdFromSlug } = await import("./recipes");
 
@@ -87,9 +88,9 @@ describe("recipes queries", () => {
         published: true,
         heroImage: { id: 1, url: "https://example.com/image.jpg" },
       };
-      vi.mocked(db.query.RecipesTable.findFirst).mockResolvedValue(
-        mockRecipe as never,
-      );
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      const findFirstMock = vi.mocked(db.query.RecipesTable.findFirst);
+      findFirstMock.mockResolvedValue(mockRecipe as never);
 
       const { getRecipe } = await import("./recipes");
       const result = await getRecipe(1);
@@ -98,9 +99,9 @@ describe("recipes queries", () => {
     });
 
     it("throws error when recipe not found", async () => {
-      vi.mocked(db.query.RecipesTable.findFirst).mockResolvedValue(
-        undefined as never,
-      );
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      const findFirstMock = vi.mocked(db.query.RecipesTable.findFirst);
+      findFirstMock.mockResolvedValue(undefined as never);
 
       const { getRecipe } = await import("./recipes");
 
@@ -113,12 +114,12 @@ describe("recipes queries", () => {
         name: "Unpublished Recipe",
         published: false,
       };
-      vi.mocked(db.query.RecipesTable.findFirst).mockResolvedValue(
-        mockRecipe as never,
-      );
-      vi.mocked(auth).mockReturnValue({ userId: null } as ReturnType<
-        typeof auth
-      >);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      const findFirstMock = vi.mocked(db.query.RecipesTable.findFirst);
+      findFirstMock.mockResolvedValue(mockRecipe as never);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      const authMock = vi.mocked(auth);
+      authMock.mockReturnValue({ userId: null } as ReturnType<typeof auth>);
 
       const { getRecipe } = await import("./recipes");
 
@@ -132,10 +133,12 @@ describe("recipes queries", () => {
         published: false,
         heroImage: null,
       };
-      vi.mocked(db.query.RecipesTable.findFirst).mockResolvedValue(
-        mockRecipe as never,
-      );
-      vi.mocked(auth).mockReturnValue({ userId: "test-user-id" } as ReturnType<
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      const findFirstMock = vi.mocked(db.query.RecipesTable.findFirst);
+      findFirstMock.mockResolvedValue(mockRecipe as never);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      const authMock = vi.mocked(auth);
+      authMock.mockReturnValue({ userId: "test-user-id" } as ReturnType<
         typeof auth
       >);
 
@@ -152,9 +155,9 @@ describe("recipes queries", () => {
         { id: 1, name: "Draft Recipe 1", published: false },
         { id: 2, name: "Draft Recipe 2", published: false },
       ];
-      vi.mocked(db.query.RecipesTable.findMany).mockResolvedValue(
-        mockRecipes as never,
-      );
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      const findManyMock = vi.mocked(db.query.RecipesTable.findMany);
+      findManyMock.mockResolvedValue(mockRecipes as never);
 
       const { getUnpublishedRecipes } = await import("./recipes");
       const result = await getUnpublishedRecipes();
@@ -164,7 +167,9 @@ describe("recipes queries", () => {
     });
 
     it("returns empty array when no unpublished recipes", async () => {
-      vi.mocked(db.query.RecipesTable.findMany).mockResolvedValue([] as never);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      const findManyMock = vi.mocked(db.query.RecipesTable.findMany);
+      findManyMock.mockResolvedValue([] as never);
 
       const { getUnpublishedRecipes } = await import("./recipes");
       const result = await getUnpublishedRecipes();
@@ -175,9 +180,8 @@ describe("recipes queries", () => {
 
   describe("createNewRecipe", () => {
     it("throws error when user not authenticated", async () => {
-      vi.mocked(auth).mockReturnValue({ userId: null } as ReturnType<
-        typeof auth
-      >);
+      const authMock = vi.mocked(auth);
+      authMock.mockReturnValue({ userId: null } as ReturnType<typeof auth>);
 
       const { createNewRecipe } = await import("./recipes");
 
@@ -192,9 +196,8 @@ describe("recipes queries", () => {
 
   describe("updateRecipeNameAndDescription", () => {
     it("throws error when user not authenticated", async () => {
-      vi.mocked(auth).mockReturnValue({ userId: null } as ReturnType<
-        typeof auth
-      >);
+      const authMock = vi.mocked(auth);
+      authMock.mockReturnValue({ userId: null } as ReturnType<typeof auth>);
 
       const { updateRecipeNameAndDescription } = await import("./recipes");
 
@@ -206,9 +209,8 @@ describe("recipes queries", () => {
 
   describe("setPublishRecipe", () => {
     it("throws error when user not authenticated", async () => {
-      vi.mocked(auth).mockReturnValue({ userId: null } as ReturnType<
-        typeof auth
-      >);
+      const authMock = vi.mocked(auth);
+      authMock.mockReturnValue({ userId: null } as ReturnType<typeof auth>);
 
       const { setPublishRecipe } = await import("./recipes");
 
@@ -220,9 +222,8 @@ describe("recipes queries", () => {
 
   describe("saveStepsForRecipeId", () => {
     it("throws error when user not authenticated", async () => {
-      vi.mocked(auth).mockReturnValue({ userId: null } as ReturnType<
-        typeof auth
-      >);
+      const authMock = vi.mocked(auth);
+      authMock.mockReturnValue({ userId: null } as ReturnType<typeof auth>);
 
       const { saveStepsForRecipeId } = await import("./recipes");
 
@@ -234,9 +235,8 @@ describe("recipes queries", () => {
 
   describe("updateRecipeHeroImage", () => {
     it("throws error when user not authenticated", async () => {
-      vi.mocked(auth).mockReturnValue({ userId: null } as ReturnType<
-        typeof auth
-      >);
+      const authMock = vi.mocked(auth);
+      authMock.mockReturnValue({ userId: null } as ReturnType<typeof auth>);
 
       const { updateRecipeHeroImage } = await import("./recipes");
 

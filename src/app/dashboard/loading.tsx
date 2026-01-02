@@ -25,7 +25,7 @@ export default function DashboardLoading() {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {[...Array(3)].map((_, i) => (
+              {Array.from({ length: 3 }, (_, i) => (
                 <div
                   key={i}
                   className="flex items-center justify-between rounded-md border p-3"

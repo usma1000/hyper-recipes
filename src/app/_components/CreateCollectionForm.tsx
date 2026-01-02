@@ -63,6 +63,10 @@ export function CreateCollectionForm({
         values.title,
         values.description,
       );
+      if (!newCollection) {
+        toast.error("Failed to create collection");
+        return;
+      }
       toast.success(`Collection "${values.title}" created successfully.`);
       form.reset();
       if (onSuccess) {

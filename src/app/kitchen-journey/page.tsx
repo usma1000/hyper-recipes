@@ -42,7 +42,7 @@ const KitchenJourney = () => {
     recipesFavorited: 0,
     streakDays: 0,
   });
-  const [badges, setBadges] = useState<any[]>([]);
+  const [badges, setBadges] = useState<unknown[]>([]);
   const [recentActivity, setRecentActivity] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -87,11 +87,15 @@ const KitchenJourney = () => {
         setUserProgress(enhancedProgress);
 
         // Fetch badges and activity (placeholder)
-        const savedBadges = JSON.parse(localStorage.getItem("badges") || "[]");
+        const savedBadges = JSON.parse(
+          localStorage.getItem("badges") ?? "[]",
+        ) as unknown[];
         const savedActivity = JSON.parse(
-          localStorage.getItem("recentActivity") || "[]",
-        );
+          localStorage.getItem("recentActivity") ?? "[]",
+        ) as string[];
 
+        // Store badges (currently unused but kept for future use)
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         setBadges(savedBadges);
         setRecentActivity([
           "Created a new recipe: Chocolate Chip Cookies",
@@ -115,7 +119,8 @@ const KitchenJourney = () => {
           // Load recent users from localStorage
           const savedRecentUsers = localStorage.getItem("recentUserIds");
           if (savedRecentUsers) {
-            setRecentUsers(JSON.parse(savedRecentUsers));
+            const parsed = JSON.parse(savedRecentUsers) as string[];
+            setRecentUsers(parsed);
           }
         }
       } catch (error) {
@@ -126,7 +131,7 @@ const KitchenJourney = () => {
     }
 
     if (user) {
-      loadUserProgress();
+      void loadUserProgress();
     }
   }, [user]);
 
@@ -197,7 +202,7 @@ const KitchenJourney = () => {
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2">
                 <ChefHat className="h-5 w-5 text-primary" />
-                {user?.username || user?.firstName || "Chef"}
+                {user?.username ?? user?.firstName ?? "Chef"}
               </CardTitle>
               <CardDescription>
                 <span className="font-semibold">

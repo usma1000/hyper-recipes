@@ -41,7 +41,7 @@ export default function Loading(): JSX.Element {
                 <Skeleton className="mb-1 h-6 w-48" />
                 <Skeleton className="mb-5 h-4 w-64" />
                 <div className="flex flex-wrap gap-2">
-                  {[...Array(6)].map((_, i) => (
+                  {Array.from({ length: 6 }, (_, i) => (
                     <Skeleton key={i} className="h-9 w-20 rounded-full" />
                   ))}
                 </div>
@@ -64,7 +64,7 @@ export default function Loading(): JSX.Element {
 
             {/* Social Proof Strip Skeleton */}
             <div className="flex items-center justify-center gap-12 border-y border-neutral-100 py-8 dark:border-neutral-800 md:gap-20">
-              {[...Array(3)].map((_, i) => (
+              {Array.from({ length: 3 }, (_, i) => (
                 <div key={i} className="flex items-center gap-3">
                   <Skeleton className="h-10 w-10 rounded-xl" />
                   <div>
@@ -121,7 +121,7 @@ export default function Loading(): JSX.Element {
               <Skeleton className="mb-1 h-6 w-48" />
               <Skeleton className="mb-5 h-4 w-64" />
               <div className="flex flex-wrap gap-2">
-                {[...Array(6)].map((_, i) => (
+                {Array.from({ length: 6 }, (_, i) => (
                   <Skeleton key={i} className="h-9 w-20 rounded-full" />
                 ))}
               </div>

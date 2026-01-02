@@ -36,14 +36,15 @@ type PropTypes = {
 };
 
 const Ingredients = ({ ingredients, showCheckboxes = false }: PropTypes) => {
-  const [checkedStatus, setCheckedStatus] = useState<{
-    [key: string]: boolean;
-  }>({});
+  const [checkedStatus, setCheckedStatus] = useState<Record<string, boolean>>(
+    {},
+  );
 
   useEffect(() => {
     const savedStatus = localStorage.getItem("ingredientCheckboxStatus");
     if (savedStatus) {
-      setCheckedStatus(JSON.parse(savedStatus));
+      const parsed = JSON.parse(savedStatus) as Record<string, boolean>;
+      setCheckedStatus(parsed);
     }
   }, []);
 

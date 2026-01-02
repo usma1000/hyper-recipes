@@ -44,7 +44,7 @@ export async function saveCookingSession(
     userId,
     rating,
     timeMinutes,
-    notes: notes || null,
+    notes: notes ?? null,
   });
 
   revalidatePath(`/recipe/[slug]`, "page");

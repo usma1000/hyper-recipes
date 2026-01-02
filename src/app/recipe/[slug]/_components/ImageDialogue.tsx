@@ -68,7 +68,7 @@ const UploadImageDialog: React.FC<UploadImageDialogProps> = ({ recipeId }) => {
         <UploadButton
           endpoint="imageUploader"
           onClientUploadComplete={async (res) => {
-            if (res && res[0]) {
+            if (res?.[0]) {
               const imageId = res[0].serverData.newImageId;
               const result = await updateRecipeImage(recipeId, imageId);
 

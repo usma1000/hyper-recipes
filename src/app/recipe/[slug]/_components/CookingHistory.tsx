@@ -95,7 +95,7 @@ export default function CookingHistory({ recipeSlug }: CookingHistoryProps) {
       }
     }
 
-    loadHistory();
+    void loadHistory();
   }, [recipeSlug]);
 
   const handleViewClick = (cook: Cook) => {

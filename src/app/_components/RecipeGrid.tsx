@@ -13,7 +13,10 @@ type RecipeGridProps = {
  * @param recipes - Array of recipes to display
  * @param columns - Number of columns on desktop (default: 3)
  */
-export function RecipeGrid({ recipes, columns = 3 }: RecipeGridProps): JSX.Element {
+export function RecipeGrid({
+  recipes,
+  columns = 3,
+}: RecipeGridProps): JSX.Element {
   const gridCols = {
     2: "grid-cols-1 sm:grid-cols-2",
     3: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
@@ -23,7 +26,9 @@ export function RecipeGrid({ recipes, columns = 3 }: RecipeGridProps): JSX.Eleme
   if (!recipes || recipes.length === 0) {
     return (
       <div className="flex min-h-[200px] items-center justify-center rounded-2xl border border-dashed border-neutral-200 bg-neutral-50/50 dark:border-neutral-800 dark:bg-neutral-900/50">
-        <p className="text-[15px] text-neutral-400 dark:text-neutral-500">No recipes found</p>
+        <p className="text-[15px] text-neutral-400 dark:text-neutral-500">
+          No recipes found
+        </p>
       </div>
     );
   }
@@ -44,11 +49,11 @@ export function RecipeGrid({ recipes, columns = 3 }: RecipeGridProps): JSX.Eleme
  * @param count - Number of skeleton cards to show
  * @param columns - Number of columns on desktop
  */
-export function RecipeGridSkeleton({ 
-  count = 9, 
-  columns = 3 
-}: { 
-  count?: number; 
+export function RecipeGridSkeleton({
+  count = 9,
+  columns = 3,
+}: {
+  count?: number;
   columns?: 2 | 3 | 4;
 }): JSX.Element {
   const gridCols = {
@@ -59,7 +64,7 @@ export function RecipeGridSkeleton({
 
   return (
     <div className={`grid gap-6 ${gridCols[columns]}`}>
-      {[...Array(count)].map((_, i) => (
+      {Array.from({ length: count }, (_, i) => (
         <RecipeCardSkeleton key={i} />
       ))}
     </div>

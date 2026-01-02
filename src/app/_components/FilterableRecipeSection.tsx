@@ -46,7 +46,7 @@ export function FilterableRecipeSection({
     if (selectedTagId === null) {
       return recipes;
     }
-    return recipesByTag[selectedTagId] || [];
+    return recipesByTag[selectedTagId] ?? [];
   }, [selectedTagId, recipes, recipesByTag]);
 
   const firstHalf = displayedRecipes.slice(0, 6);
@@ -70,16 +70,14 @@ export function FilterableRecipeSection({
 
       <div className="space-y-6">
         <RecipeGrid recipes={firstHalf} />
-        
+
         {showSignupPrompt && firstHalf.length >= 6 && (
           <SignedOut>
             <InlineSignupPrompt />
           </SignedOut>
         )}
-        
-        {secondHalf.length > 0 && (
-          <RecipeGrid recipes={secondHalf} />
-        )}
+
+        {secondHalf.length > 0 && <RecipeGrid recipes={secondHalf} />}
       </div>
     </section>
   );

@@ -30,7 +30,7 @@ export default function CookingTimer({ recipeSlug }: { recipeSlug: string }) {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem(timerKey);
       if (saved) {
-        const parsed = JSON.parse(saved);
+        const parsed = JSON.parse(saved) as TimerState;
         const elapsed = Math.floor((Date.now() - parsed.lastTickTime) / 1000);
         return {
           ...parsed,
@@ -133,7 +133,7 @@ export default function CookingTimer({ recipeSlug }: { recipeSlug: string }) {
             </div>
           </div>
           <p className="text-center text-xs text-muted-foreground">
-            Don't stress! It's not a race. This timer is just for your
+            Don&apos;t stress! It&apos;s not a race. This timer is just for your
             reference!
           </p>
         </div>

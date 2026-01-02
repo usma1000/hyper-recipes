@@ -93,8 +93,8 @@ export default async function CollectionPage({
               <CardHeader>
                 <CardTitle>No Recipes Yet</CardTitle>
                 <CardDescription>
-                  This collection doesn't have any recipes yet. Browse recipes
-                  and add them to this collection.
+                  This collection doesn&apos;t have any recipes yet. Browse
+                  recipes and add them to this collection.
                 </CardDescription>
               </CardHeader>
               <CardContent>
