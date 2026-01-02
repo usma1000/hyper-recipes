@@ -49,3 +49,27 @@ export async function saveCookingSession(
 
   revalidatePath(`/recipe/[slug]`, "page");
 }
+
+/**
+ * Updates the rating for an existing cooking session.
+ * @param sessionId - The cooking session ID
+ * @param userId - The user ID (for authorization)
+ * @param rating - The new rating (0-5, supports half stars)
+ */
+export async function updateCookingSessionRating(
+  sessionId: number,
+  userId: string,
+  rating: number,
+): Promise<void> {
+  await db
+    .update(CookingSessionsTable)
+    .set({ rating })
+    .where(
+      and(
+        eq(CookingSessionsTable.id, sessionId),
+        eq(CookingSessionsTable.userId, userId),
+      ),
+    );
+
+  revalidatePath(`/recipe/[slug]`, "page");
+}
