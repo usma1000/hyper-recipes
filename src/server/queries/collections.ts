@@ -4,7 +4,6 @@ import { auth } from "@clerk/nextjs/server";
 import { and, eq } from "drizzle-orm";
 import { CollectionsTable, CollectionRecipesTable } from "../db/schemas";
 import { revalidateRecipePaths } from "./utils";
-import { unstable_cache } from "next/cache";
 
 type NewCollection = typeof CollectionsTable.$inferInsert;
 

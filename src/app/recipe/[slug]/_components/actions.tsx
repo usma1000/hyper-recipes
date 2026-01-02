@@ -1,6 +1,6 @@
 "use server";
 
-import { z } from "zod";
+import type { z } from "zod";
 import {
   assignTagsToRecipe,
   removeAllTagsFromRecipe,
@@ -12,7 +12,7 @@ import {
   updateRecipeHeroImage,
   getAllImages,
 } from "~/server/queries";
-import { AssignTagsFormSchema } from "./AssignTagsForm";
+import type { AssignTagsFormSchema } from "./AssignTagsForm";
 
 export async function onTagSubmit(
   recipeId: number,

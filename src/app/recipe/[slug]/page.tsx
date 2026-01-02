@@ -100,7 +100,7 @@ export default async function RecipePage({ params: { slug } }: Props) {
     <div className="container py-8">
       <RecipeViewTracker recipeId={id} />
       <Suspense fallback={<RecipeLoading />}>
-        <FullRecipePageServer id={id} slug={slug} />
+        <FullRecipePageServer id={id} />
       </Suspense>
     </div>
   );

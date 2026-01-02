@@ -1,8 +1,6 @@
 import {
   CheckSquare,
   Code,
-  Heading1,
-  Heading2,
   Heading3,
   List,
   ListOrdered,

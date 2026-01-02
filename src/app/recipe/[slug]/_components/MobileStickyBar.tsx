@@ -14,12 +14,10 @@ import { AdaptThisRecipe } from "./AdaptThisRecipe";
 import { AuthGateModal } from "./AuthGateModal";
 
 interface MobileStickyBarProps {
-  recipeId: number;
   isFavorite: boolean;
   onToggleFavorite: () => void;
   onStartCookMode: () => void;
   servings: number;
-  defaultServings: number;
   onServingsChange: (servings: number) => void;
 }
 
@@ -31,16 +29,13 @@ interface MobileStickyBarProps {
  * @param onToggleFavorite - Callback to toggle favorite
  * @param onStartCookMode - Callback to start cook mode
  * @param servings - Current servings
- * @param defaultServings - Default servings from recipe
  * @param onServingsChange - Callback when servings change
  */
 export function MobileStickyBar({
-  recipeId,
   isFavorite,
   onToggleFavorite,
   onStartCookMode,
   servings,
-  defaultServings,
   onServingsChange,
 }: MobileStickyBarProps): JSX.Element {
   const { isSignedIn, isLoaded } = useUser();
@@ -92,7 +87,6 @@ export function MobileStickyBar({
           </DrawerHeader>
           <div className="px-4 pb-8">
             <AdaptThisRecipe
-              defaultServings={defaultServings}
               servings={servings}
               onServingsChange={onServingsChange}
             />

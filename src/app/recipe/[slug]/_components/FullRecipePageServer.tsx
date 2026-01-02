@@ -7,7 +7,6 @@ import DangerZoneDialog from "./DangerZoneDialog";
 
 interface FullRecipePageServerProps {
   id: number;
-  slug: string;
 }
 
 /**
@@ -18,7 +17,6 @@ interface FullRecipePageServerProps {
  */
 export default async function FullRecipePageServer({
   id,
-  slug,
 }: FullRecipePageServerProps): Promise<JSX.Element> {
   const { userId } = auth();
 

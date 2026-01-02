@@ -25,7 +25,6 @@ interface CookModeOverlayProps {
   onClose: () => void;
   steps: string[];
   ingredients: IngredientItem[];
-  recipeName: string;
 }
 
 /**
@@ -42,7 +41,6 @@ export function CookModeOverlay({
   onClose,
   steps,
   ingredients,
-  recipeName,
 }: CookModeOverlayProps): JSX.Element | null {
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
@@ -61,6 +59,24 @@ export function CookModeOverlay({
     }
   }, [isOpen]);
 
+  const handleNext = useCallback((): void => {
+    setCurrentStep((prev) => {
+      if (prev < steps.length - 1) {
+        return prev + 1;
+      }
+      return prev;
+    });
+  }, [steps.length]);
+
+  const handleBack = useCallback((): void => {
+    setCurrentStep((prev) => {
+      if (prev > 0) {
+        return prev - 1;
+      }
+      return prev;
+    });
+  }, []);
+
   useEffect(() => {
     if (!isOpen) return;
 
@@ -78,19 +94,7 @@ export function CookModeOverlay({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, currentStep, steps.length, onClose]);
-
-  const handleNext = useCallback((): void => {
-    if (currentStep < steps.length - 1) {
-      setCurrentStep((prev) => prev + 1);
-    }
-  }, [currentStep, steps.length]);
-
-  const handleBack = useCallback((): void => {
-    if (currentStep > 0) {
-      setCurrentStep((prev) => prev - 1);
-    }
-  }, [currentStep]);
+  }, [isOpen, onClose, handleNext, handleBack]);
 
   const handleMarkDone = (): void => {
     setCompletedSteps((prev) => {

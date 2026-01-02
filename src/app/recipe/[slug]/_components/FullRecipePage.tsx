@@ -93,23 +93,20 @@ export function FullRecipePageClient({
   const [servings, setServings] = useState(DEFAULT_SERVINGS);
   const [isCookModeOpen, setIsCookModeOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [isLoadingFavorite, setIsLoadingFavorite] = useState(true);
 
   const tags = recipe.tags.map((t) => t.tag);
-  const steps = recipe.steps as JSONContent | null;
+  const steps = recipe.steps;
   const stepStrings = extractStepsFromContent(steps);
   const servingsMultiplier = servings / DEFAULT_SERVINGS;
 
   useEffect(() => {
     if (!isLoaded || !isSignedIn) {
-      setIsLoadingFavorite(false);
       return;
     }
 
     checkIfFavorite(recipe.id)
       .then((result) => setIsFavorite(result))
-      .catch((err) => console.error("Failed to check favorite:", err))
-      .finally(() => setIsLoadingFavorite(false));
+      .catch((err) => console.error("Failed to check favorite:", err));
   }, [recipe.id, isSignedIn, isLoaded]);
 
   const handleToggleFavorite = async (): Promise<void> => {
@@ -146,11 +143,7 @@ export function FullRecipePageClient({
       <RecipeHeader recipe={recipe} tags={tags} servings={servings} />
 
       <div className="mb-4 lg:hidden">
-        <AdaptThisRecipe
-          defaultServings={DEFAULT_SERVINGS}
-          servings={servings}
-          onServingsChange={setServings}
-        />
+        <AdaptThisRecipe servings={servings} onServingsChange={setServings} />
       </div>
 
       <div className="mb-6 lg:hidden">
@@ -196,7 +189,6 @@ export function FullRecipePageClient({
             {adminEditSheet && <AdminWrapper>{adminEditSheet}</AdminWrapper>}
 
             <AdaptThisRecipe
-              defaultServings={DEFAULT_SERVINGS}
               servings={servings}
               onServingsChange={setServings}
             />
@@ -212,12 +204,10 @@ export function FullRecipePageClient({
       <div className="h-20 lg:hidden" />
 
       <MobileStickyBar
-        recipeId={recipe.id}
         isFavorite={isFavorite}
         onToggleFavorite={handleToggleFavorite}
         onStartCookMode={handleStartCookMode}
         servings={servings}
-        defaultServings={DEFAULT_SERVINGS}
         onServingsChange={setServings}
       />
 
@@ -226,7 +216,6 @@ export function FullRecipePageClient({
         onClose={() => setIsCookModeOpen(false)}
         steps={stepStrings}
         ingredients={recipe.ingredients}
-        recipeName={recipe.name}
       />
     </>
   );

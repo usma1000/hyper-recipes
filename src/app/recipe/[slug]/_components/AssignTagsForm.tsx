@@ -50,7 +50,7 @@ export default function AssignTagsForm({
       toast("Tags successfully created.");
       form.reset();
     }
-  }, [isSubmitSuccessful]);
+  }, [isSubmitSuccessful, form]);
 
   return (
     <Form {...form}>
