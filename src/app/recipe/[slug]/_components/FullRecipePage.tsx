@@ -5,7 +5,13 @@ import { useUser } from "@clerk/nextjs";
 import { AlertTriangle } from "lucide-react";
 import { type JSONContent } from "novel";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { SignedIn } from "@clerk/nextjs";
 import { RecipeHeader } from "./RecipeHeader";
 import { AdaptThisRecipe } from "./AdaptThisRecipe";
@@ -141,7 +147,7 @@ export function FullRecipePageClient({
 
       <RecipeHeader recipe={recipe} tags={tags} servings={servings} />
 
-      <div className="lg:hidden mb-4">
+      <div className="mb-4 lg:hidden">
         <AdaptThisRecipe
           defaultServings={DEFAULT_SERVINGS}
           servings={servings}
@@ -149,7 +155,7 @@ export function FullRecipePageClient({
         />
       </div>
 
-      <div className="lg:hidden mb-6">
+      <div className="mb-6 lg:hidden">
         <IngredientsPanel
           ingredients={recipe.ingredients}
           servingsMultiplier={servingsMultiplier}
@@ -159,7 +165,7 @@ export function FullRecipePageClient({
       </div>
 
       <div className="flex gap-8">
-        <main className="flex-1 min-w-0">
+        <main className="min-w-0 flex-1">
           <StepsList steps={steps} onStartCookMode={handleStartCookMode} />
 
           <SignedIn>

@@ -85,7 +85,9 @@ export default async function FullRecipePageServer({
       onPublish={handlePublish}
       adminEditSheet={<FullRecipeSheet recipeId={id} />}
       dangerZoneDialog={
-        <DangerZoneDialog recipe={{ id: recipe.id, published: recipe.published }} />
+        <DangerZoneDialog
+          recipe={{ id: recipe.id, published: recipe.published }}
+        />
       }
     />
   );
