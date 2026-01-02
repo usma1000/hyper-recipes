@@ -57,7 +57,7 @@ export default async function CollectionsPage(): Promise<JSX.Element> {
             <Suspense
               fallback={
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {[...Array(6)].map((_, i) => (
+                  {Array.from({ length: 6 }, (_, i) => (
                     <CollectionCardSkeleton key={i} />
                   ))}
                 </div>

@@ -270,7 +270,7 @@ export async function saveStepsForRecipeId(id: number, steps: string) {
 
   if (!user.userId) throw new Error("Not authenticated");
 
-  const parsedSteps = JSON.parse(steps);
+  const parsedSteps = JSON.parse(steps) as unknown;
   await db
     .update(RecipesTable)
     .set({

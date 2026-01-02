@@ -98,7 +98,7 @@ export default async function FullRecipePage({
                     <div className="h-6 w-24 animate-pulse rounded bg-slate-200" />
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {[...Array(6)].map((_, i) => (
+                    {Array.from({ length: 6 }, (_, i) => (
                       <div
                         key={i}
                         className="h-4 w-full animate-pulse rounded bg-slate-200"
@@ -200,7 +200,7 @@ export default async function FullRecipePage({
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {[...Array(4)].map((_, i) => (
+                  {Array.from({ length: 4 }, (_, i) => (
                     <div key={i} className="space-y-2">
                       <div className="h-4 w-full animate-pulse rounded bg-slate-200" />
                       <div className="h-4 w-5/6 animate-pulse rounded bg-slate-200" />

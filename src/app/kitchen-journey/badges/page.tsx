@@ -195,7 +195,7 @@ export default function BadgesPage() {
       if (!acc[badge.category]) {
         acc[badge.category] = [];
       }
-      (acc[badge.category] as Badge[]).push(badge);
+      acc[badge.category]!.push(badge);
       return acc;
     },
     {} as Record<string, Badge[]>,

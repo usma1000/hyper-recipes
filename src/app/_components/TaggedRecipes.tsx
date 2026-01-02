@@ -2,7 +2,6 @@
 
 import { useState, useMemo, useCallback } from "react";
 import RecipesCarousel from "./RecipesCarousel";
-import RecipeCardSkeleton from "./RecipeCardSkeleton";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -104,7 +103,7 @@ export default function TaggedRecipes({
       if (!renderedCarousels[tagId]) {
         setRenderedCarousels((prev) => ({
           ...prev,
-          [tagId]: <RecipesCarousel recipes={recipesByTag[tagId] || []} />,
+          [tagId]: <RecipesCarousel recipes={recipesByTag[tagId] ?? []} />,
         }));
       }
       return renderedCarousels[tagId];

@@ -25,7 +25,7 @@ export function GreetingBar(): JSX.Element {
   const [progress, setProgress] = useState({ level: 1, percentage: 0 });
   const [isLoading, setIsLoading] = useState(true);
 
-  const displayName = user?.firstName || user?.username || "Chef";
+  const displayName = user?.firstName ?? user?.username ?? "Chef";
   const greeting = getTimeBasedGreeting();
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export function GreetingBar(): JSX.Element {
         .then((data) => {
           const percentage = Math.min(
             100,
-            Math.max(0, Math.round((data.xp / data.nextLevelXp) * 100))
+            Math.max(0, Math.round((data.xp / data.nextLevelXp) * 100)),
           );
           setProgress({ level: data.level, percentage });
         })
@@ -57,9 +57,9 @@ export function GreetingBar(): JSX.Element {
           What are you cooking today?
         </p>
       </div>
-      
-      <Link 
-        href="/kitchen-journey" 
+
+      <Link
+        href="/kitchen-journey"
         className="flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-2.5 transition-all hover:border-neutral-300 hover:shadow-sm dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700"
       >
         <div
@@ -75,8 +75,12 @@ export function GreetingBar(): JSX.Element {
           </div>
         </div>
         <div className="hidden sm:block">
-          <p className="text-sm font-medium text-neutral-900 dark:text-white">Level {progress.level}</p>
-          <p className="text-xs text-neutral-500 dark:text-neutral-400">Kitchen Journey</p>
+          <p className="text-sm font-medium text-neutral-900 dark:text-white">
+            Level {progress.level}
+          </p>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">
+            Kitchen Journey
+          </p>
         </div>
       </Link>
     </div>

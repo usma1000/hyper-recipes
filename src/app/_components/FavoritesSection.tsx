@@ -13,7 +13,9 @@ type FavoritesSectionProps = {
  * Shows horizontal scroll of favorites or minimal empty state.
  * @param favorites - Array of user's favorite recipes
  */
-export function FavoritesSection({ favorites }: FavoritesSectionProps): JSX.Element {
+export function FavoritesSection({
+  favorites,
+}: FavoritesSectionProps): JSX.Element {
   if (!favorites || favorites.length === 0) {
     return (
       <section id="favorites" className="py-4">
@@ -29,7 +31,9 @@ export function FavoritesSection({ favorites }: FavoritesSectionProps): JSX.Elem
   return (
     <section id="favorites" className="py-4">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold tracking-tight text-neutral-900 dark:text-white">Your Favorites</h2>
+        <h2 className="text-lg font-semibold tracking-tight text-neutral-900 dark:text-white">
+          Your Favorites
+        </h2>
         <Link
           href="/favorites"
           className="flex items-center gap-1 text-[14px] font-medium text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
@@ -38,8 +42,8 @@ export function FavoritesSection({ favorites }: FavoritesSectionProps): JSX.Elem
           <ArrowRight className="h-4 w-4" />
         </Link>
       </div>
-      
-      <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+
+      <div className="scrollbar-hide flex gap-4 overflow-x-auto pb-2">
         {favorites.slice(0, 5).map((recipe) => (
           <div key={recipe.id} className="w-[280px] shrink-0">
             <Suspense fallback={<RecipeCardSkeleton />}>
@@ -63,7 +67,7 @@ export function FavoritesSectionSkeleton(): JSX.Element {
         <div className="h-5 w-16 animate-pulse rounded-md bg-neutral-100 dark:bg-neutral-800" />
       </div>
       <div className="flex gap-4 overflow-x-auto pb-2">
-        {[...Array(4)].map((_, i) => (
+        {Array.from({ length: 4 }, (_, i) => (
           <div key={i} className="w-[280px] shrink-0">
             <RecipeCardSkeleton />
           </div>

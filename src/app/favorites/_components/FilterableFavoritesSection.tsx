@@ -41,7 +41,7 @@ export function FilterableFavoritesSection({
     if (selectedTagId === null) {
       return favorites;
     }
-    return favoritesByTag[selectedTagId] || [];
+    return favoritesByTag[selectedTagId] ?? [];
   }, [selectedTagId, favorites, favoritesByTag]);
 
   return (

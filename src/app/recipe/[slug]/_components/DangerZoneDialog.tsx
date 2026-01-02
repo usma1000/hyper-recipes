@@ -45,7 +45,7 @@ export default function DangerZoneDialog({ recipe }: Props) {
             <DialogTitle>Danger Zone</DialogTitle>
             <DialogDescription>
               This is where you can delete or unpublish this recipe. I hope you
-              know what you're doing!
+              know what you&apos;re doing!
             </DialogDescription>
           </DialogHeader>
           {recipe.published && (
@@ -68,7 +68,7 @@ export default function DangerZoneDialog({ recipe }: Props) {
               <CardTitle>Delete</CardTitle>
               <CardDescription>
                 This action is <strong>irreversible</strong>! Only do this if
-                unpublishing isn't enough.
+                unpublishing isn&apos;t enough.
               </CardDescription>
             </CardHeader>
             <CardContent>
