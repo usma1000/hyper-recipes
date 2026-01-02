@@ -17,6 +17,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import CookingTimer from "./CookingTimer";
 import { fetchCookingHistory } from "~/app/_actions/cookingHistory";
 import { getRecipeIdBySlug } from "~/app/_actions/recipes";
@@ -26,6 +33,7 @@ type Cook = {
   time: string;
   rating: number;
   hasNotes: boolean;
+  notes: string | null;
 };
 
 function StarRating({ rating }: { rating: number }) {
@@ -52,6 +60,8 @@ interface CookingHistoryProps {
 export default function CookingHistory({ recipeSlug }: CookingHistoryProps) {
   const [cooks, setCooks] = useState<Cook[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedNotes, setSelectedNotes] = useState<string | null>(null);
+  const [showNotesDialog, setShowNotesDialog] = useState(false);
 
   useEffect(() => {
     async function loadHistory() {
@@ -64,6 +74,7 @@ export default function CookingHistory({ recipeSlug }: CookingHistoryProps) {
           time: `${session.timeMinutes}m`,
           rating: session.rating,
           hasNotes: !!session.notes,
+          notes: session.notes,
         }));
 
         setCooks(transformedCooks);
@@ -77,6 +88,11 @@ export default function CookingHistory({ recipeSlug }: CookingHistoryProps) {
 
     loadHistory();
   }, [recipeSlug]);
+
+  const handleNotesClick = (notes: string | null) => {
+    setSelectedNotes(notes);
+    setShowNotesDialog(true);
+  };
 
   const hasPreviousCooks = cooks.length > 0;
 
@@ -113,7 +129,11 @@ export default function CookingHistory({ recipeSlug }: CookingHistoryProps) {
                       <div className="flex items-center justify-between">
                         <StarRating rating={cook.rating} />
                         {cook.hasNotes && (
-                          <Button variant="link" className="h-6 p-0 text-xs">
+                          <Button
+                            variant="link"
+                            className="h-6 p-0 text-xs"
+                            onClick={() => handleNotesClick(cook.notes)}
+                          >
                             Notes
                           </Button>
                         )}
@@ -127,6 +147,22 @@ export default function CookingHistory({ recipeSlug }: CookingHistoryProps) {
         )}
         <CookingTimer recipeSlug={recipeSlug} />
       </CardContent>
+
+      <Dialog open={showNotesDialog} onOpenChange={setShowNotesDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Cooking Notes</DialogTitle>
+            <DialogDescription>
+              Notes from your cooking session
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap">
+              {selectedNotes || "No notes available"}
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }

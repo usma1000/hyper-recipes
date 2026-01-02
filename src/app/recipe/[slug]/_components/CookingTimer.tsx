@@ -52,7 +52,7 @@ export default function CookingTimer({ recipeSlug }: { recipeSlug: string }) {
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    if (isRunning) {
+    if (isRunning && !showConfirmStop) {
       interval = setInterval(() => {
         setTimerState((prev) => {
           const newState = {
@@ -67,7 +67,7 @@ export default function CookingTimer({ recipeSlug }: { recipeSlug: string }) {
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [isRunning, timerKey]);
+  }, [isRunning, timerKey, showConfirmStop]);
 
   const formatTime = (totalSeconds: number) => {
     const hours = Math.floor(totalSeconds / 3600);
@@ -94,7 +94,13 @@ export default function CookingTimer({ recipeSlug }: { recipeSlug: string }) {
     localStorage.setItem(timerKey, JSON.stringify(newState));
   };
 
-  const handleStop = () => setShowConfirmStop(true);
+  const handleStop = () => {
+    // Pause the timer when opening the stop confirmation modal
+    if (isRunning) {
+      handlePause();
+    }
+    setShowConfirmStop(true);
+  };
 
   const confirmStop = () => {
     const roundedMinutes = Math.round(seconds / 60);
