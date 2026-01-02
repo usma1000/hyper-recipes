@@ -14,6 +14,10 @@ export default function Footer() {
         <div className="flex items-center gap-4">
           <span className="text-sm font-normal">
             © {currentYear} Hyper Recipe. All rights reserved.{" "}
+            <Link href="/pricing" className="underline">
+              Pricing
+            </Link>{" "}
+            |{" "}
             <Link href="/privacy" className="underline">
               Privacy Policy
             </Link>{" "}
