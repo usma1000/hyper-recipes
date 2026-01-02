@@ -31,9 +31,13 @@ jobs:
 
       - name: Run linter
         run: pnpm lint
+        env:
+          SKIP_ENV_VALIDATION: true
 
       - name: Run type check
         run: pnpm typecheck
 
       - name: Run tests
         run: pnpm test:run
+        env:
+          SKIP_ENV_VALIDATION: true
