@@ -4,6 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import {
   getCookingHistoryByRecipeId,
   saveCookingSession,
+  updateCookingSessionRating,
 } from "~/server/queries/cookingHistory";
 
 /**
@@ -43,3 +44,20 @@ export async function saveCookingSessionAction(
   await saveCookingSession(recipeId, userId, rating, timeMinutes, notes);
 }
 
+/**
+ * Updates the rating for an existing cooking session.
+ * @param sessionId - The cooking session ID
+ * @param rating - The new rating (0-5, supports half stars)
+ */
+export async function updateCookingSessionRatingAction(
+  sessionId: number,
+  rating: number,
+): Promise<void> {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  await updateCookingSessionRating(sessionId, userId, rating);
+}
