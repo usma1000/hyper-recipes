@@ -11,16 +11,46 @@ import { ourFileRouter } from "./api/uploadthing/core";
 import { cn } from "~/lib/utils";
 import Footer from "./_components/Footer";
 import { Toaster } from "@/components/ui/sonner";
+import { env } from "~/env";
 
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
 });
 
+/**
+ * Gets the site URL for absolute OpenGraph URLs.
+ * Falls back to localhost in development.
+ */
+function getSiteUrl(): string {
+  const siteUrl =
+    env.NEXT_PUBLIC_SITE_URL ??
+    (process.env.NODE_ENV === "production"
+      ? "https://hyper-recipes.vercel.app"
+      : "http://localhost:3000");
+  return siteUrl;
+}
+
+const siteUrl = getSiteUrl();
+
 export const metadata = {
   title: "Hyper Recipes",
   description: "Super charged recipes with more context",
   icons: [{ rel: "icon", url: "/favicon-32x32.png", sizes: "32x32" }],
+  metadataBase: new URL(siteUrl),
+  openGraph: {
+    title: "Hyper Recipes",
+    description: "Super charged recipes with more context",
+    url: siteUrl,
+    siteName: "Hyper Recipes",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Hyper Recipes",
+    description: "Super charged recipes with more context",
+  },
 };
 
 export default function RootLayout({

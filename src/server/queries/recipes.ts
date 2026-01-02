@@ -189,6 +189,43 @@ export const getRecipeNameAndDescription = unstable_cache(
   { revalidate: 60, tags: ["recipes"] },
 );
 
+/**
+ * Fetches recipe metadata including hero image for OpenGraph tags.
+ * Cached for 60 seconds, invalidated via "recipes" tag.
+ * @param id - The recipe ID
+ * @returns Recipe metadata with name, description, slug, and hero image URL
+ */
+export const getRecipeMetadata = unstable_cache(
+  async (id: number) => {
+    const recipe = await db.query.RecipesTable.findFirst({
+      where: (model, { eq }) => eq(model.id, id),
+      columns: {
+        name: true,
+        description: true,
+        slug: true,
+      },
+      with: {
+        heroImage: {
+          columns: {
+            url: true,
+          },
+        },
+      },
+    });
+
+    if (!recipe) throw new Error("Recipe not found");
+
+    return {
+      name: recipe.name,
+      description: recipe.description,
+      slug: recipe.slug,
+      heroImageUrl: recipe.heroImage?.url ?? null,
+    };
+  },
+  ["recipe-metadata"],
+  { revalidate: 60, tags: ["recipes"] },
+);
+
 export async function updateRecipeNameAndDescription(
   id: number,
   name: string,
