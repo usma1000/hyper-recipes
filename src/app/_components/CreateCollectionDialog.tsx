@@ -43,7 +43,7 @@ export function CreateCollectionDialog({
           </DialogDescription>
         </DialogHeader>
         <CreateCollectionForm
-          onSuccess={() => {
+          onSuccess={async () => {
             setOpen(false);
           }}
         />

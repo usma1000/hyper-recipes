@@ -33,7 +33,7 @@ export const CreateCollectionFormSchema = z.object({
 });
 
 type CreateCollectionFormProps = {
-  onSuccess?: () => void;
+  onSuccess?: (collectionId: number, title: string) => void | Promise<void>;
 };
 
 /**
@@ -59,11 +59,14 @@ export function CreateCollectionForm({
   ) => {
     try {
       setIsSubmitting(true);
-      await createNewCollection(values.title, values.description);
+      const newCollection = await createNewCollection(
+        values.title,
+        values.description,
+      );
       toast.success(`Collection "${values.title}" created successfully.`);
       form.reset();
       if (onSuccess) {
-        onSuccess();
+        await onSuccess(newCollection.id, values.title);
       } else {
         router.refresh();
       }

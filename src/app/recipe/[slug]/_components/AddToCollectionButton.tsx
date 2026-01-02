@@ -15,6 +15,7 @@ import {
 } from "~/app/_actions/collections";
 import { toast } from "sonner";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
+import { CreateCollectionForm } from "~/app/_components/CreateCollectionForm";
 
 interface AddToCollectionButtonProps {
   recipeId: number;
@@ -75,6 +76,33 @@ export function AddToCollectionButton({
     });
   };
 
+  const handleCreateAndAdd = async (
+    collectionId: number,
+    title: string,
+  ): Promise<void> => {
+    startTransition(async () => {
+      try {
+        // Add the recipe to the newly created collection
+        await addRecipeToCollectionAction(collectionId, recipeId);
+        
+        toast.success(
+          `Collection "${title}" created and recipe added successfully.`,
+        );
+        
+        // Refresh collections to update the UI
+        const updated = await fetchMyCollections();
+        setCollections(updated);
+        setOpen(false);
+      } catch (error) {
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Failed to add recipe to collection",
+        );
+      }
+    });
+  };
+
   const isRecipeInCollection = (collection: Collection): boolean => {
     return collection.recipes.some(
       (collectionRecipe) => collectionRecipe.recipe.id === recipeId,
@@ -97,7 +125,12 @@ export function AddToCollectionButton({
           />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80" align="end">
+      <PopoverContent
+        className={
+          !isLoading && collections.length === 0 ? "w-96" : "w-80"
+        }
+        align="end"
+      >
         <div className="space-y-2">
           <h4 className="text-sm font-semibold">Add to Collection</h4>
           {isLoading ? (
@@ -105,9 +138,16 @@ export function AddToCollectionButton({
               <LoadingSpinner />
             </div>
           ) : collections.length === 0 ? (
-            <p className="text-sm text-neutral-500 dark:text-neutral-400">
-              No collections yet. Create one from your homepage.
-            </p>
+            <div className="space-y-4">
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                No collections yet. Create one to add this recipe.
+              </p>
+              <CreateCollectionForm
+                onSuccess={async (collectionId: number, title: string) => {
+                  await handleCreateAndAdd(collectionId, title);
+                }}
+              />
+            </div>
           ) : (
             <div className="max-h-64 space-y-1 overflow-y-auto">
               {collections.map((collection) => {
