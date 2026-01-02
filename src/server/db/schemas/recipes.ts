@@ -25,6 +25,9 @@ export const RecipesTable = createTable(
     description: varchar("description", { length: 1024 }).notNull(),
     heroImageId: integer("hero_image_id").references(() => ImagesTable.id),
     steps: json("steps"),
+    prepTime: integer("prep_time"),
+    cookTime: integer("cook_time"),
+    difficulty: varchar("difficulty", { length: 20 }),
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),

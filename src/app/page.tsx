@@ -8,18 +8,19 @@ import { fetchMyFavoriteRecipes } from "./_actions/favorites";
 import { fetchMyCollections } from "./_actions/collections";
 
 import { CompactHero } from "./_components/CompactHero";
+import { AdaptiveRecipePreview } from "./_components/AdaptiveRecipePreview";
+import { WhyBetterSection } from "./_components/WhyBetterSection";
+import { SocialProofStrip } from "./_components/SocialProofStrip";
+import { FooterCTA } from "./_components/FooterCTA";
 import { GreetingBar } from "./_components/GreetingBar";
 import { FavoritesSection, FavoritesSectionSkeleton } from "./_components/FavoritesSection";
 import { CollectionsSection } from "./_components/CollectionsSection";
 import { FilterableRecipeSection } from "./_components/FilterableRecipeSection";
-import { FeaturedRecipeSpotlight } from "./_components/FeaturedRecipeSpotlight";
-import { SocialProofStrip } from "./_components/SocialProofStrip";
-import { FooterCTA } from "./_components/FooterCTA";
 import { RecipeGridSkeleton } from "./_components/RecipeGrid";
 
 /**
  * Homepage with distinct layouts for anonymous and logged-in users.
- * Anonymous: Compact hero, recipe grid with inline signup prompts, social proof
+ * Anonymous: Product-focused landing page with adaptive recipe preview
  * Logged-in: Greeting bar, quick actions, favorites, browseable grid
  */
 export default async function HomePage(): Promise<JSX.Element> {
@@ -51,32 +52,20 @@ export default async function HomePage(): Promise<JSX.Element> {
 
   return (
     <>
-      {/* Anonymous Homepage */}
+      {/* Anonymous Homepage - Product-focused landing */}
       <SignedOut>
         <div className="flex flex-col">
-          {/* Compact Hero - outside container for full width */}
-          <CompactHero />
+          <CompactHero featuredRecipe={featuredRecipe} />
           
-          <div className="container space-y-16 py-12">
-            {/* Recipe Grid with Category Pills */}
-            <Suspense fallback={<RecipeGridSkeleton count={9} />}>
-              <FilterableRecipeSection
-                recipes={allRecipes}
-                tags={tags}
-                recipesByTag={recipesByTag}
-                showSignupPrompt={true}
-              />
-            </Suspense>
-
-            {/* Featured Recipe Spotlight */}
+          <div className="container space-y-16 py-16">
             {featuredRecipe && (
-              <FeaturedRecipeSpotlight recipe={featuredRecipe} />
+              <AdaptiveRecipePreview recipe={featuredRecipe} />
             )}
 
-            {/* Social Proof Strip */}
+            <WhyBetterSection />
+
             <SocialProofStrip />
 
-            {/* Footer CTA */}
             <FooterCTA />
           </div>
         </div>
@@ -85,20 +74,16 @@ export default async function HomePage(): Promise<JSX.Element> {
       {/* Logged-In Homepage */}
       <SignedIn>
         <div className="container space-y-6 py-6">
-          {/* Greeting Bar */}
           <GreetingBar />
 
-          {/* Favorites Section */}
           <Suspense fallback={<FavoritesSectionSkeleton />}>
             <FavoritesSection favorites={myFavoriteRecipes ?? []} />
           </Suspense>
 
-          {/* Collections Section */}
           <Suspense fallback={<div className="py-4" />}>
             <CollectionsSection collections={myCollections ?? []} />
           </Suspense>
 
-          {/* Recipe Grid with Category Pills */}
           <Suspense fallback={<RecipeGridSkeleton count={9} />}>
             <FilterableRecipeSection
               recipes={allRecipes}
