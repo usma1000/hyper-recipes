@@ -15,6 +15,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
+import { DeleteCollectionDialog } from "./_components/DeleteCollectionDialog";
 
 type Props = {
   params: { id: string };
@@ -112,6 +113,22 @@ export default async function CollectionPage({
               <RecipeGrid recipes={recipes} columns={3} />
             </Suspense>
           )}
+
+          <Card className="mt-8 border-destructive/50">
+            <CardHeader>
+              <CardTitle className="text-destructive">Danger Zone</CardTitle>
+              <CardDescription>
+                Permanently delete this collection. This action cannot be
+                undone.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <DeleteCollectionDialog
+                collectionId={collection.id}
+                collectionTitle={collection.title}
+              />
+            </CardContent>
+          </Card>
         </div>
       </SignedIn>
     </>

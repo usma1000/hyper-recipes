@@ -4,9 +4,9 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import { fetchMyCollections } from "../_actions/collections";
-import { CollectionCard } from "../_components/CollectionCard";
 import { CollectionCardSkeleton } from "../_components/CollectionsSection";
 import { CreateCollectionDialog } from "../_components/CreateCollectionDialog";
+import { CollectionCardWithActions } from "./_components/CollectionCardWithActions";
 
 /**
  * Collections page displaying all user's collections.
@@ -65,7 +65,10 @@ export default async function CollectionsPage(): Promise<JSX.Element> {
             >
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {collections.map((collection) => (
-                  <CollectionCard key={collection.id} collection={collection} />
+                  <CollectionCardWithActions
+                    key={collection.id}
+                    collection={collection}
+                  />
                 ))}
               </div>
             </Suspense>
