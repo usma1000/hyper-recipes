@@ -1,47 +1,16 @@
-import { BookOpen, ListChecks, Heart } from "lucide-react";
-
-type StatItem = {
-  icon: React.ReactNode;
-  value: string;
-  label: string;
-};
-
-const STATS: StatItem[] = [
-  {
-    icon: <BookOpen className="h-5 w-5" />,
-    value: "500+",
-    label: "Recipes",
-  },
-  {
-    icon: <ListChecks className="h-5 w-5" />,
-    value: "Easy",
-    label: "Step-by-step",
-  },
-  {
-    icon: <Heart className="h-5 w-5" />,
-    value: "Save",
-    label: "Your favorites",
-  },
-];
-
 /**
- * Minimal social proof strip for anonymous users.
- * Reinforces value without heavy marketing copy.
+ * Light credibility section for anonymous users.
+ * Minimal design reinforcing the product-first approach.
  */
 export function SocialProofStrip(): JSX.Element {
   return (
-    <div className="flex items-center justify-center gap-12 border-y border-neutral-100 py-8 dark:border-neutral-800 md:gap-20">
-      {STATS.map((stat) => (
-        <div key={stat.label} className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
-            {stat.icon}
-          </div>
-          <div>
-            <p className="text-[15px] font-semibold text-neutral-900 dark:text-white">{stat.value}</p>
-            <p className="text-[13px] text-neutral-400 dark:text-neutral-500">{stat.label}</p>
-          </div>
-        </div>
-      ))}
+    <div className="rounded-2xl border border-neutral-200/60 bg-neutral-50 px-8 py-10 text-center dark:border-neutral-800 dark:bg-neutral-900/50">
+      <p className="text-lg font-medium text-neutral-900 dark:text-white">
+        Built for home cooks who want better results—not more scrolling.
+      </p>
+      <p className="mt-2 text-[14px] text-neutral-500 dark:text-neutral-400">
+        Designed as a cooking tool first, not a content farm.
+      </p>
     </div>
   );
 }
