@@ -14,6 +14,7 @@ import { relations } from "drizzle-orm";
 import { FavoritesTable } from "./favorites";
 import { RecipesToTagsTable } from "./recipesToTags";
 import { RecipeIngredientsTable } from "./recipeIngredients";
+import { CollectionRecipesTable } from "./collectionRecipes";
 
 export const RecipesTable = createTable(
   "recipes",
@@ -50,6 +51,7 @@ export const RecipesTableRelations = relations(
       favoritedBy: many(FavoritesTable),
       tags: many(RecipesToTagsTable),
       ingredients: many(RecipeIngredientsTable),
+      collections: many(CollectionRecipesTable),
     };
   },
 );

@@ -15,6 +15,13 @@
       "when": 1767310173646,
       "tag": "0001_greedy_major_mapleleaf",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1767313604468,
+      "tag": "0002_complete_dexter_bennett",
+      "breakpoints": true
     }
   ]
 }

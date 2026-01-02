@@ -7,3 +7,5 @@ export * from "./recipesToTags";
 export * from "./recipeIngredients";
 export * from "./gamification";
 export * from "./cookingHistory";
+export * from "./collections";
+export * from "./collectionRecipes";

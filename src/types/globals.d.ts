@@ -4,6 +4,7 @@ import {
   RecipesTable,
   IngredientsTable,
   TagsTable,
+  CollectionsTable,
 } from "~/server/db/schemas";
 
 export {};
@@ -15,6 +16,11 @@ declare global {
   type Tag = InferSelectModel<typeof TagsTable>;
   type Recipe = InferSelectModel<typeof RecipesTable> & {
     heroImage: HeroImage | null;
+  };
+  type Collection = InferSelectModel<typeof CollectionsTable> & {
+    recipes: Array<{
+      recipe: Recipe;
+    }>;
   };
 
   // Define custom roles

@@ -5,10 +5,12 @@ import { auth } from "@clerk/nextjs/server";
 import { fetchSliderRecipes } from "./_actions/recipes";
 import { fetchAllTagsByType, fetchRecipesByTag } from "./_actions/tags";
 import { fetchMyFavoriteRecipes } from "./_actions/favorites";
+import { fetchMyCollections } from "./_actions/collections";
 
 import { CompactHero } from "./_components/CompactHero";
 import { GreetingBar } from "./_components/GreetingBar";
 import { FavoritesSection, FavoritesSectionSkeleton } from "./_components/FavoritesSection";
+import { CollectionsSection } from "./_components/CollectionsSection";
 import { FilterableRecipeSection } from "./_components/FilterableRecipeSection";
 import { FeaturedRecipeSpotlight } from "./_components/FeaturedRecipeSpotlight";
 import { SocialProofStrip } from "./_components/SocialProofStrip";
@@ -23,10 +25,11 @@ import { RecipeGridSkeleton } from "./_components/RecipeGrid";
 export default async function HomePage(): Promise<JSX.Element> {
   const { userId } = auth();
 
-  const [allRecipes, tags, myFavoriteRecipes] = await Promise.all([
+  const [allRecipes, tags, myFavoriteRecipes, myCollections] = await Promise.all([
     fetchSliderRecipes(),
     fetchAllTagsByType(),
     userId ? fetchMyFavoriteRecipes() : Promise.resolve([]),
+    userId ? fetchMyCollections() : Promise.resolve([]),
   ]);
 
   const tagRecipeResults = await Promise.all(
@@ -88,6 +91,11 @@ export default async function HomePage(): Promise<JSX.Element> {
           {/* Favorites Section */}
           <Suspense fallback={<FavoritesSectionSkeleton />}>
             <FavoritesSection favorites={myFavoriteRecipes ?? []} />
+          </Suspense>
+
+          {/* Collections Section */}
+          <Suspense fallback={<div className="py-4" />}>
+            <CollectionsSection collections={myCollections ?? []} />
           </Suspense>
 
           {/* Recipe Grid with Category Pills */}
