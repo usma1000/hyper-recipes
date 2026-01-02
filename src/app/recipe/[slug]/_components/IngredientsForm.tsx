@@ -77,7 +77,7 @@ export default function IngredientsForm({
       toast("Tags successfully created.");
       form.reset();
     }
-  }, [isSubmitSuccessful]);
+  }, [isSubmitSuccessful, form]);
 
   const handleRemoveIngredient = async (ingredientId: number) => {
     const result = await onRemoveIngredient(recipeId, ingredientId);

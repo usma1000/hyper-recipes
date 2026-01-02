@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Soup, FolderPlus, Heart, BookOpen } from "lucide-react";

@@ -1,7 +1,7 @@
 import "server-only";
 import { db } from "../db";
 import { revalidatePath } from "next/cache";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { PointsTable, AchievementsTable, BadgesTable } from "../db/schemas";
 
 // Calculate required XP for a given level

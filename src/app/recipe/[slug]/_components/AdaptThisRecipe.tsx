@@ -16,7 +16,6 @@ import {
 import { AuthGateModal } from "./AuthGateModal";
 
 interface AdaptThisRecipeProps {
-  defaultServings: number;
   servings: number;
   onServingsChange: (servings: number) => void;
 }
@@ -33,7 +32,6 @@ type DifficultyOption = "beginner" | "confident";
  * @param onServingsChange - Callback when servings change
  */
 export function AdaptThisRecipe({
-  defaultServings,
   servings,
   onServingsChange,
 }: AdaptThisRecipeProps): JSX.Element {
