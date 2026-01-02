@@ -21,8 +21,13 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 
+interface DangerZoneRecipe {
+  id: number;
+  published: boolean;
+}
+
 type Props = {
-  recipe: Recipe;
+  recipe: DangerZoneRecipe;
 };
 
 export default function DangerZoneDialog({ recipe }: Props) {

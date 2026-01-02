@@ -4,7 +4,7 @@ import {
   getRecipeMetadata,
   getAllRecipeNames,
 } from "~/server/queries";
-import FullRecipePage from "./_components/FullRecipePage";
+import FullRecipePageServer from "./_components/FullRecipePageServer";
 import RecipeLoading from "./loading";
 import { env } from "~/env";
 import { RecipeViewTracker } from "~/app/_components/logged-in-homepage/RecipeViewTracker";
@@ -100,7 +100,7 @@ export default async function RecipePage({ params: { slug } }: Props) {
     <div className="container py-8">
       <RecipeViewTracker recipeId={id} />
       <Suspense fallback={<RecipeLoading />}>
-        <FullRecipePage id={id} slug={slug} />
+        <FullRecipePageServer id={id} slug={slug} />
       </Suspense>
     </div>
   );
