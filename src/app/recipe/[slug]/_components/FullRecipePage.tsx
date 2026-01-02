@@ -218,7 +218,7 @@ export default async function FullRecipePage({
               </CardHeader>
               <CardContent>
                 <EditorRoot>
-                  <StepsEditor steps={steps} />
+                  <StepsEditor recipeId={id} steps={steps} />
                 </EditorRoot>
               </CardContent>
             </Card>

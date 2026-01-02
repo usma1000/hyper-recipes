@@ -30,7 +30,7 @@ export const getRecipeIdFromSlug = unstable_cache(
     return recipe.id;
   },
   ["recipe-id-from-slug"],
-  { revalidate: 60, tags: ["recipes"] }
+  { revalidate: 60, tags: ["recipes"] },
 );
 
 export async function createNewRecipe(recipe: newRecipe) {
@@ -73,7 +73,7 @@ export const getAllRecipes = unstable_cache(
     return recipes;
   },
   ["all-recipes"],
-  { revalidate: 60, tags: ["recipes"] }
+  { revalidate: 60, tags: ["recipes"] },
 );
 
 /**
@@ -94,7 +94,7 @@ export const getAllRecipeNames = unstable_cache(
     return recipes;
   },
   ["all-recipe-names"],
-  { revalidate: 60, tags: ["recipes"] }
+  { revalidate: 60, tags: ["recipes"] },
 );
 
 /**
@@ -114,7 +114,7 @@ export const getSliderRecipes = unstable_cache(
     return recipes;
   },
   ["slider-recipes"],
-  { revalidate: 60, tags: ["recipes"] }
+  { revalidate: 60, tags: ["recipes"] },
 );
 
 export async function getRecipe(id: number) {
@@ -163,7 +163,7 @@ export const getFullRecipeById = unstable_cache(
     return recipe;
   },
   ["full-recipe-by-id"],
-  { revalidate: 60, tags: ["recipes", "ingredients", "tags"] }
+  { revalidate: 60, tags: ["recipes", "ingredients", "tags"] },
 );
 
 /**
@@ -186,7 +186,7 @@ export const getRecipeNameAndDescription = unstable_cache(
     return recipe;
   },
   ["recipe-name-description"],
-  { revalidate: 60, tags: ["recipes"] }
+  { revalidate: 60, tags: ["recipes"] },
 );
 
 export async function updateRecipeNameAndDescription(
@@ -225,7 +225,7 @@ export const getStepsByRecipeId = unstable_cache(
     return recipe.steps as JSONContent;
   },
   ["recipe-steps"],
-  { revalidate: 60, tags: ["recipes"] }
+  { revalidate: 60, tags: ["recipes"] },
 );
 
 export async function saveStepsForRecipeId(id: number, steps: string) {
@@ -241,7 +241,7 @@ export async function saveStepsForRecipeId(id: number, steps: string) {
     })
     .where(eq(RecipesTable.id, id));
 
-  revalidatePath("/recipe/[slug]", "page");
+  revalidateRecipePaths();
 }
 
 export async function setPublishRecipe(id: number, published: boolean) {
