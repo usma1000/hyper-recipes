@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
-import { FolderPlus, Check } from "lucide-react";
+import { useEffect, useState, useTransition, useRef } from "react";
+import { FolderPlus, Check, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
 import {
@@ -15,7 +15,7 @@ import {
 } from "~/app/_actions/collections";
 import { toast } from "sonner";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
-import { CreateCollectionForm } from "~/app/_components/CreateCollectionForm";
+import { CreateCollectionDialogWithCallback } from "./CreateCollectionDialogWithCallback";
 
 interface AddToCollectionButtonProps {
   recipeId: number;
@@ -33,6 +33,8 @@ export function AddToCollectionButton({
   const [isLoading, setIsLoading] = useState(true);
   const [isPending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const openDialogRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     if (!isLoaded || !isSignedIn) {
@@ -52,6 +54,12 @@ export function AddToCollectionButton({
         setIsLoading(false);
       });
   }, [isSignedIn, isLoaded]);
+
+  useEffect(() => {
+    if (showCreateDialog && openDialogRef.current) {
+      openDialogRef.current();
+    }
+  }, [showCreateDialog]);
 
   if (!isLoaded || !isSignedIn) {
     return null;
@@ -84,11 +92,11 @@ export function AddToCollectionButton({
       try {
         // Add the recipe to the newly created collection
         await addRecipeToCollectionAction(collectionId, recipeId);
-        
+
         toast.success(
           `Collection "${title}" created and recipe added successfully.`,
         );
-        
+
         // Refresh collections to update the UI
         const updated = await fetchMyCollections();
         setCollections(updated);
@@ -125,64 +133,83 @@ export function AddToCollectionButton({
           />
         </Button>
       </PopoverTrigger>
-      <PopoverContent
-        className={
-          !isLoading && collections.length === 0 ? "w-96" : "w-80"
-        }
-        align="end"
-      >
+      <PopoverContent className="w-80" align="end">
         <div className="space-y-2">
           <h4 className="text-sm font-semibold">Add to Collection</h4>
           {isLoading ? (
             <div className="flex items-center justify-center py-4">
               <LoadingSpinner />
             </div>
-          ) : collections.length === 0 ? (
-            <div className="space-y-4">
-              <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                No collections yet. Create one to add this recipe.
-              </p>
-              <CreateCollectionForm
-                onSuccess={async (collectionId: number, title: string) => {
-                  await handleCreateAndAdd(collectionId, title);
-                }}
-              />
-            </div>
           ) : (
-            <div className="max-h-64 space-y-1 overflow-y-auto">
-              {collections.map((collection) => {
-                const isInCollection = isRecipeInCollection(collection);
-                return (
-                  <button
-                    key={collection.id}
-                    type="button"
-                    onClick={() => {
-                      if (!isInCollection) {
-                        handleAddToCollection(collection.id);
-                      }
-                    }}
-                    disabled={isPending || isInCollection}
-                    className="flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-neutral-800"
-                  >
-                    <div className="flex-1">
-                      <div className="font-medium">{collection.title}</div>
-                      {collection.description && (
-                        <div className="text-xs text-neutral-500 dark:text-neutral-400">
-                          {collection.description}
+            <>
+              {collections.length > 0 && (
+                <div className="max-h-64 space-y-1 overflow-y-auto">
+                  {collections.map((collection) => {
+                    const isInCollection = isRecipeInCollection(collection);
+                    return (
+                      <button
+                        key={collection.id}
+                        type="button"
+                        onClick={() => {
+                          if (!isInCollection) {
+                            handleAddToCollection(collection.id);
+                          }
+                        }}
+                        disabled={isPending || isInCollection}
+                        className="flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-neutral-800"
+                      >
+                        <div className="flex-1">
+                          <div className="font-medium">{collection.title}</div>
+                          {collection.description && (
+                            <div className="text-xs text-neutral-500 dark:text-neutral-400">
+                              {collection.description}
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-                    {isInCollection && (
-                      <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
+                        {isInCollection && (
+                          <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+              <div className="border-t border-neutral-200 pt-2 dark:border-neutral-800">
+                <button
+                  type="button"
+                  className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setOpen(false);
+                    setShowCreateDialog(true);
+                  }}
+                >
+                  <Plus className="h-4 w-4" />
+                  <span className="font-medium">Create New Collection</span>
+                </button>
+              </div>
+            </>
           )}
         </div>
       </PopoverContent>
+      <CreateCollectionDialogWithCallback
+        onOpenChange={(dialogOpen) => {
+          if (!dialogOpen) {
+            setShowCreateDialog(false);
+            openDialogRef.current = null;
+          }
+        }}
+        onSuccess={async (collectionId: number, title: string) => {
+          await handleCreateAndAdd(collectionId, title);
+          setShowCreateDialog(false);
+        }}
+      >
+        {(openDialog) => {
+          openDialogRef.current = openDialog;
+          return null;
+        }}
+      </CreateCollectionDialogWithCallback>
     </Popover>
   );
 }
-
