@@ -5,6 +5,7 @@ import { ContinueRow, ContinueRowSkeleton } from "./ContinueRow";
 import { ExploreGrid, ExploreGridSkeleton } from "./ExploreGrid";
 import { Sidebar } from "./Sidebar";
 import { FooterMicroCTA } from "./FooterMicroCTA";
+import { UpsellStrip } from "../UpsellStrip";
 
 type LoggedInHomepageProps = {
   recipes: Recipe[];
@@ -35,35 +36,38 @@ export function LoggedInHomepage({
   recipesByTag,
 }: LoggedInHomepageProps): JSX.Element {
   return (
-    <div className="container py-6">
-      <HeaderStrip />
+    <>
+      <UpsellStrip />
+      <div className="container py-6">
+        <HeaderStrip />
 
-      <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_340px]">
-        {/* Main Column (70%) */}
-        <div className="space-y-8">
-          <Suspense fallback={<CookNowSpotlightSkeleton />}>
-            <CookNowSpotlight recipes={recipes} />
-          </Suspense>
+        <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_340px]">
+          {/* Main Column (70%) */}
+          <div className="space-y-8">
+            <Suspense fallback={<CookNowSpotlightSkeleton />}>
+              <CookNowSpotlight recipes={recipes} />
+            </Suspense>
 
-          <Suspense fallback={<ContinueRowSkeleton />}>
-            <ContinueRow recipes={recipes} />
-          </Suspense>
+            <Suspense fallback={<ContinueRowSkeleton />}>
+              <ContinueRow recipes={recipes} />
+            </Suspense>
 
-          <Suspense fallback={<ExploreGridSkeleton />}>
-            <ExploreGrid
-              recipes={recipes}
-              tags={tags}
-              recipesByTag={recipesByTag}
-            />
-          </Suspense>
+            <Suspense fallback={<ExploreGridSkeleton />}>
+              <ExploreGrid
+                recipes={recipes}
+                tags={tags}
+                recipesByTag={recipesByTag}
+              />
+            </Suspense>
+          </div>
+
+          {/* Sidebar (30%) */}
+          <Sidebar favorites={favorites} collections={collections} />
         </div>
 
-        {/* Sidebar (30%) */}
-        <Sidebar favorites={favorites} collections={collections} />
+        <FooterMicroCTA />
       </div>
-
-      <FooterMicroCTA />
-    </div>
+    </>
   );
 }
 
