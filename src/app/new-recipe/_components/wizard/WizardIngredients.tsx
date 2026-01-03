@@ -1,8 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { Plus, Trash2, GripVertical, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -42,6 +59,7 @@ import {
 } from "@/components/ui/popover";
 
 import type { RecipeWizardFormData, WizardIngredient } from "./types";
+import { CreateIngredientDialog } from "./CreateIngredientDialog";
 
 /**
  * Generates a simple unique ID for form array items.
@@ -55,8 +73,86 @@ type IngredientOption = {
   name: string;
 };
 
+interface IngredientCommandProps {
+  availableIngredients: IngredientOption[];
+  fieldValue: string;
+  onSelect: (ingredientName: string) => void;
+  onIngredientCreated: (ingredient: { id: number; name: string }) => void;
+}
+
+/**
+ * Command component for ingredient selection with create option.
+ * Handles filtering and shows create option when no exact match exists.
+ */
+function IngredientCommand({
+  availableIngredients,
+  fieldValue,
+  onSelect,
+  onIngredientCreated,
+}: IngredientCommandProps): JSX.Element {
+  const [searchValue, setSearchValue] = useState("");
+
+  // Sync search value with field value when popover opens
+  useEffect(() => {
+    if (fieldValue) {
+      setSearchValue(fieldValue);
+    }
+  }, [fieldValue]);
+
+  // Check if there's an exact match for the current search
+  const hasExactMatch = availableIngredients.some(
+    (ing) => ing.name.toLowerCase() === searchValue.toLowerCase(),
+  );
+
+  // Show create option if search has value and no exact match
+  const showCreateOption = searchValue.length > 0 && !hasExactMatch;
+
+  return (
+    <Command>
+      <CommandInput
+        placeholder="Search ingredients..."
+        value={searchValue}
+        onValueChange={setSearchValue}
+      />
+      <CommandList>
+        <CommandEmpty>
+          <span className="text-sm text-muted-foreground">
+            {searchValue.length > 0
+              ? `No ingredient found matching "${searchValue}"`
+              : "Start typing to search ingredients"}
+          </span>
+        </CommandEmpty>
+        <CommandGroup>
+          {availableIngredients.map((ing) => (
+            <CommandItem
+              key={ing.id}
+              value={ing.name}
+              onSelect={() => {
+                onSelect(ing.name);
+                setSearchValue("");
+              }}
+            >
+              {ing.name}
+            </CommandItem>
+          ))}
+        </CommandGroup>
+        {showCreateOption && (
+          <div className="border-t p-2">
+            <CreateIngredientDialog
+              onIngredientCreated={onIngredientCreated}
+              triggerText={`Create "${searchValue}"`}
+              initialName={searchValue}
+            />
+          </div>
+        )}
+      </CommandList>
+    </Command>
+  );
+}
+
 interface WizardIngredientsProps {
   availableIngredients: IngredientOption[];
+  onIngredientsUpdated?: (ingredients: IngredientOption[]) => void;
 }
 
 const COMMON_UNITS = [
@@ -81,9 +177,10 @@ const COMMON_UNITS = [
  * @param availableIngredients - Available ingredients for autocomplete
  */
 export function WizardIngredients({
-  availableIngredients,
+  availableIngredients: initialIngredients,
+  onIngredientsUpdated,
 }: WizardIngredientsProps): JSX.Element {
-  const { control, watch } = useFormContext<RecipeWizardFormData>();
+  const { control, watch, setValue } = useFormContext<RecipeWizardFormData>();
   const { fields, append, remove, move } = useFieldArray({
     control,
     name: "ingredients",
@@ -91,6 +188,38 @@ export function WizardIngredients({
 
   const [expandedAdvanced, setExpandedAdvanced] = useState<string | null>(null);
   const [openCombobox, setOpenCombobox] = useState<string | null>(null);
+  const [availableIngredients, setAvailableIngredients] = useState<IngredientOption[]>(initialIngredients);
+
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 3, // Require 3px of movement before drag starts
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
+
+  const handleIngredientCreated = useCallback((ingredient: { id: number; name: string }, index: number) => {
+    // Add to available ingredients list
+    setAvailableIngredients((prev) => {
+      if (prev.some((ing) => ing.id === ingredient.id)) {
+        return prev;
+      }
+      return [...prev, ingredient];
+    });
+
+    // Update the form field with the new ingredient using setValue
+    setValue(`ingredients.${index}.ingredientName`, ingredient.name, { shouldDirty: true });
+    setValue(`ingredients.${index}.ingredientId`, ingredient.id, { shouldDirty: true });
+
+    // Notify parent if callback provided
+    const updated = [...availableIngredients, ingredient];
+    onIngredientsUpdated?.(updated);
+    setOpenCombobox(null);
+  }, [setValue, availableIngredients, onIngredientsUpdated]);
 
   function handleAddIngredient(): void {
     const newIngredient: WizardIngredient = {
@@ -117,6 +246,19 @@ export function WizardIngredients({
 
   function toggleAdvanced(id: string): void {
     setExpandedAdvanced((prev) => (prev === id ? null : id));
+  }
+
+  function handleDragEnd(event: DragEndEvent): void {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = fields.findIndex((field) => field.id === active.id);
+      const newIndex = fields.findIndex((field) => field.id === over.id);
+
+      if (oldIndex !== -1 && newIndex !== -1) {
+        move(oldIndex, newIndex);
+      }
+    }
   }
 
   return (
@@ -148,33 +290,68 @@ export function WizardIngredients({
           </Button>
         </div>
       ) : (
-        <div className="space-y-4">
-          {fields.map((field, index) => (
-            <div
-              key={field.id}
-              className="rounded-lg border bg-card p-4"
-            >
-              <div className="flex items-start gap-4">
-                {/* Drag handle and reorder buttons */}
-                <div className="flex flex-col items-center gap-1 pt-2">
-                  <GripVertical className="h-4 w-4 text-muted-foreground" />
-                  <button
-                    type="button"
-                    onClick={() => handleMoveUp(index)}
-                    disabled={index === 0}
-                    className="text-muted-foreground hover:text-foreground disabled:opacity-30"
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={fields.map((f) => f.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="space-y-4">
+              {fields.map((field, index) => {
+                const {
+                  attributes,
+                  listeners,
+                  setNodeRef,
+                  transform,
+                  transition,
+                  isDragging,
+                } = useSortable({ id: field.id });
+
+                const style = {
+                  transform: CSS.Transform.toString(transform),
+                  transition,
+                  opacity: isDragging ? 0.5 : 1,
+                };
+
+                return (
+                  <div
+                    key={field.id}
+                    ref={setNodeRef}
+                    style={style}
+                    className="rounded-lg border bg-card p-4"
                   >
-                    <ChevronUp className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleMoveDown(index)}
-                    disabled={index === fields.length - 1}
-                    className="text-muted-foreground hover:text-foreground disabled:opacity-30"
-                  >
-                    <ChevronDown className="h-4 w-4" />
-                  </button>
-                </div>
+                    <div className="flex items-start gap-4">
+                      {/* Drag handle and reorder buttons */}
+                      <div className="flex flex-col items-center gap-1 pt-2">
+                        <button
+                          type="button"
+                          {...attributes}
+                          {...listeners}
+                          className="cursor-grab active:cursor-grabbing touch-none p-1 -m-1 border-0 bg-transparent"
+                          style={{ touchAction: "none" }}
+                        >
+                          <GripVertical className="h-4 w-4 text-muted-foreground" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleMoveUp(index)}
+                          disabled={index === 0}
+                          className="text-muted-foreground hover:text-foreground disabled:opacity-30"
+                        >
+                          <ChevronUp className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleMoveDown(index)}
+                          disabled={index === fields.length - 1}
+                          className="text-muted-foreground hover:text-foreground disabled:opacity-30"
+                        >
+                          <ChevronDown className="h-4 w-4" />
+                        </button>
+                      </div>
 
                 {/* Main ingredient fields */}
                 <div className="flex-1 space-y-4">
@@ -209,39 +386,17 @@ export function WizardIngredients({
                                 className="w-64 p-0"
                                 align="start"
                               >
-                                <Command>
-                                  <CommandInput placeholder="Search ingredients..." />
-                                  <CommandList>
-                                    <CommandEmpty>
-                                      <span className="text-sm">
-                                        Press enter to use "{field.value}"
-                                      </span>
-                                    </CommandEmpty>
-                                    <CommandGroup>
-                                      {availableIngredients
-                                        .filter((ing) =>
-                                          ing.name
-                                            .toLowerCase()
-                                            .includes(
-                                              field.value?.toLowerCase() ?? "",
-                                            ),
-                                        )
-                                        .slice(0, 10)
-                                        .map((ing) => (
-                                          <CommandItem
-                                            key={ing.id}
-                                            value={ing.name}
-                                            onSelect={() => {
-                                              field.onChange(ing.name);
-                                              setOpenCombobox(null);
-                                            }}
-                                          >
-                                            {ing.name}
-                                          </CommandItem>
-                                        ))}
-                                    </CommandGroup>
-                                  </CommandList>
-                                </Command>
+                                <IngredientCommand
+                                  availableIngredients={availableIngredients}
+                                  fieldValue={field.value ?? ""}
+                                  onSelect={(ingredientName) => {
+                                    field.onChange(ingredientName);
+                                    setOpenCombobox(null);
+                                  }}
+                                  onIngredientCreated={(ingredient) =>
+                                    handleIngredientCreated(ingredient, index)
+                                  }
+                                />
                               </PopoverContent>
                             </Popover>
                             <FormMessage />
@@ -409,8 +564,11 @@ export function WizardIngredients({
                 </Button>
               </div>
             </div>
-          ))}
-        </div>
+                );
+              })}
+            </div>
+          </SortableContext>
+        </DndContext>
       )}
 
       {fields.length > 0 && (
