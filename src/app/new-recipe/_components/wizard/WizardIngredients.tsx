@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { Plus, Trash2, GripVertical, ChevronDown, ChevronUp } from "lucide-react";
 
@@ -42,6 +42,7 @@ import {
 } from "@/components/ui/popover";
 
 import type { RecipeWizardFormData, WizardIngredient } from "./types";
+import { CreateIngredientDialog } from "./CreateIngredientDialog";
 
 /**
  * Generates a simple unique ID for form array items.
@@ -55,8 +56,86 @@ type IngredientOption = {
   name: string;
 };
 
+interface IngredientCommandProps {
+  availableIngredients: IngredientOption[];
+  fieldValue: string;
+  onSelect: (ingredientName: string) => void;
+  onIngredientCreated: (ingredient: { id: number; name: string }) => void;
+}
+
+/**
+ * Command component for ingredient selection with create option.
+ * Handles filtering and shows create option when no exact match exists.
+ */
+function IngredientCommand({
+  availableIngredients,
+  fieldValue,
+  onSelect,
+  onIngredientCreated,
+}: IngredientCommandProps): JSX.Element {
+  const [searchValue, setSearchValue] = useState("");
+
+  // Sync search value with field value when popover opens
+  useEffect(() => {
+    if (fieldValue) {
+      setSearchValue(fieldValue);
+    }
+  }, [fieldValue]);
+
+  // Check if there's an exact match for the current search
+  const hasExactMatch = availableIngredients.some(
+    (ing) => ing.name.toLowerCase() === searchValue.toLowerCase(),
+  );
+
+  // Show create option if search has value and no exact match
+  const showCreateOption = searchValue.length > 0 && !hasExactMatch;
+
+  return (
+    <Command>
+      <CommandInput
+        placeholder="Search ingredients..."
+        value={searchValue}
+        onValueChange={setSearchValue}
+      />
+      <CommandList>
+        <CommandEmpty>
+          <span className="text-sm text-muted-foreground">
+            {searchValue.length > 0
+              ? `No ingredient found matching "${searchValue}"`
+              : "Start typing to search ingredients"}
+          </span>
+        </CommandEmpty>
+        <CommandGroup>
+          {availableIngredients.map((ing) => (
+            <CommandItem
+              key={ing.id}
+              value={ing.name}
+              onSelect={() => {
+                onSelect(ing.name);
+                setSearchValue("");
+              }}
+            >
+              {ing.name}
+            </CommandItem>
+          ))}
+        </CommandGroup>
+        {showCreateOption && (
+          <div className="border-t p-2">
+            <CreateIngredientDialog
+              onIngredientCreated={onIngredientCreated}
+              triggerText={`Create "${searchValue}"`}
+              initialName={searchValue}
+            />
+          </div>
+        )}
+      </CommandList>
+    </Command>
+  );
+}
+
 interface WizardIngredientsProps {
   availableIngredients: IngredientOption[];
+  onIngredientsUpdated?: (ingredients: IngredientOption[]) => void;
 }
 
 const COMMON_UNITS = [
@@ -81,9 +160,10 @@ const COMMON_UNITS = [
  * @param availableIngredients - Available ingredients for autocomplete
  */
 export function WizardIngredients({
-  availableIngredients,
+  availableIngredients: initialIngredients,
+  onIngredientsUpdated,
 }: WizardIngredientsProps): JSX.Element {
-  const { control, watch } = useFormContext<RecipeWizardFormData>();
+  const { control, watch, setValue } = useFormContext<RecipeWizardFormData>();
   const { fields, append, remove, move } = useFieldArray({
     control,
     name: "ingredients",
@@ -91,6 +171,26 @@ export function WizardIngredients({
 
   const [expandedAdvanced, setExpandedAdvanced] = useState<string | null>(null);
   const [openCombobox, setOpenCombobox] = useState<string | null>(null);
+  const [availableIngredients, setAvailableIngredients] = useState<IngredientOption[]>(initialIngredients);
+
+  const handleIngredientCreated = useCallback((ingredient: { id: number; name: string }, index: number) => {
+    // Add to available ingredients list
+    setAvailableIngredients((prev) => {
+      if (prev.some((ing) => ing.id === ingredient.id)) {
+        return prev;
+      }
+      return [...prev, ingredient];
+    });
+
+    // Update the form field with the new ingredient using setValue
+    setValue(`ingredients.${index}.ingredientName`, ingredient.name, { shouldDirty: true });
+    setValue(`ingredients.${index}.ingredientId`, ingredient.id, { shouldDirty: true });
+
+    // Notify parent if callback provided
+    const updated = [...availableIngredients, ingredient];
+    onIngredientsUpdated?.(updated);
+    setOpenCombobox(null);
+  }, [setValue, availableIngredients, onIngredientsUpdated]);
 
   function handleAddIngredient(): void {
     const newIngredient: WizardIngredient = {
@@ -209,39 +309,17 @@ export function WizardIngredients({
                                 className="w-64 p-0"
                                 align="start"
                               >
-                                <Command>
-                                  <CommandInput placeholder="Search ingredients..." />
-                                  <CommandList>
-                                    <CommandEmpty>
-                                      <span className="text-sm">
-                                        Press enter to use "{field.value}"
-                                      </span>
-                                    </CommandEmpty>
-                                    <CommandGroup>
-                                      {availableIngredients
-                                        .filter((ing) =>
-                                          ing.name
-                                            .toLowerCase()
-                                            .includes(
-                                              field.value?.toLowerCase() ?? "",
-                                            ),
-                                        )
-                                        .slice(0, 10)
-                                        .map((ing) => (
-                                          <CommandItem
-                                            key={ing.id}
-                                            value={ing.name}
-                                            onSelect={() => {
-                                              field.onChange(ing.name);
-                                              setOpenCombobox(null);
-                                            }}
-                                          >
-                                            {ing.name}
-                                          </CommandItem>
-                                        ))}
-                                    </CommandGroup>
-                                  </CommandList>
-                                </Command>
+                                <IngredientCommand
+                                  availableIngredients={availableIngredients}
+                                  fieldValue={field.value ?? ""}
+                                  onSelect={(ingredientName) => {
+                                    field.onChange(ingredientName);
+                                    setOpenCombobox(null);
+                                  }}
+                                  onIngredientCreated={(ingredient) =>
+                                    handleIngredientCreated(ingredient, index)
+                                  }
+                                />
                               </PopoverContent>
                             </Popover>
                             <FormMessage />

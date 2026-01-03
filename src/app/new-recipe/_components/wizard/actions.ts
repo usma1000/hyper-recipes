@@ -182,7 +182,8 @@ export async function submitRecipeWizard(
 
 /**
  * Saves the current wizard state as a draft.
- * For now, this just logs the data - full draft persistence can be added later.
+ * Note: This is a client-side action that uses localStorage.
+ * The actual saving happens in the client component.
  * @param data - The current wizard form data
  * @returns Result with success status
  */
@@ -194,16 +195,8 @@ export async function saveDraft(
     return { success: false, error: "Not authenticated" };
   }
 
-  try {
-    // TODO: Implement draft persistence (localStorage or server-side)
-    console.log("Draft data:", JSON.stringify(data, null, 2));
-    return { success: true };
-  } catch (error) {
-    console.error("Failed to save draft:", error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Failed to save draft",
-    };
-  }
+  // This function is kept for compatibility but actual saving
+  // happens client-side via saveDraftToStorage()
+  return { success: true };
 }
 

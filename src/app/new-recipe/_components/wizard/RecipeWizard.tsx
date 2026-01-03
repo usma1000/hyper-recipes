@@ -1,16 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { ChevronLeft, ChevronRight, Save } from "lucide-react";
+import { ChevronLeft, ChevronRight, Save, FolderOpen, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 import {
   RecipeWizardSchema,
@@ -26,6 +34,14 @@ import { WizardDifficulty } from "./WizardDifficulty";
 import { WizardPreview } from "./WizardPreview";
 import { WizardPublish } from "./WizardPublish";
 import { submitRecipeWizard, saveDraft } from "./actions";
+import {
+  saveDraftToStorage,
+  loadDraftFromStorage,
+  getAllDrafts,
+  deleteDraftFromStorage,
+  formatDraftDate,
+  type DraftMetadata,
+} from "./draftUtils";
 
 type TagOption = {
   id: number;
@@ -56,12 +72,19 @@ export function RecipeWizard({
   const router = useRouter();
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
+  const [drafts, setDrafts] = useState<DraftMetadata[]>([]);
+  const [showDraftDialog, setShowDraftDialog] = useState(false);
 
   const form = useForm<RecipeWizardFormData>({
     resolver: zodResolver(RecipeWizardSchema),
     defaultValues: DEFAULT_WIZARD_VALUES,
     mode: "onChange",
   });
+
+  // Load drafts on mount
+  useEffect(() => {
+    setDrafts(getAllDrafts());
+  }, []);
 
   const {
     formState: { isSubmitting, isDirty },
@@ -145,18 +168,46 @@ export function RecipeWizard({
     setIsSaving(true);
     try {
       const data = getValues();
-      const result = await saveDraft(data);
-      if (result.success) {
-        toast.success("Draft saved successfully");
-      } else {
-        toast.error(result.error ?? "Failed to save draft");
-      }
+      // Save to localStorage
+      saveDraftToStorage(data, currentStepIndex);
+      // Also call server action for compatibility
+      await saveDraft(data);
+      toast.success("Draft saved successfully");
+      // Refresh drafts list
+      setDrafts(getAllDrafts());
     } catch (error) {
       toast.error("Failed to save draft");
       console.error("Save draft error:", error);
     } finally {
       setIsSaving(false);
     }
+  }
+
+  /**
+   * Loads a draft and populates the form.
+   * @param draftId - The draft ID to load
+   */
+  function handleLoadDraft(draftId: string): void {
+    const draft = loadDraftFromStorage(draftId);
+    if (!draft) {
+      toast.error("Draft not found");
+      return;
+    }
+
+    form.reset(draft.data);
+    setCurrentStepIndex(draft.metadata.step);
+    setShowDraftDialog(false);
+    toast.success(`Loaded draft: ${draft.metadata.name}`);
+  }
+
+  /**
+   * Deletes a draft.
+   * @param draftId - The draft ID to delete
+   */
+  function handleDeleteDraft(draftId: string): void {
+    deleteDraftFromStorage(draftId);
+    setDrafts(getAllDrafts());
+    toast.success("Draft deleted");
   }
 
   /**
@@ -188,7 +239,14 @@ export function RecipeWizard({
       case "basics":
         return <WizardBasics availableTags={availableTags} />;
       case "ingredients":
-        return <WizardIngredients availableIngredients={availableIngredients} />;
+        return (
+          <WizardIngredients
+            availableIngredients={availableIngredients}
+            onIngredientsUpdated={(updated) => {
+              // Ingredients list can be updated when new ones are created
+            }}
+          />
+        );
       case "steps":
         return <WizardSteps />;
       case "difficulty":
@@ -272,6 +330,62 @@ export function RecipeWizard({
               <ChevronLeft className="mr-1 h-4 w-4" />
               Back
             </Button>
+
+            <Dialog open={showDraftDialog} onOpenChange={setShowDraftDialog}>
+              <DialogTrigger asChild>
+                <Button type="button" variant="outline">
+                  <FolderOpen className="mr-1 h-4 w-4" />
+                  Load Draft
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Saved Drafts</DialogTitle>
+                  <DialogDescription>
+                    Select a draft to resume editing, or delete drafts you no
+                    longer need.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="max-h-96 space-y-2 overflow-y-auto">
+                  {drafts.length === 0 ? (
+                    <p className="py-8 text-center text-sm text-muted-foreground">
+                      No saved drafts yet. Save your progress to create a draft.
+                    </p>
+                  ) : (
+                    drafts.map((draft) => (
+                      <div
+                        key={draft.id}
+                        className="flex items-center justify-between rounded-lg border p-3"
+                      >
+                        <div className="flex-1">
+                          <p className="font-medium">{draft.name}</p>
+                          <p className="text-xs text-muted-foreground">
+                            Step {draft.step + 1}: {WIZARD_STEPS[draft.step]?.title ?? "Unknown"} • {formatDraftDate(draft.lastSaved)}
+                          </p>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            type="button"
+                            size="sm"
+                            onClick={() => handleLoadDraft(draft.id)}
+                          >
+                            Load
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleDeleteDraft(draft.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
 
             {isDirty && (
               <Button
