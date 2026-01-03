@@ -3,6 +3,23 @@
 import { useState, useCallback, useEffect } from "react";
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { Plus, Trash2, GripVertical, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -173,6 +190,18 @@ export function WizardIngredients({
   const [openCombobox, setOpenCombobox] = useState<string | null>(null);
   const [availableIngredients, setAvailableIngredients] = useState<IngredientOption[]>(initialIngredients);
 
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 3, // Require 3px of movement before drag starts
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
+
   const handleIngredientCreated = useCallback((ingredient: { id: number; name: string }, index: number) => {
     // Add to available ingredients list
     setAvailableIngredients((prev) => {
@@ -219,6 +248,19 @@ export function WizardIngredients({
     setExpandedAdvanced((prev) => (prev === id ? null : id));
   }
 
+  function handleDragEnd(event: DragEndEvent): void {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = fields.findIndex((field) => field.id === active.id);
+      const newIndex = fields.findIndex((field) => field.id === over.id);
+
+      if (oldIndex !== -1 && newIndex !== -1) {
+        move(oldIndex, newIndex);
+      }
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -248,33 +290,68 @@ export function WizardIngredients({
           </Button>
         </div>
       ) : (
-        <div className="space-y-4">
-          {fields.map((field, index) => (
-            <div
-              key={field.id}
-              className="rounded-lg border bg-card p-4"
-            >
-              <div className="flex items-start gap-4">
-                {/* Drag handle and reorder buttons */}
-                <div className="flex flex-col items-center gap-1 pt-2">
-                  <GripVertical className="h-4 w-4 text-muted-foreground" />
-                  <button
-                    type="button"
-                    onClick={() => handleMoveUp(index)}
-                    disabled={index === 0}
-                    className="text-muted-foreground hover:text-foreground disabled:opacity-30"
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={fields.map((f) => f.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="space-y-4">
+              {fields.map((field, index) => {
+                const {
+                  attributes,
+                  listeners,
+                  setNodeRef,
+                  transform,
+                  transition,
+                  isDragging,
+                } = useSortable({ id: field.id });
+
+                const style = {
+                  transform: CSS.Transform.toString(transform),
+                  transition,
+                  opacity: isDragging ? 0.5 : 1,
+                };
+
+                return (
+                  <div
+                    key={field.id}
+                    ref={setNodeRef}
+                    style={style}
+                    className="rounded-lg border bg-card p-4"
                   >
-                    <ChevronUp className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleMoveDown(index)}
-                    disabled={index === fields.length - 1}
-                    className="text-muted-foreground hover:text-foreground disabled:opacity-30"
-                  >
-                    <ChevronDown className="h-4 w-4" />
-                  </button>
-                </div>
+                    <div className="flex items-start gap-4">
+                      {/* Drag handle and reorder buttons */}
+                      <div className="flex flex-col items-center gap-1 pt-2">
+                        <button
+                          type="button"
+                          {...attributes}
+                          {...listeners}
+                          className="cursor-grab active:cursor-grabbing touch-none p-1 -m-1 border-0 bg-transparent"
+                          style={{ touchAction: "none" }}
+                        >
+                          <GripVertical className="h-4 w-4 text-muted-foreground" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleMoveUp(index)}
+                          disabled={index === 0}
+                          className="text-muted-foreground hover:text-foreground disabled:opacity-30"
+                        >
+                          <ChevronUp className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleMoveDown(index)}
+                          disabled={index === fields.length - 1}
+                          className="text-muted-foreground hover:text-foreground disabled:opacity-30"
+                        >
+                          <ChevronDown className="h-4 w-4" />
+                        </button>
+                      </div>
 
                 {/* Main ingredient fields */}
                 <div className="flex-1 space-y-4">
@@ -487,8 +564,11 @@ export function WizardIngredients({
                 </Button>
               </div>
             </div>
-          ))}
-        </div>
+                );
+              })}
+            </div>
+          </SortableContext>
+        </DndContext>
       )}
 
       {fields.length > 0 && (
