@@ -13,3 +13,9 @@ export * from "./queries/favorites";
 export * from "./queries/tags";
 export * from "./queries/ingredients";
 export * from "./queries/gamification";
+export * from "./queries/cookingHistory";
+export * from "./queries/collections";
+
+// Recipe Authoring v2 queries
+export * from "./queries/recipeVersions";
+export * from "./queries/recipeView";

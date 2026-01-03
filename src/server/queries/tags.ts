@@ -26,6 +26,21 @@ export const getAllTagNames = unstable_cache(
 );
 
 /**
+ * Fetches all tags with their types for the wizard.
+ * Cached for 5 minutes, invalidated via "tags" tag.
+ */
+export const getAllTags = unstable_cache(
+  async () => {
+    const tags = await db.query.TagsTable.findMany({
+      orderBy: (model, { asc }) => [asc(model.tagType), asc(model.name)],
+    });
+    return tags;
+  },
+  ["all-tags"],
+  { revalidate: 300, tags: ["tags"] }
+);
+
+/**
  * Fetches published recipes for a specific tag.
  * Cached for 60 seconds, invalidated via "recipes" and "tags" tags.
  * @param tagId - The tag ID to filter by

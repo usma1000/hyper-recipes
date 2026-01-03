@@ -1,4 +1,4 @@
-import { getFullRecipeById, getAllRecipes } from "~/server/queries";
+import { getFullRecipeById, getAllRecipes, hasV2DataAsync } from "~/server/queries";
 import { auth } from "@clerk/nextjs/server";
 import { type JSONContent } from "novel";
 import { FullRecipePageClient } from "./FullRecipePage";
@@ -12,6 +12,7 @@ interface FullRecipePageServerProps {
 /**
  * Server component that fetches recipe data and passes to client component.
  * Handles auth checks for unpublished recipes.
+ * Now checks for v2 data to enable difficulty switching.
  * @param id - Recipe ID
  * @param slug - Recipe slug (for routing)
  */
@@ -20,7 +21,11 @@ export default async function FullRecipePageServer({
 }: FullRecipePageServerProps): Promise<JSX.Element> {
   const { userId } = auth();
 
-  const fullRecipe = await getFullRecipeById(id);
+  // Fetch recipe and check for v2 data in parallel
+  const [fullRecipe, hasV2] = await Promise.all([
+    getFullRecipeById(id),
+    hasV2DataAsync(id),
+  ]);
 
   if (!fullRecipe.published && !userId) {
     throw new Error("Recipe is unpublished.");
@@ -80,6 +85,7 @@ export default async function FullRecipePageServer({
           recipe={{ id: recipe.id, published: recipe.published }}
         />
       }
+      hasV2Data={hasV2}
     />
   );
 }
