@@ -11,6 +11,7 @@ import { AdaptiveRecipePreview } from "./_components/AdaptiveRecipePreview";
 import { WhyBetterSection } from "./_components/WhyBetterSection";
 import { SocialProofStrip } from "./_components/SocialProofStrip";
 import { FooterCTA } from "./_components/FooterCTA";
+import { UpsellStrip } from "./_components/UpsellStrip";
 import { LoggedInHomepage } from "./_components/logged-in-homepage";
 
 /**
@@ -50,6 +51,7 @@ export default async function HomePage(): Promise<JSX.Element> {
       {/* Anonymous Homepage - Product-focused landing */}
       <SignedOut>
         <div className="flex flex-col">
+          <UpsellStrip />
           <CompactHero featuredRecipe={featuredRecipe} />
           
           <div className="container space-y-16 py-16">
