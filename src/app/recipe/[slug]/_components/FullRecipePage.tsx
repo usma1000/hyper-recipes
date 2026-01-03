@@ -64,11 +64,14 @@ interface RelatedRecipe {
   heroImage: { url: string; name: string } | null;
 }
 
+type DifficultyLevel = "EASY" | "MEDIUM" | "HARD";
+
 interface FullRecipePageProps {
   recipe: FullRecipe;
   relatedRecipes: RelatedRecipe[];
   adminEditSheet?: ReactNode;
   dangerZoneDialog?: ReactNode;
+  hasV2Data?: boolean;
 }
 
 const DEFAULT_SERVINGS = 4;
@@ -88,9 +91,11 @@ export function FullRecipePageClient({
   relatedRecipes,
   adminEditSheet,
   dangerZoneDialog,
+  hasV2Data = false,
 }: FullRecipePageProps): JSX.Element {
   const { isSignedIn, isLoaded } = useUser();
   const [servings, setServings] = useState(DEFAULT_SERVINGS);
+  const [difficulty, setDifficulty] = useState<DifficultyLevel>("MEDIUM");
   const [isCookModeOpen, setIsCookModeOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -143,7 +148,13 @@ export function FullRecipePageClient({
       <RecipeHeader recipe={recipe} tags={tags} servings={servings} />
 
       <div className="mb-4 lg:hidden">
-        <AdaptThisRecipe servings={servings} onServingsChange={setServings} />
+        <AdaptThisRecipe
+          servings={servings}
+          onServingsChange={setServings}
+          difficulty={difficulty}
+          onDifficultyChange={setDifficulty}
+          hasV2Data={hasV2Data}
+        />
       </div>
 
       <div className="mb-6 lg:hidden">
@@ -191,6 +202,9 @@ export function FullRecipePageClient({
             <AdaptThisRecipe
               servings={servings}
               onServingsChange={setServings}
+              difficulty={difficulty}
+              onDifficultyChange={setDifficulty}
+              hasV2Data={hasV2Data}
             />
 
             <IngredientsPanel

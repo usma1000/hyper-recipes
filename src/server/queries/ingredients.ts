@@ -154,3 +154,42 @@ export async function batchAddIngredientsToRecipe(
     throw new Error("Failed to add ingredients to recipe");
   }
 }
+
+/**
+ * Creates a new ingredient or returns existing one by name.
+ * Used by the wizard to handle new ingredient creation inline.
+ * @param name - The ingredient name
+ * @param description - Optional description
+ * @returns The ingredient with its ID
+ */
+export async function createOrGetIngredient(
+  name: string,
+  description?: string,
+): Promise<{ id: number; name: string; description: string | null }> {
+  const user = auth();
+
+  if (!user.userId) throw new Error("Not authenticated");
+
+  // Check if ingredient already exists (case-insensitive)
+  const existing = await db.query.IngredientsTable.findFirst({
+    where: (model, { ilike }) => ilike(model.name, name),
+  });
+
+  if (existing) {
+    return existing;
+  }
+
+  // Create new ingredient
+  const [created] = await db
+    .insert(IngredientsTable)
+    .values({
+      name,
+      description: description ?? null,
+    })
+    .returning();
+
+  if (!created) throw new Error("Failed to create ingredient");
+
+  revalidateIngredientCache();
+  return created;
+}

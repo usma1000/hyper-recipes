@@ -15,9 +15,14 @@ import {
 } from "@/components/ui/drawer";
 import { AuthGateModal } from "./AuthGateModal";
 
+type DifficultyLevel = "EASY" | "MEDIUM" | "HARD";
+
 interface AdaptThisRecipeProps {
   servings: number;
   onServingsChange: (servings: number) => void;
+  difficulty?: DifficultyLevel;
+  onDifficultyChange?: (difficulty: DifficultyLevel) => void;
+  hasV2Data?: boolean;
 }
 
 type TimeOption = "quick" | "standard" | "slow";
@@ -27,13 +32,19 @@ type DifficultyOption = "beginner" | "confident";
  * Adapt this recipe card - the key differentiator feature.
  * Controls for servings, time, swaps, and difficulty.
  * Anonymous users see controls but are gated on interaction.
- * @param defaultServings - Original recipe servings
+ * Now supports v2 difficulty levels (EASY/MEDIUM/HARD).
  * @param servings - Current servings state
  * @param onServingsChange - Callback when servings change
+ * @param difficulty - Current difficulty level (v2)
+ * @param onDifficultyChange - Callback when difficulty changes (v2)
+ * @param hasV2Data - Whether this recipe has v2 difficulty variations
  */
 export function AdaptThisRecipe({
   servings,
   onServingsChange,
+  difficulty = "MEDIUM",
+  onDifficultyChange,
+  hasV2Data = false,
 }: AdaptThisRecipeProps): JSX.Element {
   const { isSignedIn, isLoaded } = useUser();
   const [showAuthGate, setShowAuthGate] = useState(false);
@@ -76,6 +87,13 @@ export function AdaptThisRecipe({
     if (!value) return;
     requireAuth(() => {
       setDifficultyOption(value as DifficultyOption);
+    });
+  };
+
+  const handleV2DifficultyChange = (value: string): void => {
+    if (!value || !onDifficultyChange) return;
+    requireAuth(() => {
+      onDifficultyChange(value as DifficultyLevel);
     });
   };
 
@@ -160,30 +178,68 @@ export function AdaptThisRecipe({
 
           <div className="space-y-2">
             <label className="text-sm font-medium">Difficulty</label>
-            <ToggleGroup
-              type="single"
-              value={difficultyOption}
-              onValueChange={handleDifficultyChange}
-              className="justify-start"
-            >
-              <ToggleGroupItem
-                value="beginner"
-                aria-label="Beginner"
-                className="px-4"
-              >
-                Beginner
-              </ToggleGroupItem>
-              <ToggleGroupItem
-                value="confident"
-                aria-label="Confident"
-                className="px-4"
-              >
-                Confident
-              </ToggleGroupItem>
-            </ToggleGroup>
-            <p className="text-xs text-muted-foreground">
-              More guidance vs. fewer prompts
-            </p>
+            {hasV2Data ? (
+              <>
+                <ToggleGroup
+                  type="single"
+                  value={difficulty}
+                  onValueChange={handleV2DifficultyChange}
+                  className="justify-start"
+                >
+                  <ToggleGroupItem
+                    value="EASY"
+                    aria-label="Easy"
+                    className="px-4"
+                  >
+                    Easy
+                  </ToggleGroupItem>
+                  <ToggleGroupItem
+                    value="MEDIUM"
+                    aria-label="Medium"
+                    className="px-4"
+                  >
+                    Medium
+                  </ToggleGroupItem>
+                  <ToggleGroupItem
+                    value="HARD"
+                    aria-label="Hard"
+                    className="px-4"
+                  >
+                    Hard
+                  </ToggleGroupItem>
+                </ToggleGroup>
+                <p className="text-xs text-muted-foreground">
+                  Recipe adapts to your skill level
+                </p>
+              </>
+            ) : (
+              <>
+                <ToggleGroup
+                  type="single"
+                  value={difficultyOption}
+                  onValueChange={handleDifficultyChange}
+                  className="justify-start"
+                >
+                  <ToggleGroupItem
+                    value="beginner"
+                    aria-label="Beginner"
+                    className="px-4"
+                  >
+                    Beginner
+                  </ToggleGroupItem>
+                  <ToggleGroupItem
+                    value="confident"
+                    aria-label="Confident"
+                    className="px-4"
+                  >
+                    Confident
+                  </ToggleGroupItem>
+                </ToggleGroup>
+                <p className="text-xs text-muted-foreground">
+                  More guidance vs. fewer prompts
+                </p>
+              </>
+            )}
           </div>
         </CardContent>
       </Card>
