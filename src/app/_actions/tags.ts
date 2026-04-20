@@ -2,6 +2,7 @@
 
 import {
   getAllTagsByType,
+  getPublishedRecipesByTagIdMap,
   getRecipesByTag,
   getAllTagsForRecipe,
   assignTagsToRecipe,
@@ -16,6 +17,12 @@ export async function fetchAllTagsByType() {
 
 export async function fetchRecipesByTag(tagId: number) {
   return await getRecipesByTag(tagId);
+}
+
+export async function fetchPublishedRecipesByTagIdMap(): Promise<
+  Record<number, Recipe[]>
+> {
+  return await getPublishedRecipesByTagIdMap();
 }
 
 export async function fetchTagsForRecipe(recipeId: number) {

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect, type ReactNode } from "react";
+import { useState, useEffect, useCallback, type ReactNode } from "react";
 import { useUser } from "@clerk/nextjs";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Loader2, Check } from "lucide-react";
 import { type JSONContent } from "novel";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Card,
   CardContent,
@@ -12,7 +13,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { SignedIn } from "@clerk/nextjs";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { RecipeHeader } from "./RecipeHeader";
 import { AdaptThisRecipe } from "./AdaptThisRecipe";
 import { StepsList, extractStepsFromContent } from "./StepsList";
@@ -22,6 +23,7 @@ import { MobileStickyBar } from "./MobileStickyBar";
 import { MoreLikeThis } from "./MoreLikeThis";
 import { AdminWrapper } from "./AdminWrapper";
 import { checkIfFavorite, toggleFavorite } from "~/app/_actions/favorites";
+import { saveGeneralNote } from "~/app/_actions/userNotes";
 import { onPublishRecipe } from "./actions";
 
 interface FullRecipe {
@@ -66,12 +68,18 @@ interface RelatedRecipe {
 
 type DifficultyLevel = "EASY" | "MEDIUM" | "HARD";
 
+interface UserNotes {
+  stepNotes: Record<number, string>;
+  generalNote: string;
+}
+
 interface FullRecipePageProps {
   recipe: FullRecipe;
   relatedRecipes: RelatedRecipe[];
   adminEditSheet?: ReactNode;
   dangerZoneDialog?: ReactNode;
   hasV2Data?: boolean;
+  userNotes?: UserNotes;
 }
 
 const DEFAULT_SERVINGS = 4;
@@ -92,12 +100,18 @@ export function FullRecipePageClient({
   adminEditSheet,
   dangerZoneDialog,
   hasV2Data = false,
+  userNotes,
 }: FullRecipePageProps): JSX.Element {
   const { isSignedIn, isLoaded } = useUser();
   const [servings, setServings] = useState(DEFAULT_SERVINGS);
   const [difficulty, setDifficulty] = useState<DifficultyLevel>("MEDIUM");
   const [isCookModeOpen, setIsCookModeOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+
+  const [generalNote, setGeneralNote] = useState(userNotes?.generalNote ?? "");
+  const [savedGeneralNote, setSavedGeneralNote] = useState(userNotes?.generalNote ?? "");
+  const [generalNoteSaveState, setGeneralNoteSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [generalNoteError, setGeneralNoteError] = useState("");
 
   const tags = recipe.tags.map((t) => t.tag);
   const steps = recipe.steps;
@@ -127,6 +141,22 @@ export function FullRecipePageClient({
   const handleStartCookMode = (): void => {
     setIsCookModeOpen(true);
   };
+
+  const handleSaveGeneralNote = useCallback(async () => {
+    setGeneralNoteSaveState("saving");
+    setGeneralNoteError("");
+
+    const result = await saveGeneralNote(recipe.id, generalNote);
+
+    if (result.success) {
+      setSavedGeneralNote(generalNote);
+      setGeneralNoteSaveState("saved");
+      setTimeout(() => setGeneralNoteSaveState("idle"), 2000);
+    } else {
+      setGeneralNoteSaveState("error");
+      setGeneralNoteError(result.error ?? "Failed to save");
+    }
+  }, [recipe.id, generalNote]);
 
   return (
     <>
@@ -168,23 +198,63 @@ export function FullRecipePageClient({
 
       <div className="flex gap-8">
         <main className="min-w-0 flex-1">
-          <StepsList steps={steps} onStartCookMode={handleStartCookMode} />
+          <StepsList
+            steps={steps}
+            onStartCookMode={handleStartCookMode}
+            recipeId={recipe.id}
+            isSignedIn={!!isSignedIn}
+            stepNotes={userNotes?.stepNotes}
+          />
 
-          <SignedIn>
-            <Card className="mt-8">
-              <CardHeader>
-                <CardTitle>Make it yours</CardTitle>
-                <CardDescription>
-                  Save notes, swaps, and ratings for next time.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
+          <Card className="mt-8">
+            <CardHeader>
+              <CardTitle>Make it yours</CardTitle>
+              <CardDescription>
+                Save swaps, timing tweaks, and reminders for next time.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SignedIn>
+                <div className="space-y-3">
+                  <Textarea
+                    value={generalNote}
+                    onChange={(e) => setGeneralNote(e.target.value)}
+                    placeholder="Your notes for this recipe..."
+                    className="min-h-[100px]"
+                    maxLength={2000}
+                  />
+                  <div className="flex items-center gap-2">
+                    <Button
+                      onClick={handleSaveGeneralNote}
+                      disabled={generalNoteSaveState === "saving" || generalNote === savedGeneralNote}
+                    >
+                      {generalNoteSaveState === "saving" ? (
+                        <>
+                          <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+                          Saving...
+                        </>
+                      ) : generalNoteSaveState === "saved" ? (
+                        <>
+                          <Check className="mr-1.5 h-4 w-4" />
+                          Saved
+                        </>
+                      ) : (
+                        "Save notes"
+                      )}
+                    </Button>
+                  </div>
+                  {generalNoteSaveState === "error" && (
+                    <p className="text-sm text-destructive">{generalNoteError}</p>
+                  )}
+                </div>
+              </SignedIn>
+              <SignedOut>
                 <p className="text-sm text-muted-foreground">
-                  Personal notes feature coming soon.
+                  Log in to save personal notes.
                 </p>
-              </CardContent>
-            </Card>
-          </SignedIn>
+              </SignedOut>
+            </CardContent>
+          </Card>
 
           {dangerZoneDialog && (
             <AdminWrapper>

@@ -18,3 +18,6 @@ export * from "./ingredientSubstitutions";
 export * from "./scalingRules";
 export * from "./ingredientOverrides";
 export * from "./stepOverrides";
+
+// User notes schemas
+export * from "./recipeUserNotes";

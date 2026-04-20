@@ -71,6 +71,41 @@ export const getRecipesByTag = unstable_cache(
 );
 
 /**
+ * All published recipes grouped by tag id in one query (homepage).
+ * Replaces one getRecipesByTag call per tag, which amplified CPU under crawlers or many tags.
+ */
+export const getPublishedRecipesByTagIdMap = unstable_cache(
+  async (): Promise<Record<number, Recipe[]>> => {
+    const relations = await db.query.RecipesToTagsTable.findMany({
+      with: {
+        recipe: {
+          with: {
+            heroImage: true,
+          },
+        },
+      },
+    });
+
+    const byTagId: Record<number, Recipe[]> = {};
+    for (const relation of relations) {
+      const recipe = relation.recipe;
+      if (!recipe || !recipe.published) {
+        continue;
+      }
+      const list = byTagId[relation.tagId];
+      if (list) {
+        list.push(recipe);
+      } else {
+        byTagId[relation.tagId] = [recipe];
+      }
+    }
+    return byTagId;
+  },
+  ["published-recipes-by-tag-id-map"],
+  { revalidate: 60, tags: ["recipes", "tags"] },
+);
+
+/**
  * Fetches all tags assigned to a recipe.
  * Cached for 60 seconds, invalidated via "tags" tag.
  * @param recipeId - The recipe ID
