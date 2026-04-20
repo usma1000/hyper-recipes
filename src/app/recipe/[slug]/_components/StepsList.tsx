@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { type JSONContent } from "novel";
 import { ChevronDown, Lightbulb, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,10 +11,14 @@ import {
 } from "@/components/ui/collapsible";
 import { StepCard } from "./StepCard";
 import { cn } from "~/lib/utils";
+import { saveStepNote } from "~/app/_actions/userNotes";
 
 interface StepsListProps {
   steps: JSONContent | null;
   onStartCookMode: () => void;
+  recipeId: number;
+  isSignedIn: boolean;
+  stepNotes?: Record<number, string>;
 }
 
 /**
@@ -59,12 +63,19 @@ function extractStepsFromContent(content: JSONContent | null): string[] {
 /**
  * Steps list with decision support callouts.
  * Parses Novel editor JSON and renders scannable step cards.
+ * Supports per-step notes for logged-in users.
  * @param steps - Novel editor JSON content
  * @param onStartCookMode - Callback to enter cook mode
+ * @param recipeId - The recipe ID for saving notes
+ * @param isSignedIn - Whether the user is signed in
+ * @param stepNotes - Existing notes for each step
  */
 export function StepsList({
   steps,
   onStartCookMode,
+  recipeId,
+  isSignedIn,
+  stepNotes = {},
 }: StepsListProps): JSX.Element {
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
   const [showCommonFixes, setShowCommonFixes] = useState(false);
@@ -83,6 +94,13 @@ export function StepsList({
       return newSet;
     });
   };
+
+  const handleSaveStepNote = useCallback(
+    async (stepIndex: number, note: string) => {
+      return await saveStepNote(recipeId, stepIndex, note);
+    },
+    [recipeId]
+  );
 
   return (
     <section className="space-y-4">
@@ -106,6 +124,9 @@ export function StepsList({
               content={step}
               isCompleted={completedSteps.has(index)}
               onClick={() => toggleStepCompletion(index)}
+              isSignedIn={isSignedIn}
+              note={stepNotes[index] ?? ""}
+              onSaveNote={(note) => handleSaveStepNote(index, note)}
             />
           ))}
         </div>

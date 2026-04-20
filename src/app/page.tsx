@@ -2,7 +2,10 @@ import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 
 import { fetchAllRecipes } from "./_actions/recipes";
-import { fetchAllTagsByType, fetchRecipesByTag } from "./_actions/tags";
+import {
+  fetchAllTagsByType,
+  fetchPublishedRecipesByTagIdMap,
+} from "./_actions/tags";
 import { fetchMyFavoriteRecipes } from "./_actions/favorites";
 import { fetchMyCollections } from "./_actions/collections";
 
@@ -22,26 +25,18 @@ import { LoggedInHomepage } from "./_components/logged-in-homepage";
 export default async function HomePage(): Promise<JSX.Element> {
   const { userId } = auth();
 
-  const [allRecipes, tags, myFavoriteRecipes, myCollections] = await Promise.all([
-    fetchAllRecipes(),
-    fetchAllTagsByType(),
-    userId ? fetchMyFavoriteRecipes() : Promise.resolve([]),
-    userId ? fetchMyCollections() : Promise.resolve([]),
-  ]);
+  const [allRecipes, tags, myFavoriteRecipes, myCollections, recipesByTagBatch] =
+    await Promise.all([
+      fetchAllRecipes(),
+      fetchAllTagsByType(),
+      userId ? fetchMyFavoriteRecipes() : Promise.resolve([]),
+      userId ? fetchMyCollections() : Promise.resolve([]),
+      fetchPublishedRecipesByTagIdMap(),
+    ]);
 
-  const tagRecipeResults = await Promise.all(
-    tags.map(async (tag) => ({
-      tagId: tag.id,
-      recipes: await fetchRecipesByTag(tag.id),
-    }))
-  );
-
-  const recipesByTag: Record<
-    number,
-    Awaited<ReturnType<typeof fetchRecipesByTag>>
-  > = {};
-  for (const result of tagRecipeResults) {
-    recipesByTag[result.tagId] = result.recipes;
+  const recipesByTag: Record<number, Recipe[]> = {};
+  for (const tag of tags) {
+    recipesByTag[tag.id] = recipesByTagBatch[tag.id] ?? [];
   }
 
   const featuredRecipe = allRecipes[0];

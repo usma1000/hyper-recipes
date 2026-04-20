@@ -1,9 +1,17 @@
-import { getFullRecipeById, getAllRecipes, hasV2DataAsync } from "~/server/queries";
+import {
+  getFullRecipeById,
+  getRelatedRecipeSummariesExcluding,
+  hasV2DataAsync,
+} from "~/server/queries";
 import { auth } from "@clerk/nextjs/server";
 import { type JSONContent } from "novel";
 import { FullRecipePageClient } from "./FullRecipePage";
 import FullRecipeSheet from "./FullRecipeSheet";
 import DangerZoneDialog from "./DangerZoneDialog";
+import {
+  getStepNotesForRecipe,
+  getGeneralNoteForRecipe,
+} from "~/server/queries/userNotes";
 
 interface FullRecipePageServerProps {
   id: number;
@@ -21,29 +29,34 @@ export default async function FullRecipePageServer({
 }: FullRecipePageServerProps): Promise<JSX.Element> {
   const { userId } = auth();
 
-  // Fetch recipe and check for v2 data in parallel
-  const [fullRecipe, hasV2] = await Promise.all([
+  // Fetch recipe, v2 data, and user notes in parallel
+  const [fullRecipe, hasV2, stepNotes, generalNote] = await Promise.all([
     getFullRecipeById(id),
     hasV2DataAsync(id),
+    getStepNotesForRecipe(id),
+    getGeneralNoteForRecipe(id),
   ]);
 
   if (!fullRecipe.published && !userId) {
     throw new Error("Recipe is unpublished.");
   }
 
-  const allRecipes = await getAllRecipes();
-  const relatedRecipes = allRecipes
-    .filter((r) => r.id !== fullRecipe.id)
-    .slice(0, 6)
-    .map((r) => ({
-      id: r.id,
-      name: r.name,
-      slug: r.slug,
-      prepTime: r.prepTime,
-      cookTime: r.cookTime,
-      difficulty: r.difficulty,
-      heroImage: r.heroImage,
-    }));
+  const userNotes = userId
+    ? { stepNotes, generalNote }
+    : undefined;
+
+  const relatedRows = await getRelatedRecipeSummariesExcluding(fullRecipe.id);
+  const relatedRecipes = relatedRows.map((r) => ({
+    id: r.id,
+    name: r.name,
+    slug: r.slug,
+    prepTime: r.prepTime,
+    cookTime: r.cookTime,
+    difficulty: r.difficulty,
+    heroImage: r.heroImage
+      ? { url: r.heroImage.url, name: r.heroImage.name }
+      : null,
+  }));
 
   const recipe = {
     id: fullRecipe.id,
@@ -86,6 +99,7 @@ export default async function FullRecipePageServer({
         />
       }
       hasV2Data={hasV2}
+      userNotes={userNotes}
     />
   );
 }

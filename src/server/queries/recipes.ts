@@ -118,6 +118,40 @@ export const getSliderRecipes = unstable_cache(
   { revalidate: 60, tags: ["recipes"] },
 );
 
+/**
+ * Lightweight published recipes for "more like this", excluding one recipe.
+ * Avoids loading every published recipe on each recipe page (major cost for crawlers).
+ */
+export const getRelatedRecipeSummariesExcluding = unstable_cache(
+  async (excludeRecipeId: number) => {
+    const recipes = await db.query.RecipesTable.findMany({
+      where: (model, { and, eq, ne }) =>
+        and(eq(model.published, true), ne(model.id, excludeRecipeId)),
+      orderBy: (model, { desc }) => desc(model.id),
+      limit: 6,
+      columns: {
+        id: true,
+        name: true,
+        slug: true,
+        prepTime: true,
+        cookTime: true,
+        difficulty: true,
+      },
+      with: {
+        heroImage: {
+          columns: {
+            url: true,
+            name: true,
+          },
+        },
+      },
+    });
+    return recipes;
+  },
+  ["related-recipe-summaries-excluding"],
+  { revalidate: 60, tags: ["recipes"] },
+);
+
 export async function getRecipe(id: number) {
   const recipe = await db.query.RecipesTable.findFirst({
     where: (model, { eq }) => eq(model.id, id),
