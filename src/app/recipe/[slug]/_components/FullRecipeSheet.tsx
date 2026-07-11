@@ -19,6 +19,7 @@ import {
 import AssignTagsForm from "./AssignTagsForm";
 import IngredientsForm from "./IngredientsForm";
 import EditRecipeForm from "./EditRecipeForm";
+import UploadImageDialog from "./ImageDialogue";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default async function FullRecipeSheet({
@@ -41,6 +42,15 @@ export default async function FullRecipeSheet({
           <SheetTitle>Edit Recipe</SheetTitle>
         </SheetHeader>
         <div className="flex flex-col gap-8 pb-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Hero Image</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <UploadImageDialog recipeId={recipeId} />
+            </CardContent>
+          </Card>
+
           <Suspense
             fallback={
               <Card>
