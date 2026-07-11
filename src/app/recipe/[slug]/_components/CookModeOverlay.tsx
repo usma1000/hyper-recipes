@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { X, ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { X, ChevronLeft, ChevronRight, Check, ChefHat } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "~/lib/utils";
 
@@ -19,37 +19,47 @@ interface CookModeOverlayProps {
   onClose: () => void;
   steps: string[];
   ingredients: IngredientItem[];
+  onLogCook?: (elapsedMinutes: number) => void;
 }
 
 /**
  * Full-screen cook mode with always-visible ingredients and one step at a time.
- * Desktop: ingredients sidebar + step stage. Mobile: ingredients strip above step.
- * @param isOpen - Whether cook mode is active
- * @param onClose - Callback to exit cook mode
- * @param steps - Array of step strings
- * @param ingredients - Array of ingredients for quick reference
+ * Tracks elapsed time and offers check-in when the last step is completed.
  */
 export function CookModeOverlay({
   isOpen,
   onClose,
   steps,
   ingredients,
+  onLogCook,
 }: CookModeOverlayProps): JSX.Element | null {
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
+  const [isFinished, setIsFinished] = useState(false);
+  const startedAtRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (isOpen) {
       setCurrentStep(0);
       setCompletedSteps(new Set());
+      setIsFinished(false);
+      startedAtRef.current = Date.now();
 
       if ("wakeLock" in navigator) {
         navigator.wakeLock
           .request("screen")
           .catch((err) => console.log("Wake lock not available:", err));
       }
+    } else {
+      startedAtRef.current = null;
     }
   }, [isOpen]);
+
+  const getElapsedMinutes = (): number => {
+    if (!startedAtRef.current) return 1;
+    const elapsed = Math.round((Date.now() - startedAtRef.current) / 60000);
+    return Math.max(1, elapsed);
+  };
 
   const handleNext = useCallback((): void => {
     setCurrentStep((prev) => {
@@ -73,6 +83,7 @@ export function CookModeOverlay({
     if (!isOpen) return;
 
     const handleKeyDown = (e: KeyboardEvent): void => {
+      if (isFinished) return;
       if (e.key === "ArrowRight" || e.key === " ") {
         e.preventDefault();
         handleNext();
@@ -86,7 +97,7 @@ export function CookModeOverlay({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose, handleNext, handleBack]);
+  }, [isOpen, onClose, handleNext, handleBack, isFinished]);
 
   const handleMarkDone = (): void => {
     setCompletedSteps((prev) => {
@@ -97,7 +108,15 @@ export function CookModeOverlay({
 
     if (currentStep < steps.length - 1) {
       handleNext();
+    } else {
+      setIsFinished(true);
     }
+  };
+
+  const handleLogCook = (): void => {
+    const minutes = getElapsedMinutes();
+    onClose();
+    onLogCook?.(minutes);
   };
 
   if (!isOpen) return null;
@@ -106,7 +125,11 @@ export function CookModeOverlay({
   const isLastStep = currentStep === steps.length - 1;
   const isCurrentStepCompleted = completedSteps.has(currentStep);
   const progress =
-    steps.length > 0 ? ((currentStep + 1) / steps.length) * 100 : 0;
+    steps.length > 0
+      ? isFinished
+        ? 100
+        : ((currentStep + 1) / steps.length) * 100
+      : 0;
 
   const ingredientsList = (
     <ul className="space-y-2.5">
@@ -124,6 +147,44 @@ export function CookModeOverlay({
       )}
     </ul>
   );
+
+  if (isFinished) {
+    return (
+      <div className="fixed inset-0 z-50 flex flex-col bg-background">
+        <div className="h-1 bg-muted">
+          <div className="h-full w-full bg-herb transition-all duration-300" />
+        </div>
+        <header className="flex items-center justify-end border-b border-border/70 px-4 py-3">
+          <Button variant="ghost" size="sm" onClick={onClose}>
+            <X className="mr-1.5 h-4 w-4" />
+            Exit
+          </Button>
+        </header>
+        <main className="flex flex-1 flex-col items-center justify-center px-6 py-8">
+          <div className="max-w-md text-center animate-rise space-y-4">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-herb-muted text-herb">
+              <ChefHat className="h-8 w-8" aria-hidden />
+            </div>
+            <h2 className="font-display text-3xl font-semibold tracking-tight">
+              You finished!
+            </h2>
+            <p className="text-muted-foreground">
+              Log this cook to save your rating, earn XP, and share with the
+              community.
+            </p>
+            <div className="flex flex-col gap-2 pt-2 sm:flex-row sm:justify-center">
+              <Button onClick={handleLogCook} className="sm:min-w-[160px]">
+                Log this cook
+              </Button>
+              <Button variant="outline" onClick={onClose}>
+                Exit cook mode
+              </Button>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-background">
@@ -198,11 +259,11 @@ export function CookModeOverlay({
 
               <Button
                 onClick={handleMarkDone}
-                disabled={isCurrentStepCompleted}
+                disabled={isCurrentStepCompleted && !isLastStep}
                 className="max-w-xs flex-1"
               >
                 <Check className="mr-1.5 h-4 w-4" />
-                Done
+                {isLastStep ? "Finish" : "Done"}
               </Button>
 
               <Button

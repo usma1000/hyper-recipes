@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Clock, ChefHat, Users, Share2, Printer, Soup } from "lucide-react";
+import { Clock, ChefHat, Users, Share2, Printer, Soup, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 import { FavoriteButton } from "./FavoriteButton";
+import { AddToCollectionButton } from "./AddToCollectionButton";
+import type { RecipeCookStats } from "~/server/queries/cookingHistory";
 
 interface RecipeHeaderProps {
   recipe: {
@@ -26,7 +28,9 @@ interface RecipeHeaderProps {
   };
   tags: Array<{ id: number; name: string; tagType: string | null }>;
   servings: number;
+  cookStats?: RecipeCookStats;
   onStartCookMode: () => void;
+  onCheckIn: () => void;
 }
 
 /**
@@ -63,16 +67,14 @@ function formatDifficulty(difficulty: string | null): string | null {
 
 /**
  * Full-bleed hero header with photo, title, meta, and primary cook CTA.
- * @param recipe - The recipe data including hero image
- * @param tags - Array of recipe tags
- * @param servings - Current servings count
- * @param onStartCookMode - Opens cook mode overlay
  */
 export function RecipeHeader({
   recipe,
   tags,
   servings,
+  cookStats,
   onStartCookMode,
+  onCheckIn,
 }: RecipeHeaderProps): JSX.Element {
   const totalTime = formatTotalTime(recipe.prepTime, recipe.cookTime);
   const difficultyLabel = formatDifficulty(recipe.difficulty);
@@ -165,10 +167,24 @@ export function RecipeHeader({
               <Users className="h-4 w-4" aria-hidden />
               {servings} servings
             </span>
+            {cookStats?.avgRating != null && (
+              <span className="flex items-center gap-1.5 font-medium text-foreground">
+                <Star className="h-4 w-4 fill-accent text-accent" aria-hidden />
+                {cookStats.avgRating.toFixed(1)}
+              </span>
+            )}
+            {cookStats && cookStats.cookCount > 0 && (
+              <span className="text-sm">
+                {cookStats.cookCount === 1
+                  ? "1 cook"
+                  : `${cookStats.cookCount} cooks`}
+              </span>
+            )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <FavoriteButton recipeId={recipe.id} />
+            <AddToCollectionButton recipeId={recipe.id} />
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -191,6 +207,9 @@ export function RecipeHeader({
                 <TooltipContent>Print</TooltipContent>
               </Tooltip>
             </TooltipProvider>
+            <Button variant="outline" size="sm" onClick={onCheckIn}>
+              I cooked this
+            </Button>
             <Button
               variant="ghost"
               size="sm"

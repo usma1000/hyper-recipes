@@ -1,4 +1,13 @@
-import { serial, varchar, integer, real, text, timestamp, index } from "drizzle-orm/pg-core";
+import {
+  serial,
+  varchar,
+  integer,
+  real,
+  text,
+  timestamp,
+  index,
+  boolean,
+} from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { createTable } from "../tableCreator";
 import { RecipesTable } from "./recipes";
@@ -15,6 +24,7 @@ export const CookingSessionsTable = createTable(
     rating: real("rating").notNull(),
     timeMinutes: integer("time_minutes").notNull(),
     notes: text("notes"),
+    isPublic: boolean("is_public").default(true).notNull(),
     cookedAt: timestamp("cooked_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),

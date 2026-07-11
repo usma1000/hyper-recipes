@@ -1,11 +1,12 @@
-import AchievementBadge from "./_components/AchievementBadge";
-import {
-  BakingLegendBadge,
-  FirstRecipeBadge,
-  SpicyMasterBadge,
-} from "./_components/badges";
+"use client";
 
-type Badge = {
+import { useEffect, useState } from "react";
+import { useUser } from "@clerk/nextjs";
+import AchievementBadge from "./_components/AchievementBadge";
+import { fetchBadgeCatalog } from "~/app/_actions/gamification";
+import { BADGE_DEFINITIONS } from "~/server/gamification/badgeDefinitions";
+
+type BadgeRow = {
   name: string;
   description: string;
   isEarned: boolean;
@@ -13,183 +14,43 @@ type Badge = {
   imagePath: string;
 };
 
-const badges: Badge[] = [
-  // Basic Check-In Badges
-  {
-    name: "First Cook",
-    description: "Check in your first recipe",
-    isEarned: true,
-    category: "Basic Check-In Badges",
-    imagePath: "/badges/first-cook.png",
-  },
-  {
-    name: "Five-Star Chef",
-    description: "Check in 5 recipes",
-    isEarned: false,
-    category: "Basic Check-In Badges",
-    imagePath: "/badges/five-star-chef.png",
-  },
-  {
-    name: "Recipe Master",
-    description: "Check in 10 recipes",
-    isEarned: false,
-    category: "Basic Check-In Badges",
-    imagePath: "/badges/recipe-master.png",
-  },
-  {
-    name: "Kitchen Warrior",
-    description: "Check in 25 recipes",
-    isEarned: false,
-    category: "Basic Check-In Badges",
-    imagePath: "/badges/kitchen-warrior.png",
-  },
-  {
-    name: "Culinary Legend",
-    description: "Check in 50+ recipes",
-    isEarned: false,
-    category: "Basic Check-In Badges",
-    imagePath: "/badges/culinary-legend.png",
-  },
+/**
+ * Badge catalog page showing earned vs locked badges from the shared definitions.
+ */
+export default function BadgesPage(): JSX.Element {
+  const { user, isLoaded } = useUser();
+  const [badges, setBadges] = useState<BadgeRow[]>(
+    BADGE_DEFINITIONS.map((badge) => ({
+      name: badge.name,
+      description: badge.description,
+      category: badge.category,
+      imagePath: badge.imagePath,
+      isEarned: false,
+    })),
+  );
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Photo Badges
-  {
-    name: "Food Photographer",
-    description: "Upload a photo for 1 check-in",
-    isEarned: false,
-    category: "Photo Badges",
-    imagePath: "/badges/food-photographer.png",
-  },
-  {
-    name: "Shutter Chef",
-    description: "Upload photos for 10 check-ins",
-    isEarned: false,
-    category: "Photo Badges",
-    imagePath: "/badges/shutter-chef.png",
-  },
-  {
-    name: "Instagram-Worthy",
-    description: "Upload high-rated photos",
-    isEarned: false,
-    category: "Photo Badges",
-    imagePath: "/badges/instagram-worthy.png",
-  },
+  useEffect(() => {
+    async function load() {
+      if (!isLoaded) return;
+      if (!user) {
+        setIsLoading(false);
+        return;
+      }
 
-  // Streak Badges
-  {
-    name: "Weekend Warrior",
-    description: "Cook 2 days in a row",
-    isEarned: false,
-    category: "Cooking Streak Badges",
-    imagePath: "/badges/weekend-warrior.png",
-  },
-  {
-    name: "One-Week Streak",
-    description: "Cook 7 days in a row",
-    isEarned: false,
-    category: "Cooking Streak Badges",
-    imagePath: "/badges/one-week-streak.png",
-  },
-  {
-    name: "Iron Chef",
-    description: "Cook 30 days in a row",
-    isEarned: false,
-    category: "Cooking Streak Badges",
-    imagePath: "/badges/iron-chef.png",
-  },
+      try {
+        const catalog = await fetchBadgeCatalog();
+        setBadges(catalog);
+      } catch (error) {
+        console.error("Failed to load badge catalog:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
 
-  // Cuisine Badges
-  {
-    name: "Italian Explorer",
-    description: "Cook 3 Italian recipes",
-    isEarned: true,
-    category: "Cuisine Badges",
-    imagePath: "/badges/italian-explorer.png",
-  },
-  {
-    name: "Masala Master",
-    description: "Cook 3 Indian recipes",
-    isEarned: true,
-    category: "Cuisine Badges",
-    imagePath: "/badges/masala-master.png",
-  },
-  {
-    name: "Sushi Sensei",
-    description: "Cook 3 Japanese recipes",
-    isEarned: true,
-    category: "Cuisine Badges",
-    imagePath: "/badges/sushi-sensei.png",
-  },
-  {
-    name: "Taco Titan",
-    description: "Cook 3 Mexican recipes",
-    isEarned: false,
-    category: "Cuisine Badges",
-    imagePath: "/badges/taco-titan.png",
-  },
-  {
-    name: "Mediterranean Maven",
-    description: "Cook 3 Mediterranean recipes",
-    isEarned: false,
-    category: "Cuisine Badges",
-    imagePath: "/badges/mediterranean-maven.png",
-  },
-  {
-    name: "Global Gourmet",
-    description: "Cook 10+ recipes from different cuisines",
-    isEarned: false,
-    category: "Cuisine Badges",
-    imagePath: "/badges/global-gourmet.png",
-  },
+    void load();
+  }, [user, isLoaded]);
 
-  // Ingredient Badges
-  {
-    name: "Garlic Lover",
-    description: "Cook 5 recipes with garlic",
-    isEarned: false,
-    category: "Ingredient Badges",
-    imagePath: "/badges/garlic-lover.png",
-  },
-  {
-    name: "Spicy Adventurer",
-    description: "Cook 3 spicy dishes",
-    isEarned: true,
-    category: "Ingredient Badges",
-    imagePath: "/badges/spicy-adventurer.png",
-  },
-  {
-    name: "Sweet Tooth",
-    description: "Cook 3 dessert recipes",
-    isEarned: false,
-    category: "Ingredient Badges",
-    imagePath: "/badges/sweet-tooth.png",
-  },
-
-  // Challenge Badges
-  {
-    name: "Speed Chef",
-    description: "Cook a recipe in under 15 minutes",
-    isEarned: false,
-    category: "Challenge Badges",
-    imagePath: "/badges/speed-chef.png",
-  },
-  {
-    name: "Clean Cook",
-    description: "Check in a recipe with zero spills",
-    isEarned: false,
-    category: "Challenge Badges",
-    imagePath: "/badges/clean-cook.png",
-  },
-  {
-    name: "Dinner Party Pro",
-    description: "Cook a meal for 4+ people",
-    isEarned: false,
-    category: "Challenge Badges",
-    imagePath: "/badges/dinner-party-pro.png",
-  },
-];
-
-export default function BadgesPage() {
-  // Group badges by category
   const groupedBadges = badges.reduce(
     (acc, badge) => {
       if (!acc[badge.category]) {
@@ -198,11 +59,22 @@ export default function BadgesPage() {
       acc[badge.category]!.push(badge);
       return acc;
     },
-    {} as Record<string, Badge[]>,
+    {} as Record<string, BadgeRow[]>,
   );
 
   return (
     <div className="container space-y-12 py-8">
+      <div className="text-center">
+        <h1 className="font-display text-3xl font-semibold">Badges</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {isLoading
+            ? "Loading your badges..."
+            : user
+              ? "Earn badges by logging cooks and exploring the kitchen."
+              : "Sign in to see which badges you have earned."}
+        </p>
+      </div>
+
       {Object.entries(groupedBadges).map(([category, categoryBadges]) => (
         <section key={category}>
           <h2 className="mb-6 text-2xl font-bold">{category}</h2>

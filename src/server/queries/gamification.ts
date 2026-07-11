@@ -3,6 +3,20 @@ import { db } from "../db";
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 import { PointsTable, AchievementsTable, BadgesTable } from "../db/schemas";
+import {
+  CHECK_IN_XP,
+  getEarnedCheckInBadges,
+} from "~/server/gamification/badgeDefinitions";
+
+export interface CheckInRewardResult {
+  pointsAwarded: number;
+  newBadges: string[];
+  progress: {
+    xp: number;
+    level: number;
+    nextLevelXp: number;
+  };
+}
 
 // Calculate required XP for a given level
 function calculateRequiredXp(level: number): number {
@@ -216,5 +230,42 @@ export async function getUserGamificationProfile(userId: string) {
     points,
     achievements,
     badges,
+  };
+}
+
+/**
+ * Awards XP and any newly earned check-in count badges after a cook log.
+ * @param userId - The user ID
+ * @param checkInCount - Total check-ins after the new session was saved
+ * @returns Points awarded, newly earned badge names, and updated progress
+ */
+export async function awardCheckInRewards(
+  userId: string,
+  checkInCount: number,
+): Promise<CheckInRewardResult> {
+  await addUserPoints(userId, CHECK_IN_XP);
+
+  const existingBadges = await getUserBadges(userId);
+  const earnedNames = new Set(existingBadges.map((b) => b.badgeName));
+  const qualified = getEarnedCheckInBadges(checkInCount);
+  const newBadges: string[] = [];
+
+  for (const badge of qualified) {
+    if (earnedNames.has(badge.name)) {
+      continue;
+    }
+    await addUserBadge(userId, badge.name);
+    newBadges.push(badge.name);
+  }
+
+  const progress = await getUserProgress(userId);
+
+  revalidatePath("/kitchen-journey");
+  revalidatePath("/kitchen-journey/badges");
+
+  return {
+    pointsAwarded: CHECK_IN_XP,
+    newBadges,
+    progress,
   };
 }

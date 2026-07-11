@@ -1,13 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Star, StarHalf } from "lucide-react";
 import { format } from "date-fns";
@@ -25,12 +18,10 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import CookingTimer from "./CookingTimer";
 import {
   fetchCookingHistory,
   updateCookingSessionRatingAction,
 } from "~/app/_actions/cookingHistory";
-import { getRecipeIdBySlug } from "~/app/_actions/recipes";
 
 type Cook = {
   id: number;
@@ -41,28 +32,40 @@ type Cook = {
   notes: string | null;
 };
 
-function StarRating({ rating }: { rating: number }) {
+function StarRating({ rating }: { rating: number }): JSX.Element {
   return (
     <div className="flex text-accent">
       {[1, 2, 3, 4, 5].map((value) => {
         const difference = value - rating;
         if (difference <= 0) {
           return <Star key={value} size={16} className="fill-current" />;
-        } else if (difference > 0 && difference < 1) {
-          return <StarHalf key={value} size={16} className="fill-current" />;
-        } else {
-          return <Star key={value} size={16} className="text-muted" />;
         }
+        if (difference > 0 && difference < 1) {
+          return <StarHalf key={value} size={16} className="fill-current" />;
+        }
+        return <Star key={value} size={16} className="text-muted" />;
       })}
     </div>
   );
 }
 
 interface CookingHistoryProps {
-  recipeSlug: string;
+  recipeId: number;
+  refreshKey?: number;
+  onCheckIn?: () => void;
 }
 
-export default function CookingHistory({ recipeSlug }: CookingHistoryProps) {
+/**
+ * Personal cook history for the signed-in user on a recipe.
+ * @param recipeId - Recipe ID
+ * @param refreshKey - Increment to reload history after a new check-in
+ * @param onCheckIn - Opens the check-in modal
+ */
+export default function CookingHistory({
+  recipeId,
+  refreshKey = 0,
+  onCheckIn,
+}: CookingHistoryProps): JSX.Element {
   const [cooks, setCooks] = useState<Cook[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCook, setSelectedCook] = useState<Cook | null>(null);
@@ -73,19 +76,17 @@ export default function CookingHistory({ recipeSlug }: CookingHistoryProps) {
 
   useEffect(() => {
     async function loadHistory() {
+      setIsLoading(true);
       try {
-        const recipeId = await getRecipeIdBySlug(recipeSlug);
         const sessions = await fetchCookingHistory(recipeId);
-
         const transformedCooks: Cook[] = sessions.map((session) => ({
           id: session.id,
-          date: session.cookedAt.toISOString(),
+          date: new Date(session.cookedAt).toISOString(),
           time: `${session.timeMinutes}m`,
           rating: session.rating,
           hasNotes: !!session.notes,
           notes: session.notes,
         }));
-
         setCooks(transformedCooks);
       } catch (error) {
         console.error("Failed to fetch cooking history:", error);
@@ -96,58 +97,51 @@ export default function CookingHistory({ recipeSlug }: CookingHistoryProps) {
     }
 
     void loadHistory();
-  }, [recipeSlug]);
+  }, [recipeId, refreshKey]);
 
-  const handleViewClick = (cook: Cook) => {
+  const handleViewClick = (cook: Cook): void => {
     setSelectedCook(cook);
     setEditingRating(cook.rating);
     setHoveredRating(0);
     setShowViewDialog(true);
   };
 
-  const handleStarClick = (star: number, event: React.MouseEvent) => {
-    const button = event.currentTarget;
+  const handleStarClick = (star: number, event: React.MouseEvent): void => {
+    const button = event.currentTarget as HTMLButtonElement;
     const rect = button.getBoundingClientRect();
     const halfWidth = rect.width / 2;
     const clickX = event.clientX - rect.left;
-
-    const finalRating = clickX < halfWidth ? star - 0.5 : star;
-    setEditingRating(finalRating);
+    setEditingRating(clickX < halfWidth ? star - 0.5 : star);
   };
 
-  const handleStarHover = (star: number, event: React.MouseEvent) => {
-    const button = event.currentTarget;
+  const handleStarHover = (star: number, event: React.MouseEvent): void => {
+    const button = event.currentTarget as HTMLButtonElement;
     const rect = button.getBoundingClientRect();
     const halfWidth = rect.width / 2;
     const hoverX = event.clientX - rect.left;
-
-    const finalRating = hoverX < halfWidth ? star - 0.5 : star;
-    setHoveredRating(finalRating);
+    setHoveredRating(hoverX < halfWidth ? star - 0.5 : star);
   };
 
-  const renderStar = (starNumber: number, currentRating: number) => {
+  const renderStar = (
+    starNumber: number,
+    currentRating: number,
+  ): JSX.Element => {
     if (starNumber <= Math.floor(currentRating)) {
       return <Star className="h-8 w-8 fill-accent text-accent" />;
-    } else if (starNumber - 0.5 === currentRating) {
-      return <StarHalf className="h-8 w-8 fill-accent text-accent" />;
-    } else {
-      return <Star className="h-8 w-8 text-muted" />;
     }
+    if (starNumber - 0.5 === currentRating) {
+      return <StarHalf className="h-8 w-8 fill-accent text-accent" />;
+    }
+    return <Star className="h-8 w-8 text-muted" />;
   };
 
-  const handleSaveRating = async () => {
+  const handleSaveRating = async (): Promise<void> => {
     if (!selectedCook) return;
-
-    if (editingRating === 0) {
-      alert("Please provide a rating");
-      return;
-    }
+    if (editingRating === 0) return;
 
     setIsSaving(true);
     try {
       await updateCookingSessionRatingAction(selectedCook.id, editingRating);
-
-      // Update local state
       setCooks((prevCooks) =>
         prevCooks.map((cook) =>
           cook.id === selectedCook.id
@@ -155,11 +149,9 @@ export default function CookingHistory({ recipeSlug }: CookingHistoryProps) {
             : cook,
         ),
       );
-
       setShowViewDialog(false);
     } catch (error) {
       console.error("Failed to update rating:", error);
-      alert("Failed to update rating. Please try again.");
     } finally {
       setIsSaving(false);
     }
@@ -168,65 +160,70 @@ export default function CookingHistory({ recipeSlug }: CookingHistoryProps) {
   const hasPreviousCooks = cooks.length > 0;
 
   return (
-    <Card>
-      <CardHeader className="space-y-1.5">
-        <CardTitle>Cook Tracker</CardTitle>
-        <CardDescription>
+    <div className="rounded-2xl border border-border/70 bg-card/80 p-4 sm:p-5">
+      <div className="space-y-1">
+        <h3 className="font-display text-base font-semibold tracking-tight">
+          Your cooks
+        </h3>
+        <p className="text-sm text-muted-foreground">
           {isLoading
             ? "Loading..."
             : hasPreviousCooks
               ? `Cooked ${cooks.length} ${cooks.length === 1 ? "time" : "times"}`
-              : "Ready to cook?"}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        {hasPreviousCooks && (
-          <Accordion type="single" collapsible className="mb-4">
-            <AccordionItem value="cooking-history" className="border-none">
-              <AccordionTrigger className="py-2">History</AccordionTrigger>
-              <AccordionContent>
-                <div className="space-y-2">
-                  {cooks.map((cook, i) => (
-                    <div
-                      key={i}
-                      className="flex flex-col space-y-1 border-b border-border pb-2 last:border-0"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">
-                          {format(new Date(cook.date), "MMM d")}
-                        </span>
-                        <span className="text-sm">{cook.time}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <StarRating rating={cook.rating} />
-                        <Button
-                          variant="link"
-                          className="h-6 p-0 text-xs"
-                          onClick={() => handleViewClick(cook)}
-                        >
-                          View
-                        </Button>
-                      </div>
+              : "You have not logged this recipe yet."}
+        </p>
+      </div>
+
+      {hasPreviousCooks && (
+        <Accordion type="single" collapsible className="mt-3">
+          <AccordionItem value="cooking-history" className="border-none">
+            <AccordionTrigger className="py-2 text-sm">History</AccordionTrigger>
+            <AccordionContent>
+              <div className="space-y-2">
+                {cooks.map((cook) => (
+                  <div
+                    key={cook.id}
+                    className="flex flex-col space-y-1 border-b border-border/60 pb-2 last:border-0"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">
+                        {format(new Date(cook.date), "MMM d")}
+                      </span>
+                      <span className="text-sm">{cook.time}</span>
                     </div>
-                  ))}
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        )}
-        <CookingTimer recipeSlug={recipeSlug} />
-      </CardContent>
+                    <div className="flex items-center justify-between">
+                      <StarRating rating={cook.rating} />
+                      <Button
+                        variant="link"
+                        className="h-6 p-0 text-xs"
+                        onClick={() => handleViewClick(cook)}
+                      >
+                        View
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      )}
+
+      {onCheckIn && (
+        <Button onClick={onCheckIn} className="mt-4 w-full" variant="outline">
+          I cooked this
+        </Button>
+      )}
 
       <Dialog open={showViewDialog} onOpenChange={setShowViewDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Cooking Session Details</DialogTitle>
+            <DialogTitle>Cooking session</DialogTitle>
             <DialogDescription>
-              View and edit your cooking session
+              View and edit your rating for this cook.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-6 py-4">
-            {/* Rating Section */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Rating</label>
               <div className="flex gap-2">
@@ -248,11 +245,10 @@ export default function CookingHistory({ recipeSlug }: CookingHistoryProps) {
               </span>
             </div>
 
-            {/* Notes Section */}
             {selectedCook?.notes && (
               <div className="space-y-2">
                 <label className="text-sm font-medium">Notes</label>
-                <p className="whitespace-pre-wrap rounded-md border border-border p-3 text-sm text-foreground/80 dark:border-border dark:text-muted-foreground">
+                <p className="whitespace-pre-wrap rounded-md border border-border p-3 text-sm text-foreground/80">
                   {selectedCook.notes}
                 </p>
               </div>
@@ -267,11 +263,11 @@ export default function CookingHistory({ recipeSlug }: CookingHistoryProps) {
               Cancel
             </Button>
             <Button onClick={handleSaveRating} disabled={isSaving}>
-              {isSaving ? "Saving..." : "Save Rating"}
+              {isSaving ? "Saving..." : "Save rating"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </Card>
+    </div>
   );
 }
