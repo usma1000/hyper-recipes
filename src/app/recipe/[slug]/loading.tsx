@@ -1,103 +1,66 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
 
-export default function RecipeLoading() {
+/**
+ * Loading skeleton matching the redesigned recipe page layout.
+ */
+export default function RecipeLoading(): JSX.Element {
   return (
-    <div className="flex flex-col gap-8">
-      <div className="flex flex-wrap gap-8">
-        {/* Left Column */}
-        <div className="flex-grow-[1] basis-64">
-          {/* Navigation */}
-          <div className="mb-8 flex justify-between align-middle">
-            <Button variant="default" size="sm" disabled>
-              <ArrowLeft size={16} /> Back
-            </Button>
-            <Skeleton className="h-9 w-24" />
-          </div>
+    <div>
+      <div className="relative h-[42vh] min-h-[280px] w-full bg-muted sm:h-[52vh] sm:min-h-[360px]">
+        <Skeleton className="h-full w-full rounded-none" />
+        <div className="absolute inset-x-0 bottom-0 container pb-8">
+          <Skeleton className="mb-3 h-3 w-40 bg-background/30" />
+          <Skeleton className="mb-3 h-12 w-2/3 max-w-xl bg-background/40" />
+          <Skeleton className="h-4 w-1/2 max-w-md bg-background/30" />
+        </div>
+      </div>
 
-          {/* Ingredients Card */}
-          <div className="sticky top-8">
-            <Card>
-              <CardHeader>
-                <Skeleton className="h-6 w-32" />
-              </CardHeader>
-              <CardContent className="space-y-4">
+      <div className="border-b border-border/80">
+        <div className="container flex flex-col gap-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex gap-4">
+            <Skeleton className="h-5 w-24" />
+            <Skeleton className="h-5 w-28" />
+            <Skeleton className="h-5 w-20" />
+          </div>
+          <div className="flex gap-2">
+            <Skeleton className="h-9 w-36" />
+            <Skeleton className="h-9 w-9" />
+            <Skeleton className="h-9 w-9" />
+          </div>
+        </div>
+      </div>
+
+      <div className="container py-8 lg:py-10">
+        <div className="flex flex-col gap-8 lg:flex-row lg:gap-12">
+          <aside className="w-full shrink-0 space-y-4 lg:w-80">
+            <div className="rounded-2xl border border-border/70 p-5">
+              <Skeleton className="mb-4 h-6 w-28" />
+              <div className="space-y-3">
                 {Array.from({ length: 6 }, (_, i) => (
-                  <div key={i} className="flex items-center gap-2">
+                  <div key={i} className="flex items-center gap-3">
                     <Skeleton className="h-4 w-4" />
                     <Skeleton className="h-4 w-full" />
                   </div>
                 ))}
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        {/* Right Column */}
-        <div className="flex grow-[999] basis-0 flex-col gap-8">
-          {/* Recipe Card */}
-          <Card>
-            <CardHeader>
-              {/* Hero Image */}
-              <div className="relative mb-8 h-96">
-                <Skeleton className="h-full w-full rounded-lg" />
               </div>
+            </div>
+            <Skeleton className="h-12 w-full rounded-xl" />
+          </aside>
 
-              {/* Title and Description */}
-              <div className="flex items-end gap-2">
-                <Skeleton className="h-8 w-2/3" />
-                <Skeleton className="h-8 w-8" /> {/* Favorite button */}
-              </div>
-              <Skeleton className="h-4 w-full" />
-
-              {/* Tags */}
-              <div className="flex flex-row gap-2">
-                {Array.from({ length: 3 }, (_, i) => (
-                  <Skeleton key={i} className="h-6 w-20" />
-                ))}
-              </div>
-            </CardHeader>
-          </Card>
-
-          {/* Steps Card */}
-          <Card>
-            <CardHeader className="mb-4 border-b border-border">
-              <CardTitle as="h2" className="text-3xl">
-                Steps
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {Array.from({ length: 4 }, (_, i) => (
-                <div key={i} className="space-y-2">
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-5/6" />
+          <main className="min-w-0 flex-1 space-y-4">
+            <Skeleton className="h-8 w-32" />
+            {Array.from({ length: 4 }, (_, i) => (
+              <div key={i} className="rounded-2xl bg-card/40 p-5">
+                <div className="flex gap-4">
+                  <Skeleton className="h-9 w-9 rounded-full" />
+                  <div className="flex-1 space-y-2 pt-1">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-5/6" />
+                  </div>
                 </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* Notes Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                <Skeleton className="h-6 w-32" />
-              </CardTitle>
-              <CardDescription>
-                <Skeleton className="h-4 w-64" />
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-4 w-full" />
-            </CardContent>
-          </Card>
+              </div>
+            ))}
+          </main>
         </div>
       </div>
     </div>

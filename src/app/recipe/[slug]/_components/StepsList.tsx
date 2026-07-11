@@ -2,25 +2,19 @@
 
 import { useState, useCallback } from "react";
 import { type JSONContent } from "novel";
-import { ChevronDown, Lightbulb, Wrench } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import { StepCard } from "./StepCard";
-import { cn } from "~/lib/utils";
+import { CookingTips } from "./CookingTips";
 import { saveStepNote } from "~/app/_actions/userNotes";
+import type { IngredientSwap } from "./AdaptThisRecipe";
 
 interface StepsListProps {
   steps?: JSONContent | null;
   stepInstructions?: string[];
-  onStartCookMode: () => void;
   recipeId: number;
   isSignedIn: boolean;
   stepNotes?: Record<number, string>;
   isLoading?: boolean;
+  swaps?: IngredientSwap[];
 }
 
 /**
@@ -63,32 +57,27 @@ function extractStepsFromContent(content: JSONContent | null): string[] {
 }
 
 /**
- * Steps list with decision support callouts.
- * Accepts Novel editor JSON or precomputed instruction strings (v2 adapt view).
- * Supports per-step notes for logged-in users.
+ * Steps list with cooking tips (cues, fixes, swaps).
  * @param steps - Novel editor JSON content (v1)
  * @param stepInstructions - Precomputed step strings (v2)
- * @param onStartCookMode - Callback to enter cook mode
  * @param recipeId - The recipe ID for saving notes
  * @param isSignedIn - Whether the user is signed in
  * @param stepNotes - Existing notes for each step
  * @param isLoading - Whether adapted steps are loading
+ * @param swaps - Ingredient substitution suggestions
  */
 export function StepsList({
   steps = null,
   stepInstructions,
-  onStartCookMode,
   recipeId,
   isSignedIn,
   stepNotes = {},
   isLoading = false,
+  swaps = [],
 }: StepsListProps): JSX.Element {
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
-  const [showCommonFixes, setShowCommonFixes] = useState(false);
-  const [showKeyCues, setShowKeyCues] = useState(false);
 
-  const stepStrings =
-    stepInstructions ?? extractStepsFromContent(steps);
+  const stepStrings = stepInstructions ?? extractStepsFromContent(steps);
 
   const toggleStepCompletion = (index: number): void => {
     setCompletedSteps((prev) => {
@@ -106,101 +95,51 @@ export function StepsList({
     async (stepIndex: number, note: string) => {
       return await saveStepNote(recipeId, stepIndex, note);
     },
-    [recipeId]
+    [recipeId],
   );
 
   return (
-    <section className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Steps</h2>
-        <Button onClick={onStartCookMode}>Start Cook Mode</Button>
+    <section className="space-y-5">
+      <div>
+        <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-accent">
+          Method
+        </p>
+        <h2 className="mt-1 font-display text-2xl font-semibold tracking-tight">
+          Steps
+        </h2>
       </div>
 
       {isLoading ? (
-        <div className="rounded-lg border border-dashed p-8 text-center">
+        <div className="rounded-2xl border border-dashed border-border p-8 text-center">
           <p className="text-muted-foreground">Updating steps...</p>
         </div>
       ) : stepStrings.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-8 text-center">
+        <div className="rounded-2xl border border-dashed border-border p-8 text-center">
           <p className="text-muted-foreground">
             No steps available for this recipe.
           </p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <ol className="space-y-3">
           {stepStrings.map((step, index) => (
-            <StepCard
-              key={index}
-              stepNumber={index + 1}
-              content={step}
-              isCompleted={completedSteps.has(index)}
-              onClick={() => toggleStepCompletion(index)}
-              isSignedIn={isSignedIn}
-              note={stepNotes[index] ?? ""}
-              onSaveNote={(note) => handleSaveStepNote(index, note)}
-            />
+            <li key={index}>
+              <StepCard
+                stepNumber={index + 1}
+                content={step}
+                isCompleted={completedSteps.has(index)}
+                onClick={() => toggleStepCompletion(index)}
+                isSignedIn={isSignedIn}
+                note={stepNotes[index] ?? ""}
+                onSaveNote={(note) => handleSaveStepNote(index, note)}
+              />
+            </li>
           ))}
-        </div>
+        </ol>
       )}
 
-      <div className="mt-6 space-y-2">
-        <Collapsible open={showCommonFixes} onOpenChange={setShowCommonFixes}>
-          <CollapsibleTrigger asChild>
-            <Button
-              variant="ghost"
-              className="w-full justify-between font-normal"
-            >
-              <span className="flex items-center gap-2">
-                <Wrench className="h-4 w-4" />
-                Common fixes
-              </span>
-              <ChevronDown
-                className={cn(
-                  "h-4 w-4 transition-transform",
-                  showCommonFixes && "rotate-180"
-                )}
-              />
-            </Button>
-          </CollapsibleTrigger>
-          <CollapsibleContent className="px-4 pt-2">
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>Too thick? Add a splash of water.</li>
-              <li>Too thin? Simmer 2-3 minutes longer.</li>
-              <li>Too salty? Add acid or unsalted starch.</li>
-            </ul>
-          </CollapsibleContent>
-        </Collapsible>
-
-        <Collapsible open={showKeyCues} onOpenChange={setShowKeyCues}>
-          <CollapsibleTrigger asChild>
-            <Button
-              variant="ghost"
-              className="w-full justify-between font-normal"
-            >
-              <span className="flex items-center gap-2">
-                <Lightbulb className="h-4 w-4" />
-                Key cues
-              </span>
-              <ChevronDown
-                className={cn(
-                  "h-4 w-4 transition-transform",
-                  showKeyCues && "rotate-180"
-                )}
-              />
-            </Button>
-          </CollapsibleTrigger>
-          <CollapsibleContent className="px-4 pt-2">
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>Look for glossy sauce.</li>
-              <li>Aromatics should be fragrant, not browned.</li>
-              <li>Taste and adjust before serving.</li>
-            </ul>
-          </CollapsibleContent>
-        </Collapsible>
-      </div>
+      <CookingTips swaps={swaps} />
     </section>
   );
 }
 
 export { extractStepsFromContent };
-

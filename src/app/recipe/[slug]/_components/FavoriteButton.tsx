@@ -5,6 +5,7 @@ import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
 import { checkIfFavorite, toggleFavorite } from "~/app/_actions/favorites";
+import { cn } from "~/lib/utils";
 
 interface FavoriteButtonProps {
   recipeId: number;
@@ -14,7 +15,9 @@ interface FavoriteButtonProps {
  * Client-side favorite button that handles its own data fetching.
  * This prevents auth checks from blocking the main recipe content render.
  */
-export function FavoriteButton({ recipeId }: FavoriteButtonProps): JSX.Element | null {
+export function FavoriteButton({
+  recipeId,
+}: FavoriteButtonProps): JSX.Element | null {
   const { isSignedIn, isLoaded } = useUser();
   const [isFavorite, setIsFavorite] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -56,17 +59,21 @@ export function FavoriteButton({ recipeId }: FavoriteButtonProps): JSX.Element |
   return (
     <Button
       type="button"
-      variant="ghost"
-      size="sm"
       onClick={handleToggle}
       disabled={isPending || isLoading}
+      className={cn(
+        "shadow-soft",
+        isFavorite && "bg-accent text-accent-foreground hover:bg-accent/90",
+      )}
     >
       <Star
-        className={`h-5 w-5 transition-all active:-translate-y-1 ${
-          isFavorite ? "fill-accent" : ""
-        } ${isLoading ? "opacity-50" : ""}`}
+        className={cn(
+          "mr-1.5 h-4 w-4 transition-transform",
+          isFavorite && "fill-current",
+          isLoading && "opacity-50",
+        )}
       />
+      {isFavorite ? "Saved" : "Save"}
     </Button>
   );
 }
-

@@ -57,7 +57,7 @@ function CompactRecipeCard({
   return (
     <Link
       href={`/recipe/${recipe.slug}`}
-      className="group block overflow-hidden rounded-lg border border-border bg-card transition-all hover:border-primary/30 hover:shadow-md"
+      className="group block overflow-hidden rounded-2xl border border-border/70 bg-card transition-all duration-200 hover:border-foreground/15 hover:shadow-lift"
     >
       <div className="relative aspect-[16/10] overflow-hidden bg-muted">
         {recipe.heroImage?.url ? (
@@ -130,8 +130,13 @@ export function MoreLikeThis({ recipes }: MoreLikeThisProps): JSX.Element | null
   if (recipes.length === 0) return null;
 
   return (
-    <section className="mt-12">
-      <h2 className="mb-4 text-xl font-semibold">More like this</h2>
+    <section className="mt-14 border-t border-border/70 pt-10">
+      <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-accent">
+        Keep exploring
+      </p>
+      <h2 className="mt-1 mb-5 font-display text-2xl font-semibold tracking-tight">
+        More like this
+      </h2>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {recipes.slice(0, 6).map((recipe) => (
           <CompactRecipeCard key={recipe.id} recipe={recipe} />
