@@ -4,6 +4,8 @@ import { NextResponse } from "next/server";
 const isAdminRoute = createRouteMatcher(["/dashboard(.*)", "/new-recipe(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
+  // Only resolve auth on admin routes. Calling auth() on every public
+  // request (/, /recipe/*, etc.) burns Edge CPU and is amplified by bots.
   if (!isAdminRoute(req)) {
     return NextResponse.next();
   }

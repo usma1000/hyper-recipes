@@ -19,6 +19,10 @@ export async function fetchRecipesByTag(tagId: number) {
   return await getRecipesByTag(tagId);
 }
 
+/**
+ * Fetches all published recipes grouped by tag in one cached query.
+ * Prefer this over N× fetchRecipesByTag on list pages.
+ */
 export async function fetchPublishedRecipesByTagIdMap(): Promise<
   Record<number, Recipe[]>
 > {

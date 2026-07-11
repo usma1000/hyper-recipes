@@ -58,7 +58,6 @@ export const getRecipesByTag = unstable_cache(
       },
     });
 
-    // Filter out any recipes that aren't published
     return recipes
       .map((relation) => relation.recipe)
       .filter(

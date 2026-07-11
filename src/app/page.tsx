@@ -1,7 +1,7 @@
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 
-import { fetchAllRecipes } from "./_actions/recipes";
+import { fetchAllRecipes, fetchSliderRecipes } from "./_actions/recipes";
 import {
   fetchAllTagsByType,
   fetchPublishedRecipesByTagIdMap,
@@ -19,36 +19,23 @@ import { LoggedInHomepage } from "./_components/logged-in-homepage";
 
 /**
  * Homepage with distinct layouts for anonymous and logged-in users.
- * Anonymous: Product-focused landing page with adaptive recipe preview
- * Logged-in: Two-column layout with Cook Now spotlight, Continue row, Explore grid, and sidebar
+ * Anonymous visitors (including bots) only load a small featured set —
+ * not the full catalog or per-tag query fan-out.
  */
 export default async function HomePage(): Promise<JSX.Element> {
   const { userId } = auth();
 
-  const [allRecipes, tags, myFavoriteRecipes, myCollections, recipesByTagBatch] =
-    await Promise.all([
-      fetchAllRecipes(),
-      fetchAllTagsByType(),
-      userId ? fetchMyFavoriteRecipes() : Promise.resolve([]),
-      userId ? fetchMyCollections() : Promise.resolve([]),
-      fetchPublishedRecipesByTagIdMap(),
-    ]);
+  // Anonymous / bot path: one cached slider query, no catalog/tag fan-out.
+  if (!userId) {
+    const featuredRecipes = await fetchSliderRecipes();
+    const featuredRecipe = featuredRecipes[0];
 
-  const recipesByTag: Record<number, Recipe[]> = {};
-  for (const tag of tags) {
-    recipesByTag[tag.id] = recipesByTagBatch[tag.id] ?? [];
-  }
-
-  const featuredRecipe = allRecipes[0];
-
-  return (
-    <>
-      {/* Anonymous Homepage - Product-focused landing */}
+    return (
       <SignedOut>
         <div className="flex flex-col">
           <UpsellStrip />
           <CompactHero featuredRecipe={featuredRecipe} />
-          
+
           <div className="container space-y-16 py-16">
             {featuredRecipe && (
               <AdaptiveRecipePreview recipe={featuredRecipe} />
@@ -62,17 +49,32 @@ export default async function HomePage(): Promise<JSX.Element> {
           </div>
         </div>
       </SignedOut>
+    );
+  }
 
-      {/* Logged-In Homepage - Two-column layout per spec */}
-      <SignedIn>
-        <LoggedInHomepage
-          recipes={allRecipes}
-          favorites={myFavoriteRecipes ?? []}
-          collections={myCollections ?? []}
-          tags={tags}
-          recipesByTag={recipesByTag}
-        />
-      </SignedIn>
-    </>
+  const [allRecipes, tags, recipesByTagBatch, myFavoriteRecipes, myCollections] =
+    await Promise.all([
+      fetchAllRecipes(),
+      fetchAllTagsByType(),
+      fetchPublishedRecipesByTagIdMap(),
+      fetchMyFavoriteRecipes(),
+      fetchMyCollections(),
+    ]);
+
+  const recipesByTag: Record<number, Recipe[]> = {};
+  for (const tag of tags) {
+    recipesByTag[tag.id] = recipesByTagBatch[tag.id] ?? [];
+  }
+
+  return (
+    <SignedIn>
+      <LoggedInHomepage
+        recipes={allRecipes}
+        favorites={myFavoriteRecipes ?? []}
+        collections={myCollections ?? []}
+        tags={tags}
+        recipesByTag={recipesByTag}
+      />
+    </SignedIn>
   );
 }

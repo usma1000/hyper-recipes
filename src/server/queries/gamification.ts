@@ -111,7 +111,7 @@ export async function addUserPoints(userId: string, pointsToAdd: number) {
 
   // Consider selective path revalidation if this changes UI
   revalidatePath("/profile", "page");
-  revalidatePath("/", "layout"); // For the badge in the layout
+  revalidatePath("/", "page"); // For the badge in the layout
 }
 
 // Admin function to manually set a user's points
@@ -152,8 +152,7 @@ export async function setUserPoints(userId: string, newPointsTotal: number) {
   // Revalidate paths
   revalidatePath("/profile", "page");
   revalidatePath("/kitchen-journey", "page");
-  revalidatePath("/", "layout"); // For the badge in the layout
-  revalidatePath("/", "page"); // Ensure the top nav is refreshed
+  revalidatePath("/", "page"); // Refresh top-nav badge data on next visit
 }
 
 // Achievements queries

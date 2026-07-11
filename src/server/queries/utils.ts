@@ -3,10 +3,11 @@ import { revalidatePath, revalidateTag } from "next/cache";
 
 /**
  * Revalidates all recipe-related paths and cache tags.
- * Call this after recipe mutations (create, update, delete, publish).
+ * Prefer page-level revalidation over layout — layout invalidation
+ * forces every nested page under "/" to recompute on the next request.
  */
 export const revalidateRecipePaths = (): void => {
-  revalidatePath("/", "layout");
+  revalidatePath("/", "page");
   revalidatePath("/recipe/[slug]", "page");
   revalidateTag("recipes");
 };
@@ -16,7 +17,7 @@ export const revalidateRecipePaths = (): void => {
  * Call this after tag mutations (create, update, delete, assign).
  */
 export const revalidateTagCache = (): void => {
-  revalidatePath("/", "layout");
+  revalidatePath("/", "page");
   revalidatePath("/dashboard", "page");
   revalidateTag("tags");
 };

@@ -481,15 +481,20 @@ export async function getDefaultRecipeViewAsync(
 /**
  * Checks if a recipe has v2 data (versions, steps, ingredients).
  * Used during migration period to determine which reader to use.
+ * Cached so recipe page SSR does not pay an extra DB round-trip per request.
  * @param recipeId - The recipe ID
  * @returns True if recipe has v2 data
  */
-export async function hasV2DataAsync(recipeId: number): Promise<boolean> {
-  const version = await db.query.RecipeVersionsTable.findFirst({
-    where: eq(RecipeVersionsTable.recipeId, recipeId),
-    columns: { id: true },
-  });
+export const hasV2DataAsync = unstable_cache(
+  async (recipeId: number): Promise<boolean> => {
+    const version = await db.query.RecipeVersionsTable.findFirst({
+      where: eq(RecipeVersionsTable.recipeId, recipeId),
+      columns: { id: true },
+    });
 
-  return version !== undefined;
-}
+    return version !== undefined;
+  },
+  ["has-v2-data"],
+  { revalidate: 60, tags: ["recipes", "recipe-versions"] },
+);
 
