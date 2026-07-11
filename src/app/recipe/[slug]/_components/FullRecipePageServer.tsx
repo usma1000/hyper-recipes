@@ -19,33 +19,31 @@ interface FullRecipePageServerProps {
 
 /**
  * Server component that fetches recipe data and passes to client component.
- * Handles auth checks for unpublished recipes.
- * Now checks for v2 data to enable difficulty switching.
+ * Auth is required for unpublished access control and personalized notes.
+ * Related recipes use a limited cached query (not the full catalog).
  * @param id - Recipe ID
- * @param slug - Recipe slug (for routing)
  */
 export default async function FullRecipePageServer({
   id,
 }: FullRecipePageServerProps): Promise<JSX.Element> {
   const { userId } = auth();
 
-  // Fetch recipe, v2 data, and user notes in parallel
-  const [fullRecipe, hasV2, stepNotes, generalNote] = await Promise.all([
-    getFullRecipeById(id),
-    hasV2DataAsync(id),
-    getStepNotesForRecipe(id),
-    getGeneralNoteForRecipe(id),
-  ]);
+  // Fetch recipe, v2 data, related set, and user notes in parallel
+  const [fullRecipe, hasV2, relatedRows, stepNotes, generalNote] =
+    await Promise.all([
+      getFullRecipeById(id),
+      hasV2DataAsync(id),
+      getRelatedRecipeSummariesExcluding(id),
+      getStepNotesForRecipe(id),
+      getGeneralNoteForRecipe(id),
+    ]);
 
   if (!fullRecipe.published && !userId) {
     throw new Error("Recipe is unpublished.");
   }
 
-  const userNotes = userId
-    ? { stepNotes, generalNote }
-    : undefined;
+  const userNotes = userId ? { stepNotes, generalNote } : undefined;
 
-  const relatedRows = await getRelatedRecipeSummariesExcluding(fullRecipe.id);
   const relatedRecipes = relatedRows.map((r) => ({
     id: r.id,
     name: r.name,

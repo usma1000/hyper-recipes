@@ -54,7 +54,7 @@ export async function createNewRecipe(recipe: newRecipeInput) {
     .values({ ...recipe, slug: finalSlug })
     .returning();
 
-  revalidatePath("/", "layout");
+  revalidatePath("/", "page");
   return newRecipe;
 }
 

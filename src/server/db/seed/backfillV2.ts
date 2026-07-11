@@ -34,7 +34,7 @@ type JSONContent = {
  * @returns Array of step instruction strings
  */
 function extractStepsFromJson(content: JSONContent | null): string[] {
-  if (!content || !content.content) return [];
+  if (!content?.content) return [];
 
   const steps: string[] = [];
 
@@ -346,5 +346,5 @@ async function main(): Promise<void> {
   }
 }
 
-main();
+void main();
 

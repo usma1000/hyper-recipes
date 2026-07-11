@@ -1,0 +1,22 @@
+# Reduce bot-driven SSR / DB load on a hobby Vercel deployment.
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /new-recipe
+Disallow: /favorites
+Disallow: /collections
+Disallow: /kitchen-journey
+
+# Block common scrapers from hammering dynamic recipe pages.
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /

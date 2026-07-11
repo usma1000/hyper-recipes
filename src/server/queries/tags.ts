@@ -58,7 +58,6 @@ export const getRecipesByTag = unstable_cache(
       },
     });
 
-    // Filter out any recipes that aren't published
     return recipes
       .map((relation) => relation.recipe)
       .filter(
@@ -89,7 +88,7 @@ export const getPublishedRecipesByTagIdMap = unstable_cache(
     const byTagId: Record<number, Recipe[]> = {};
     for (const relation of relations) {
       const recipe = relation.recipe;
-      if (!recipe || !recipe.published) {
+      if (!recipe?.published) {
         continue;
       }
       const list = byTagId[relation.tagId];
