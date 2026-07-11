@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback, type ReactNode } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  type ReactNode,
+} from "react";
 import { useUser } from "@clerk/nextjs";
 import { AlertTriangle, Loader2, Check } from "lucide-react";
 import { type JSONContent } from "novel";
@@ -15,7 +21,10 @@ import {
 } from "@/components/ui/card";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { RecipeHeader } from "./RecipeHeader";
-import { AdaptThisRecipe } from "./AdaptThisRecipe";
+import {
+  AdaptThisRecipe,
+  type IngredientSwap,
+} from "./AdaptThisRecipe";
 import { StepsList, extractStepsFromContent } from "./StepsList";
 import { IngredientsPanel } from "./IngredientsPanel";
 import { CookModeOverlay } from "./CookModeOverlay";
@@ -24,7 +33,14 @@ import { MoreLikeThis } from "./MoreLikeThis";
 import { AdminWrapper } from "./AdminWrapper";
 import { checkIfFavorite, toggleFavorite } from "~/app/_actions/favorites";
 import { saveGeneralNote } from "~/app/_actions/userNotes";
-import { onPublishRecipe } from "./actions";
+import {
+  fetchRecipeView,
+  onPublishRecipe,
+} from "./actions";
+import type {
+  RecipeViewDTO,
+  RecipeViewIngredient,
+} from "./recipeViewTypes";
 
 interface FullRecipe {
   id: number;
@@ -79,10 +95,68 @@ interface FullRecipePageProps {
   adminEditSheet?: ReactNode;
   dangerZoneDialog?: ReactNode;
   hasV2Data?: boolean;
+  initialRecipeView?: RecipeViewDTO;
   userNotes?: UserNotes;
 }
 
 const DEFAULT_SERVINGS = 4;
+
+/**
+ * Formats a computed quantity for display in the ingredients panel.
+ * @param quantity - Numeric quantity from the recipe view
+ * @param unit - Unit string
+ * @returns Formatted quantity string
+ */
+function formatComputedQuantity(quantity: number, unit: string): string {
+  const formatted =
+    quantity % 1 === 0
+      ? quantity.toString()
+      : quantity.toFixed(2).replace(/\.?0+$/, "");
+  return unit ? `${formatted} ${unit}` : formatted;
+}
+
+/**
+ * Maps computed v2 ingredients into the IngredientsPanel shape.
+ * @param ingredients - Computed recipe view ingredients
+ * @param recipeId - Recipe ID for the panel item shape
+ * @returns Ingredients panel items
+ */
+function mapViewIngredients(
+  ingredients: RecipeViewIngredient[],
+  recipeId: number,
+): FullRecipe["ingredients"] {
+  return ingredients.map((ing) => ({
+    quantity: formatComputedQuantity(ing.quantity, ing.unit),
+    recipeId,
+    ingredientId: ing.ingredientId,
+    ingredient: {
+      id: ing.ingredientId,
+      name: ing.ingredientName,
+      description: ing.ingredientDescription,
+    },
+  }));
+}
+
+/**
+ * Builds swap suggestions from computed ingredients that have substitutions.
+ * @param ingredients - Computed recipe view ingredients
+ * @returns Ingredient swap groups for the adapt drawer
+ */
+function buildSwaps(ingredients: RecipeViewIngredient[]): IngredientSwap[] {
+  return ingredients
+    .filter((ing) => ing.substitutions.length > 0)
+    .map((ing) => ({
+      originalIngredientId: ing.ingredientId,
+      originalName: ing.ingredientName,
+      substitutes: ing.substitutions.map((sub) => ({
+        ingredientId: sub.ingredientId,
+        ingredientName: sub.ingredientName,
+        quantity: sub.quantity,
+        unit: sub.unit,
+        notes: sub.notes,
+      })),
+    }));
+}
 
 /**
  * Redesigned recipe page that feels like a cooking tool.
@@ -93,6 +167,9 @@ const DEFAULT_SERVINGS = 4;
  * @param relatedRecipes - Related recipes for "More like this" section
  * @param adminEditSheet - Server component for admin edit functionality
  * @param dangerZoneDialog - Server component for danger zone dialog
+ * @param hasV2Data - Whether this recipe has v2 versions
+ * @param initialRecipeView - SSR-loaded MEDIUM view for v2 recipes
+ * @param userNotes - Personalized notes for the signed-in user
  */
 export function FullRecipePageClient({
   recipe,
@@ -100,23 +177,71 @@ export function FullRecipePageClient({
   adminEditSheet,
   dangerZoneDialog,
   hasV2Data = false,
+  initialRecipeView,
   userNotes,
 }: FullRecipePageProps): JSX.Element {
   const { isSignedIn, isLoaded } = useUser();
   const [servings, setServings] = useState(DEFAULT_SERVINGS);
   const [difficulty, setDifficulty] = useState<DifficultyLevel>("MEDIUM");
+  const [recipeView, setRecipeView] = useState<RecipeViewDTO | undefined>(
+    initialRecipeView,
+  );
+  const [isViewLoading, setIsViewLoading] = useState(false);
+  const skipInitialFetch = useRef(
+    Boolean(
+      hasV2Data &&
+        initialRecipeView &&
+        initialRecipeView.difficulty === "MEDIUM" &&
+        initialRecipeView.servings === DEFAULT_SERVINGS,
+    ),
+  );
+
   const [isCookModeOpen, setIsCookModeOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
 
   const [generalNote, setGeneralNote] = useState(userNotes?.generalNote ?? "");
-  const [savedGeneralNote, setSavedGeneralNote] = useState(userNotes?.generalNote ?? "");
-  const [generalNoteSaveState, setGeneralNoteSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [savedGeneralNote, setSavedGeneralNote] = useState(
+    userNotes?.generalNote ?? "",
+  );
+  const [generalNoteSaveState, setGeneralNoteSaveState] = useState<
+    "idle" | "saving" | "saved" | "error"
+  >("idle");
   const [generalNoteError, setGeneralNoteError] = useState("");
 
   const tags = recipe.tags.map((t) => t.tag);
-  const steps = recipe.steps;
-  const stepStrings = extractStepsFromContent(steps);
-  const servingsMultiplier = servings / DEFAULT_SERVINGS;
+
+  useEffect(() => {
+    if (!hasV2Data) {
+      return;
+    }
+
+    if (skipInitialFetch.current) {
+      skipInitialFetch.current = false;
+      return;
+    }
+
+    let cancelled = false;
+    setIsViewLoading(true);
+
+    fetchRecipeView(recipe.id, difficulty, servings)
+      .then((view) => {
+        if (!cancelled) {
+          setRecipeView(view);
+        }
+      })
+      .catch((err: unknown) => {
+        console.error("Failed to fetch adapted recipe view:", err);
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setIsViewLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [hasV2Data, recipe.id, difficulty, servings]);
 
   useEffect(() => {
     if (!isLoaded || !isSignedIn) {
@@ -158,6 +283,19 @@ export function FullRecipePageClient({
     }
   }, [recipe.id, generalNote]);
 
+  const useV2View = hasV2Data && recipeView !== undefined;
+  const displayIngredients = useV2View
+    ? mapViewIngredients(recipeView.ingredients, recipe.id)
+    : recipe.ingredients;
+  const stepInstructions = useV2View
+    ? recipeView.steps.map((step) => step.instruction)
+    : undefined;
+  const stepStrings = useV2View
+    ? recipeView.steps.map((step) => step.instruction)
+    : extractStepsFromContent(recipe.steps);
+  const servingsMultiplier = useV2View ? 1 : servings / DEFAULT_SERVINGS;
+  const swaps = useV2View ? buildSwaps(recipeView.ingredients) : [];
+
   return (
     <>
       {!recipe.published && (
@@ -184,13 +322,15 @@ export function FullRecipePageClient({
           difficulty={difficulty}
           onDifficultyChange={setDifficulty}
           hasV2Data={hasV2Data}
+          swaps={swaps}
         />
       </div>
 
       <div className="mb-6 lg:hidden">
         <IngredientsPanel
-          ingredients={recipe.ingredients}
+          ingredients={displayIngredients}
           servingsMultiplier={servingsMultiplier}
+          isLoading={isViewLoading}
           collapsible
           defaultOpen={false}
         />
@@ -199,11 +339,13 @@ export function FullRecipePageClient({
       <div className="flex gap-8">
         <main className="min-w-0 flex-1">
           <StepsList
-            steps={steps}
+            steps={useV2View ? null : recipe.steps}
+            stepInstructions={stepInstructions}
             onStartCookMode={handleStartCookMode}
             recipeId={recipe.id}
             isSignedIn={!!isSignedIn}
             stepNotes={userNotes?.stepNotes}
+            isLoading={isViewLoading}
           />
 
           <Card className="mt-8">
@@ -226,7 +368,10 @@ export function FullRecipePageClient({
                   <div className="flex items-center gap-2">
                     <Button
                       onClick={handleSaveGeneralNote}
-                      disabled={generalNoteSaveState === "saving" || generalNote === savedGeneralNote}
+                      disabled={
+                        generalNoteSaveState === "saving" ||
+                        generalNote === savedGeneralNote
+                      }
                     >
                       {generalNoteSaveState === "saving" ? (
                         <>
@@ -244,7 +389,9 @@ export function FullRecipePageClient({
                     </Button>
                   </div>
                   {generalNoteSaveState === "error" && (
-                    <p className="text-sm text-destructive">{generalNoteError}</p>
+                    <p className="text-sm text-destructive">
+                      {generalNoteError}
+                    </p>
                   )}
                 </div>
               </SignedIn>
@@ -275,11 +422,13 @@ export function FullRecipePageClient({
               difficulty={difficulty}
               onDifficultyChange={setDifficulty}
               hasV2Data={hasV2Data}
+              swaps={swaps}
             />
 
             <IngredientsPanel
-              ingredients={recipe.ingredients}
+              ingredients={displayIngredients}
               servingsMultiplier={servingsMultiplier}
+              isLoading={isViewLoading}
             />
           </div>
         </aside>
@@ -293,13 +442,17 @@ export function FullRecipePageClient({
         onStartCookMode={handleStartCookMode}
         servings={servings}
         onServingsChange={setServings}
+        difficulty={difficulty}
+        onDifficultyChange={setDifficulty}
+        hasV2Data={hasV2Data}
+        swaps={swaps}
       />
 
       <CookModeOverlay
         isOpen={isCookModeOpen}
         onClose={() => setIsCookModeOpen(false)}
         steps={stepStrings}
-        ingredients={recipe.ingredients}
+        ingredients={displayIngredients}
       />
     </>
   );

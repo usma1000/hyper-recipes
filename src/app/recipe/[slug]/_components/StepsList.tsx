@@ -14,11 +14,13 @@ import { cn } from "~/lib/utils";
 import { saveStepNote } from "~/app/_actions/userNotes";
 
 interface StepsListProps {
-  steps: JSONContent | null;
+  steps?: JSONContent | null;
+  stepInstructions?: string[];
   onStartCookMode: () => void;
   recipeId: number;
   isSignedIn: boolean;
   stepNotes?: Record<number, string>;
+  isLoading?: boolean;
 }
 
 /**
@@ -62,26 +64,31 @@ function extractStepsFromContent(content: JSONContent | null): string[] {
 
 /**
  * Steps list with decision support callouts.
- * Parses Novel editor JSON and renders scannable step cards.
+ * Accepts Novel editor JSON or precomputed instruction strings (v2 adapt view).
  * Supports per-step notes for logged-in users.
- * @param steps - Novel editor JSON content
+ * @param steps - Novel editor JSON content (v1)
+ * @param stepInstructions - Precomputed step strings (v2)
  * @param onStartCookMode - Callback to enter cook mode
  * @param recipeId - The recipe ID for saving notes
  * @param isSignedIn - Whether the user is signed in
  * @param stepNotes - Existing notes for each step
+ * @param isLoading - Whether adapted steps are loading
  */
 export function StepsList({
-  steps,
+  steps = null,
+  stepInstructions,
   onStartCookMode,
   recipeId,
   isSignedIn,
   stepNotes = {},
+  isLoading = false,
 }: StepsListProps): JSX.Element {
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
   const [showCommonFixes, setShowCommonFixes] = useState(false);
   const [showKeyCues, setShowKeyCues] = useState(false);
 
-  const stepStrings = extractStepsFromContent(steps);
+  const stepStrings =
+    stepInstructions ?? extractStepsFromContent(steps);
 
   const toggleStepCompletion = (index: number): void => {
     setCompletedSteps((prev) => {
@@ -109,7 +116,11 @@ export function StepsList({
         <Button onClick={onStartCookMode}>Start Cook Mode</Button>
       </div>
 
-      {stepStrings.length === 0 ? (
+      {isLoading ? (
+        <div className="rounded-lg border border-dashed p-8 text-center">
+          <p className="text-muted-foreground">Updating steps...</p>
+        </div>
+      ) : stepStrings.length === 0 ? (
         <div className="rounded-lg border border-dashed p-8 text-center">
           <p className="text-muted-foreground">
             No steps available for this recipe.

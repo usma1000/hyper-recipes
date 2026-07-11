@@ -10,8 +10,13 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
-import { AdaptThisRecipe } from "./AdaptThisRecipe";
+import {
+  AdaptThisRecipe,
+  type IngredientSwap,
+} from "./AdaptThisRecipe";
 import { AuthGateModal } from "./AuthGateModal";
+
+type DifficultyLevel = "EASY" | "MEDIUM" | "HARD";
 
 interface MobileStickyBarProps {
   isFavorite: boolean;
@@ -19,17 +24,24 @@ interface MobileStickyBarProps {
   onStartCookMode: () => void;
   servings: number;
   onServingsChange: (servings: number) => void;
+  difficulty?: DifficultyLevel;
+  onDifficultyChange?: (difficulty: DifficultyLevel) => void;
+  hasV2Data?: boolean;
+  swaps?: IngredientSwap[];
 }
 
 /**
  * Mobile sticky bottom bar with quick action buttons.
  * Contains Cook Mode, Adapt drawer trigger, and Save button.
- * @param recipeId - The recipe ID
  * @param isFavorite - Whether the recipe is favorited
  * @param onToggleFavorite - Callback to toggle favorite
  * @param onStartCookMode - Callback to start cook mode
  * @param servings - Current servings
  * @param onServingsChange - Callback when servings change
+ * @param difficulty - Current difficulty level (v2)
+ * @param onDifficultyChange - Callback when difficulty changes (v2)
+ * @param hasV2Data - Whether this recipe has v2 difficulty variations
+ * @param swaps - Ingredient substitution suggestions
  */
 export function MobileStickyBar({
   isFavorite,
@@ -37,6 +49,10 @@ export function MobileStickyBar({
   onStartCookMode,
   servings,
   onServingsChange,
+  difficulty,
+  onDifficultyChange,
+  hasV2Data = false,
+  swaps = [],
 }: MobileStickyBarProps): JSX.Element {
   const { isSignedIn, isLoaded } = useUser();
   const [showAdaptDrawer, setShowAdaptDrawer] = useState(false);
@@ -89,6 +105,10 @@ export function MobileStickyBar({
             <AdaptThisRecipe
               servings={servings}
               onServingsChange={onServingsChange}
+              difficulty={difficulty}
+              onDifficultyChange={onDifficultyChange}
+              hasV2Data={hasV2Data}
+              swaps={swaps}
             />
           </div>
         </DrawerContent>
@@ -101,4 +121,3 @@ export function MobileStickyBar({
     </>
   );
 }
-

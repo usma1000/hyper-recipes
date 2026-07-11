@@ -27,6 +27,7 @@ interface IngredientsPanelProps {
   servingsMultiplier?: number;
   collapsible?: boolean;
   defaultOpen?: boolean;
+  isLoading?: boolean;
 }
 
 /**
@@ -75,12 +76,14 @@ function formatScaledQuantity(quantity: string, multiplier: number): string {
  * @param servingsMultiplier - Multiplier for scaling quantities
  * @param collapsible - Whether to render as collapsible (for mobile)
  * @param defaultOpen - Default open state when collapsible
+ * @param isLoading - Whether adapted ingredients are loading
  */
 export function IngredientsPanel({
   ingredients,
   servingsMultiplier = 1,
   collapsible = false,
   defaultOpen = true,
+  isLoading = false,
 }: IngredientsPanelProps): JSX.Element {
   const [checkedItems, setCheckedItems] = useState<Record<number, boolean>>({});
   const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -110,7 +113,9 @@ export function IngredientsPanel({
 
   const content = (
     <>
-      {ingredients.length === 0 ? (
+      {isLoading ? (
+        <p className="text-sm text-muted-foreground">Updating ingredients...</p>
+      ) : ingredients.length === 0 ? (
         <p className="text-sm text-muted-foreground">Ingredients unavailable.</p>
       ) : (
         <ul className="space-y-3">
