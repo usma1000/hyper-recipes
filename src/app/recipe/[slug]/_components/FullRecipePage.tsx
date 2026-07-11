@@ -12,13 +12,6 @@ import { AlertTriangle, Loader2, Check } from "lucide-react";
 import { type JSONContent } from "novel";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { RecipeHeader } from "./RecipeHeader";
 import {
@@ -33,10 +26,7 @@ import { MoreLikeThis } from "./MoreLikeThis";
 import { AdminWrapper } from "./AdminWrapper";
 import { checkIfFavorite, toggleFavorite } from "~/app/_actions/favorites";
 import { saveGeneralNote } from "~/app/_actions/userNotes";
-import {
-  fetchRecipeView,
-  onPublishRecipe,
-} from "./actions";
+import { fetchRecipeView, onPublishRecipe } from "./actions";
 import type {
   RecipeViewDTO,
   RecipeViewIngredient,
@@ -140,7 +130,7 @@ function mapViewIngredients(
 /**
  * Builds swap suggestions from computed ingredients that have substitutions.
  * @param ingredients - Computed recipe view ingredients
- * @returns Ingredient swap groups for the adapt drawer
+ * @returns Ingredient swap groups for cooking tips
  */
 function buildSwaps(ingredients: RecipeViewIngredient[]): IngredientSwap[] {
   return ingredients
@@ -159,10 +149,7 @@ function buildSwaps(ingredients: RecipeViewIngredient[]): IngredientSwap[] {
 }
 
 /**
- * Redesigned recipe page that feels like a cooking tool.
- * Features "Adapt this recipe" controls, scannable steps, and Cook Mode.
- * Desktop: Steps on left, Adapt + Ingredients on sticky right sidebar.
- * Mobile: Single column with sticky bottom action bar.
+ * Recipe detail page with hero photo, sticky ingredients, and tucked adapt controls.
  * @param recipe - The full recipe data
  * @param relatedRecipes - Related recipes for "More like this" section
  * @param adminEditSheet - Server component for admin edit functionality
@@ -299,139 +286,141 @@ export function FullRecipePageClient({
   return (
     <>
       {!recipe.published && (
-        <div className="mb-8 flex items-center justify-between rounded-md border border-accent/40 bg-accent/10 p-4 font-semibold text-accent">
-          <div>
-            <AlertTriangle
-              size={16}
-              className="mr-2 inline-block -translate-y-[2px]"
-            />
-            This recipe is not yet published. It will not be visible to others.
+        <div className="container pt-6">
+          <div className="flex items-center justify-between rounded-xl border border-accent/40 bg-accent/10 p-4 font-semibold text-accent">
+            <div>
+              <AlertTriangle
+                size={16}
+                className="mr-2 inline-block -translate-y-[2px]"
+              />
+              This recipe is not yet published. It will not be visible to others.
+            </div>
+            <form action={() => onPublishRecipe(recipe.id, true)}>
+              <Button type="submit">Publish</Button>
+            </form>
           </div>
-          <form action={() => onPublishRecipe(recipe.id, true)}>
-            <Button type="submit">Publish</Button>
-          </form>
         </div>
       )}
 
-      <RecipeHeader recipe={recipe} tags={tags} servings={servings} />
+      <RecipeHeader
+        recipe={recipe}
+        tags={tags}
+        servings={servings}
+        onStartCookMode={handleStartCookMode}
+      />
 
-      <div className="mb-4 lg:hidden">
-        <AdaptThisRecipe
-          servings={servings}
-          onServingsChange={setServings}
-          difficulty={difficulty}
-          onDifficultyChange={setDifficulty}
-          hasV2Data={hasV2Data}
-          swaps={swaps}
-        />
-      </div>
+      <div className="container py-8 lg:py-10">
+        <div className="flex flex-col gap-8 lg:flex-row lg:gap-12">
+          <aside className="w-full shrink-0 lg:sticky lg:top-24 lg:w-80 lg:self-start">
+            <div className="space-y-4">
+              {adminEditSheet && (
+                <AdminWrapper>{adminEditSheet}</AdminWrapper>
+              )}
 
-      <div className="mb-6 lg:hidden">
-        <IngredientsPanel
-          ingredients={displayIngredients}
-          servingsMultiplier={servingsMultiplier}
-          isLoading={isViewLoading}
-          collapsible
-          defaultOpen={false}
-        />
-      </div>
+              <div className="lg:hidden">
+                <IngredientsPanel
+                  ingredients={displayIngredients}
+                  servingsMultiplier={servingsMultiplier}
+                  isLoading={isViewLoading}
+                  collapsible
+                  defaultOpen
+                />
+              </div>
 
-      <div className="flex gap-8">
-        <main className="min-w-0 flex-1">
-          <StepsList
-            steps={useV2View ? null : recipe.steps}
-            stepInstructions={stepInstructions}
-            onStartCookMode={handleStartCookMode}
-            recipeId={recipe.id}
-            isSignedIn={!!isSignedIn}
-            stepNotes={userNotes?.stepNotes}
-            isLoading={isViewLoading}
-          />
+              <div className="hidden lg:block">
+                <IngredientsPanel
+                  ingredients={displayIngredients}
+                  servingsMultiplier={servingsMultiplier}
+                  isLoading={isViewLoading}
+                />
+              </div>
 
-          <Card className="mt-8">
-            <CardHeader>
-              <CardTitle>Make it yours</CardTitle>
-              <CardDescription>
-                Save swaps, timing tweaks, and reminders for next time.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <SignedIn>
-                <div className="space-y-3">
-                  <Textarea
-                    value={generalNote}
-                    onChange={(e) => setGeneralNote(e.target.value)}
-                    placeholder="Your notes for this recipe..."
-                    className="min-h-[100px]"
-                    maxLength={2000}
-                  />
-                  <div className="flex items-center gap-2">
-                    <Button
-                      onClick={handleSaveGeneralNote}
-                      disabled={
-                        generalNoteSaveState === "saving" ||
-                        generalNote === savedGeneralNote
-                      }
-                    >
-                      {generalNoteSaveState === "saving" ? (
-                        <>
-                          <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
-                          Saving...
-                        </>
-                      ) : generalNoteSaveState === "saved" ? (
-                        <>
-                          <Check className="mr-1.5 h-4 w-4" />
-                          Saved
-                        </>
-                      ) : (
-                        "Save notes"
-                      )}
-                    </Button>
-                  </div>
-                  {generalNoteSaveState === "error" && (
-                    <p className="text-sm text-destructive">
-                      {generalNoteError}
-                    </p>
-                  )}
-                </div>
-              </SignedIn>
-              <SignedOut>
-                <p className="text-sm text-muted-foreground">
-                  Log in to save personal notes.
-                </p>
-              </SignedOut>
-            </CardContent>
-          </Card>
+              <AdaptThisRecipe
+                servings={servings}
+                onServingsChange={setServings}
+                difficulty={difficulty}
+                onDifficultyChange={setDifficulty}
+                hasV2Data={hasV2Data}
+                defaultCollapsed
+              />
+            </div>
+          </aside>
 
-          {dangerZoneDialog && (
-            <AdminWrapper>
-              <div className="mt-8">{dangerZoneDialog}</div>
-            </AdminWrapper>
-          )}
-
-          <MoreLikeThis recipes={relatedRecipes} />
-        </main>
-
-        <aside className="hidden w-80 shrink-0 lg:block">
-          <div className="sticky top-24 space-y-4">
-            {adminEditSheet && <AdminWrapper>{adminEditSheet}</AdminWrapper>}
-
-            <AdaptThisRecipe
-              servings={servings}
-              onServingsChange={setServings}
-              difficulty={difficulty}
-              onDifficultyChange={setDifficulty}
-              hasV2Data={hasV2Data}
+          <main className="min-w-0 flex-1">
+            <StepsList
+              steps={useV2View ? null : recipe.steps}
+              stepInstructions={stepInstructions}
+              recipeId={recipe.id}
+              isSignedIn={!!isSignedIn}
+              stepNotes={userNotes?.stepNotes}
+              isLoading={isViewLoading}
               swaps={swaps}
             />
 
-            <IngredientsPanel
-              ingredients={displayIngredients}
-              servingsMultiplier={servingsMultiplier}
-              isLoading={isViewLoading}
-            />
-          </div>
-        </aside>
+            <section className="mt-10 rounded-2xl border border-border/70 bg-gradient-to-br from-card via-card to-herb-muted/40 p-5 sm:p-6">
+              <h2 className="font-display text-xl font-semibold tracking-tight">
+                Make it yours
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Save swaps, timing tweaks, and reminders for next time.
+              </p>
+              <div className="mt-4">
+                <SignedIn>
+                  <div className="space-y-3">
+                    <Textarea
+                      value={generalNote}
+                      onChange={(e) => setGeneralNote(e.target.value)}
+                      placeholder="Your notes for this recipe..."
+                      className="min-h-[100px] bg-background/70"
+                      maxLength={2000}
+                    />
+                    <div className="flex items-center gap-2">
+                      <Button
+                        onClick={handleSaveGeneralNote}
+                        disabled={
+                          generalNoteSaveState === "saving" ||
+                          generalNote === savedGeneralNote
+                        }
+                      >
+                        {generalNoteSaveState === "saving" ? (
+                          <>
+                            <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+                            Saving...
+                          </>
+                        ) : generalNoteSaveState === "saved" ? (
+                          <>
+                            <Check className="mr-1.5 h-4 w-4" />
+                            Saved
+                          </>
+                        ) : (
+                          "Save notes"
+                        )}
+                      </Button>
+                    </div>
+                    {generalNoteSaveState === "error" && (
+                      <p className="text-sm text-destructive">
+                        {generalNoteError}
+                      </p>
+                    )}
+                  </div>
+                </SignedIn>
+                <SignedOut>
+                  <p className="text-sm text-muted-foreground">
+                    Log in to save personal notes.
+                  </p>
+                </SignedOut>
+              </div>
+            </section>
+
+            {dangerZoneDialog && (
+              <AdminWrapper>
+                <div className="mt-8">{dangerZoneDialog}</div>
+              </AdminWrapper>
+            )}
+
+            <MoreLikeThis recipes={relatedRecipes} />
+          </main>
+        </div>
       </div>
 
       <div className="h-20 lg:hidden" />
@@ -445,7 +434,6 @@ export function FullRecipePageClient({
         difficulty={difficulty}
         onDifficultyChange={setDifficulty}
         hasV2Data={hasV2Data}
-        swaps={swaps}
       />
 
       <CookModeOverlay

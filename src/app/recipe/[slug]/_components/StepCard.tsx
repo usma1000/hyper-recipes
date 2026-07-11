@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, type MouseEvent } from "react";
 import { MessageSquare, Check, Loader2, X } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -18,9 +18,7 @@ interface StepCardProps {
 }
 
 /**
- * Individual step card with step number and content.
- * Designed for scannability with clear visual hierarchy.
- * Supports per-step notes for logged-in users.
+ * Individual step with editorial numbering and optional notes.
  * @param stepNumber - The step number (1-indexed)
  * @param content - The step text content
  * @param isActive - Whether this step is currently active
@@ -43,7 +41,9 @@ export function StepCard({
   const [isEditing, setIsEditing] = useState(false);
   const [noteValue, setNoteValue] = useState(note);
   const [savedNote, setSavedNote] = useState(note);
-  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [saveState, setSaveState] = useState<
+    "idle" | "saving" | "saved" | "error"
+  >("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
   const hasNote = savedNote.trim().length > 0;
@@ -74,7 +74,7 @@ export function StepCard({
     setErrorMessage("");
   }, [savedNote]);
 
-  const handleStartEdit = useCallback((e: React.MouseEvent) => {
+  const handleStartEdit = useCallback((e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setIsEditing(true);
   }, []);
@@ -82,37 +82,41 @@ export function StepCard({
   return (
     <div
       className={cn(
-        "group relative rounded-lg border p-4 transition-all",
-        isActive && "border-accent bg-accent/5 ring-1 ring-accent/40",
-        isCompleted && "border-herb/30 bg-herb-muted/50",
-        !isActive && !isCompleted && "border-border hover:border-accent/40",
-        onClick && "cursor-pointer"
+        "group relative rounded-2xl px-4 py-4 transition-all duration-200 sm:px-5",
+        isActive && "bg-accent/5 ring-1 ring-accent/30",
+        isCompleted && "bg-herb-muted/60",
+        !isActive &&
+          !isCompleted &&
+          "bg-card/40 hover:bg-card hover:shadow-soft",
+        onClick && "cursor-pointer",
       )}
       onClick={onClick}
     >
       <div className="flex gap-4">
         <div
           className={cn(
-            "flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-sm font-semibold",
+            "flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-display text-sm font-semibold tabular-nums transition-colors",
             isActive && "bg-accent text-accent-foreground",
             isCompleted && "bg-herb text-herb-foreground",
-            !isActive && !isCompleted && "bg-muted text-muted-foreground"
+            !isActive &&
+              !isCompleted &&
+              "bg-secondary text-muted-foreground group-hover:text-foreground",
           )}
         >
-          {isCompleted ? "✓" : stepNumber}
+          {isCompleted ? <Check className="h-4 w-4" /> : stepNumber}
         </div>
-        <div className="flex-1 pt-1">
+        <div className="min-w-0 flex-1 pt-1">
           <p
             className={cn(
-              "text-[15px] leading-relaxed",
-              isCompleted && "text-muted-foreground line-through"
+              "text-[15px] leading-relaxed text-foreground/90",
+              isCompleted && "text-muted-foreground line-through",
             )}
           >
             {content}
           </p>
 
           {hasNote && !isEditing && (
-            <div className="mt-2 rounded bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
+            <div className="mt-3 rounded-lg bg-muted/60 px-3 py-2 text-sm text-muted-foreground">
               <MessageSquare className="mr-1.5 inline-block h-3.5 w-3.5" />
               {savedNote}
             </div>
@@ -122,7 +126,7 @@ export function StepCard({
             <button
               type="button"
               onClick={handleStartEdit}
-              className="mt-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              className="mt-2 inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
             >
               <MessageSquare className="h-3.5 w-3.5" />
               {hasNote ? "Edit note" : "Add note"}
@@ -130,7 +134,10 @@ export function StepCard({
           )}
 
           {isSignedIn && isEditing && (
-            <div className="mt-3 space-y-2" onClick={(e) => e.stopPropagation()}>
+            <div
+              className="mt-3 space-y-2"
+              onClick={(e) => e.stopPropagation()}
+            >
               <Textarea
                 value={noteValue}
                 onChange={(e) => setNoteValue(e.target.value)}
@@ -179,4 +186,3 @@ export function StepCard({
     </div>
   );
 }
-

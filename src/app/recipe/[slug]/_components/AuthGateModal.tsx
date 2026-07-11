@@ -46,7 +46,7 @@ export function AuthGateModal({
         <DialogHeader>
           <DialogTitle>Unlock smart recipe controls</DialogTitle>
           <DialogDescription>
-            Adjust time, servings, and ingredient swaps with a free account.
+            Adjust time, servings, and difficulty with a free account.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex-col gap-2 sm:flex-col">
