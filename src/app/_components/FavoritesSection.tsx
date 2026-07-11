@@ -19,8 +19,8 @@ export function FavoritesSection({
   if (!favorites || favorites.length === 0) {
     return (
       <section id="favorites" className="py-4">
-        <div className="flex items-center justify-center rounded-2xl border border-dashed border-neutral-200 bg-neutral-50/50 py-8 dark:border-neutral-800 dark:bg-neutral-900/50">
-          <p className="text-[15px] text-neutral-500 dark:text-neutral-400">
+        <div className="flex items-center justify-center rounded-2xl border border-dashed border-border bg-muted/50 py-8 dark:border-border dark:bg-card/50">
+          <p className="text-[15px] text-muted-foreground dark:text-muted-foreground">
             No favorites yet — browse below to find recipes you love
           </p>
         </div>
@@ -31,12 +31,12 @@ export function FavoritesSection({
   return (
     <section id="favorites" className="py-4">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold tracking-tight text-neutral-900 dark:text-white">
+        <h2 className="text-lg font-semibold tracking-tight text-foreground dark:text-foreground">
           Your Favorites
         </h2>
         <Link
           href="/favorites"
-          className="flex items-center gap-1 text-[14px] font-medium text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+          className="flex items-center gap-1 text-[14px] font-medium text-muted-foreground transition-colors hover:text-foreground dark:text-muted-foreground dark:hover:text-foreground"
         >
           See all
           <ArrowRight className="h-4 w-4" />
@@ -63,8 +63,8 @@ export function FavoritesSectionSkeleton(): JSX.Element {
   return (
     <section className="py-4">
       <div className="mb-4 flex items-center justify-between">
-        <div className="h-6 w-32 animate-pulse rounded-md bg-neutral-100 dark:bg-neutral-800" />
-        <div className="h-5 w-16 animate-pulse rounded-md bg-neutral-100 dark:bg-neutral-800" />
+        <div className="h-6 w-32 animate-pulse rounded-md bg-muted dark:bg-muted" />
+        <div className="h-5 w-16 animate-pulse rounded-md bg-muted dark:bg-muted" />
       </div>
       <div className="flex gap-4 overflow-x-auto pb-2">
         {Array.from({ length: 4 }, (_, i) => (

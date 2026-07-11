@@ -9,13 +9,11 @@ export default function NotFound(): JSX.Element {
   return (
     <div className="container flex min-h-[60vh] flex-col items-center justify-center py-16">
       <div className="text-center">
-        <h1 className="text-6xl font-bold text-neutral-900 dark:text-white">
-          404
-        </h1>
-        <h2 className="mt-4 text-2xl font-semibold text-neutral-700 dark:text-neutral-300">
+        <h1 className="font-display text-6xl font-bold text-foreground">404</h1>
+        <h2 className="mt-4 font-display text-2xl font-semibold text-foreground">
           Page Not Found
         </h2>
-        <p className="mt-2 text-[15px] text-neutral-500 dark:text-neutral-400">
+        <p className="mt-2 text-[15px] text-muted-foreground">
           The page you&apos;re looking for doesn&apos;t exist.
         </p>
         <div className="mt-8">

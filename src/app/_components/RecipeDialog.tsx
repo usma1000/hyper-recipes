@@ -80,7 +80,7 @@ export default async function RecipeDialog({ recipe }: { recipe: Recipe }) {
                 <form action={() => toggleFavorite(recipe.id, isFavorite)}>
                   <Button type="submit" variant="secondary" size="default">
                     <Star
-                      className={`mr-2 h-5 w-5 transition-all active:-translate-y-1 ${isFavorite ? "fill-amber-400" : ""}`}
+                      className={`mr-2 h-5 w-5 transition-all active:-translate-y-1 ${isFavorite ? "fill-accent" : ""}`}
                     />
                     Favorite
                   </Button>

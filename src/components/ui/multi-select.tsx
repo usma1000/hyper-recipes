@@ -46,7 +46,7 @@ const multiSelectVariants = cva(
           "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
         inverted: "inverted",
         themed:
-          "rounded-lg border border-slate-200 bg-white text-slate-950 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50",
+          "rounded-lg border border-border bg-card text-foreground shadow-sm dark:border-border dark:bg-background dark:text-primary-foreground",
       },
     },
     defaultVariants: {

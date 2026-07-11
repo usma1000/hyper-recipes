@@ -73,9 +73,9 @@ export default function StepsEditor({
   if (!isLoaded) {
     return (
       <div className="prose-headings:font-title font-default prose prose-lg max-w-full animate-pulse dark:prose-invert">
-        <div className="h-4 w-3/4 rounded bg-slate-200" />
-        <div className="mt-2 h-4 w-full rounded bg-slate-200" />
-        <div className="mt-2 h-4 w-5/6 rounded bg-slate-200" />
+        <div className="h-4 w-3/4 rounded bg-muted" />
+        <div className="mt-2 h-4 w-full rounded bg-muted" />
+        <div className="mt-2 h-4 w-5/6 rounded bg-muted" />
       </div>
     );
   }

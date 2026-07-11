@@ -69,7 +69,7 @@ export default function RecipeLoading() {
 
           {/* Steps Card */}
           <Card>
-            <CardHeader className="mb-4 border-b border-slate-200">
+            <CardHeader className="mb-4 border-b border-border">
               <CardTitle as="h2" className="text-3xl">
                 Steps
               </CardTitle>

@@ -35,12 +35,12 @@ type SavedSectionProps = {
 function SavedSection({ favorites }: SavedSectionProps): JSX.Element {
   if (!favorites || favorites.length === 0) {
     return (
-      <section className="rounded-2xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+      <section className="rounded-2xl border border-border bg-card p-5 dark:border-border dark:bg-card">
         <div className="mb-4 flex items-center gap-2">
-          <Heart className="h-5 w-5 text-neutral-400" />
-          <h3 className="font-semibold text-neutral-900 dark:text-white">Saved</h3>
+          <Heart className="h-5 w-5 text-muted-foreground" />
+          <h3 className="font-semibold text-foreground dark:text-foreground">Saved</h3>
         </div>
-        <p className="text-[14px] text-neutral-500 dark:text-neutral-400">
+        <p className="text-[14px] text-muted-foreground dark:text-muted-foreground">
           Save recipes to build your shortlist.
         </p>
       </section>
@@ -48,15 +48,15 @@ function SavedSection({ favorites }: SavedSectionProps): JSX.Element {
   }
 
   return (
-    <section className="rounded-2xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+    <section className="rounded-2xl border border-border bg-card p-5 dark:border-border dark:bg-card">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Heart className="h-5 w-5 text-neutral-400" />
-          <h3 className="font-semibold text-neutral-900 dark:text-white">Saved</h3>
+          <Heart className="h-5 w-5 text-muted-foreground" />
+          <h3 className="font-semibold text-foreground dark:text-foreground">Saved</h3>
         </div>
         <Link
           href="/favorites"
-          className="flex items-center gap-1 text-[13px] font-medium text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+          className="flex items-center gap-1 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground dark:text-muted-foreground dark:hover:text-foreground"
         >
           View all
           <ArrowRight className="h-3.5 w-3.5" />
@@ -82,12 +82,12 @@ type ListsSectionProps = {
 function ListsSection({ collections }: ListsSectionProps): JSX.Element {
   if (!collections || collections.length === 0) {
     return (
-      <section className="rounded-2xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+      <section className="rounded-2xl border border-border bg-card p-5 dark:border-border dark:bg-card">
         <div className="mb-4 flex items-center gap-2">
-          <FolderPlus className="h-5 w-5 text-neutral-400" />
-          <h3 className="font-semibold text-neutral-900 dark:text-white">Lists</h3>
+          <FolderPlus className="h-5 w-5 text-muted-foreground" />
+          <h3 className="font-semibold text-foreground dark:text-foreground">Lists</h3>
         </div>
-        <p className="mb-3 text-[14px] text-neutral-500 dark:text-neutral-400">
+        <p className="mb-3 text-[14px] text-muted-foreground dark:text-muted-foreground">
           Make lists for your go-to meals.
         </p>
         <Link href="/collections">
@@ -100,15 +100,15 @@ function ListsSection({ collections }: ListsSectionProps): JSX.Element {
   }
 
   return (
-    <section className="rounded-2xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+    <section className="rounded-2xl border border-border bg-card p-5 dark:border-border dark:bg-card">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <FolderPlus className="h-5 w-5 text-neutral-400" />
-          <h3 className="font-semibold text-neutral-900 dark:text-white">Lists</h3>
+          <FolderPlus className="h-5 w-5 text-muted-foreground" />
+          <h3 className="font-semibold text-foreground dark:text-foreground">Lists</h3>
         </div>
         <Link
           href="/collections"
-          className="flex items-center gap-1 text-[13px] font-medium text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+          className="flex items-center gap-1 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground dark:text-muted-foreground dark:hover:text-foreground"
         >
           Manage lists
           <ArrowRight className="h-3.5 w-3.5" />
@@ -119,12 +119,12 @@ function ListsSection({ collections }: ListsSectionProps): JSX.Element {
           <Link
             key={collection.id}
             href={`/collections/${collection.id}`}
-            className="flex items-center justify-between rounded-lg px-2 py-2 transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800"
+            className="flex items-center justify-between rounded-lg px-2 py-2 transition-colors hover:bg-muted dark:hover:bg-muted"
           >
-            <span className="text-[14px] font-medium text-neutral-700 dark:text-neutral-300">
+            <span className="text-[14px] font-medium text-foreground/80 dark:text-muted-foreground/40">
               {collection.title}
             </span>
-            <span className="text-[12px] text-neutral-400">
+            <span className="text-[12px] text-muted-foreground">
               {collection.recipes?.length ?? 0} recipes
             </span>
           </Link>
@@ -140,21 +140,21 @@ function ListsSection({ collections }: ListsSectionProps): JSX.Element {
  */
 function YourRecipesSection(): JSX.Element {
   return (
-    <section className="rounded-2xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+    <section className="rounded-2xl border border-border bg-card p-5 dark:border-border dark:bg-card">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <BookOpen className="h-5 w-5 text-neutral-400" />
-          <h3 className="font-semibold text-neutral-900 dark:text-white">Your recipes</h3>
+          <BookOpen className="h-5 w-5 text-muted-foreground" />
+          <h3 className="font-semibold text-foreground dark:text-foreground">Your recipes</h3>
         </div>
         <Link
           href="/dashboard"
-          className="flex items-center gap-1 text-[13px] font-medium text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+          className="flex items-center gap-1 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground dark:text-muted-foreground dark:hover:text-foreground"
         >
           View all
           <ArrowRight className="h-3.5 w-3.5" />
         </Link>
       </div>
-      <p className="text-[14px] text-neutral-500 dark:text-neutral-400">
+      <p className="text-[14px] text-muted-foreground dark:text-muted-foreground">
         Recipes you create will appear here.
       </p>
     </section>
@@ -172,9 +172,9 @@ function SidebarRecipeItem({ recipe }: SidebarRecipeItemProps): JSX.Element {
   return (
     <Link
       href={`/recipe/${recipe.slug}`}
-      className="flex items-center gap-3 rounded-lg transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800"
+      className="flex items-center gap-3 rounded-lg transition-colors hover:bg-muted dark:hover:bg-muted"
     >
-      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-neutral-100 dark:bg-neutral-800">
+      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-muted dark:bg-muted">
         {recipe.heroImage?.url ? (
           <Image
             src={recipe.heroImage.url}
@@ -185,11 +185,11 @@ function SidebarRecipeItem({ recipe }: SidebarRecipeItemProps): JSX.Element {
           />
         ) : (
           <div className="flex h-full items-center justify-center">
-            <Soup size={16} className="text-neutral-300 dark:text-neutral-600" />
+            <Soup size={16} className="text-muted-foreground/40 dark:text-muted-foreground" />
           </div>
         )}
       </div>
-      <span className="truncate text-[14px] font-medium text-neutral-700 dark:text-neutral-300">
+      <span className="truncate text-[14px] font-medium text-foreground/80 dark:text-muted-foreground/40">
         {recipe.name}
       </span>
     </Link>
@@ -205,14 +205,14 @@ export function SidebarSkeleton(): JSX.Element {
       {Array.from({ length: 3 }, (_, i) => (
         <div
           key={i}
-          className="rounded-2xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900"
+          className="rounded-2xl border border-border bg-card p-5 dark:border-border dark:bg-card"
         >
-          <div className="mb-4 h-5 w-24 animate-pulse rounded bg-neutral-100 dark:bg-neutral-800" />
+          <div className="mb-4 h-5 w-24 animate-pulse rounded bg-muted dark:bg-muted" />
           <div className="space-y-3">
             {Array.from({ length: 3 }, (_, j) => (
               <div key={j} className="flex items-center gap-3">
-                <div className="h-10 w-10 shrink-0 animate-pulse rounded-lg bg-neutral-100 dark:bg-neutral-800" />
-                <div className="h-4 w-full animate-pulse rounded bg-neutral-100 dark:bg-neutral-800" />
+                <div className="h-10 w-10 shrink-0 animate-pulse rounded-lg bg-muted dark:bg-muted" />
+                <div className="h-4 w-full animate-pulse rounded bg-muted dark:bg-muted" />
               </div>
             ))}
           </div>

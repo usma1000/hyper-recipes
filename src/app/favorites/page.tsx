@@ -51,7 +51,7 @@ export default async function FavoritesPage(): Promise<JSX.Element> {
     <>
       <SignedOut>
         <div className="container py-8">
-          <p className="text-center text-neutral-500">
+          <p className="text-center text-muted-foreground">
             Please sign in to view your favorites.
           </p>
         </div>
@@ -60,10 +60,10 @@ export default async function FavoritesPage(): Promise<JSX.Element> {
       <SignedIn>
         <div className="container py-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-white">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground dark:text-foreground">
               Your Favorites
             </h1>
-            <p className="mt-2 text-[15px] text-neutral-500 dark:text-neutral-400">
+            <p className="mt-2 text-[15px] text-muted-foreground dark:text-muted-foreground">
               {favorites.length === 0
                 ? "You haven't favorited any recipes yet."
                 : `${favorites.length} ${favorites.length === 1 ? "recipe" : "recipes"} saved`}
@@ -71,8 +71,8 @@ export default async function FavoritesPage(): Promise<JSX.Element> {
           </div>
 
           {favorites.length === 0 ? (
-            <div className="flex min-h-[200px] items-center justify-center rounded-2xl border border-dashed border-neutral-200 bg-neutral-50/50 dark:border-neutral-800 dark:bg-neutral-900/50">
-              <p className="text-[15px] text-neutral-400 dark:text-neutral-500">
+            <div className="flex min-h-[200px] items-center justify-center rounded-2xl border border-dashed border-border bg-muted/50 dark:border-border dark:bg-card/50">
+              <p className="text-[15px] text-muted-foreground dark:text-muted-foreground">
                 No favorites yet
               </p>
             </div>

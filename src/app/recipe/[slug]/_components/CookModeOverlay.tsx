@@ -120,7 +120,7 @@ export function CookModeOverlay({
       <div className="fixed inset-0 z-50 flex flex-col bg-background">
         <div className="h-1 bg-muted">
           <div
-            className="h-full bg-primary transition-all duration-300"
+            className="h-full bg-herb transition-all duration-300"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -153,7 +153,7 @@ export function CookModeOverlay({
               className={cn(
                 "mb-6 inline-flex h-16 w-16 items-center justify-center rounded-full text-2xl font-bold",
                 isCurrentStepCompleted
-                  ? "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400"
+                  ? "bg-green-100 text-herb dark:bg-green-900/30 dark:text-herb"
                   : "bg-primary/10 text-primary"
               )}
             >

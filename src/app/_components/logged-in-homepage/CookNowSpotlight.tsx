@@ -59,18 +59,17 @@ export function CookNowSpotlight({ recipes }: CookNowSpotlightProps): JSX.Elemen
   const timeDisplay = formatTime(spotlightRecipe.prepTime, spotlightRecipe.cookTime);
 
   return (
-    <section className="relative overflow-hidden rounded-3xl border border-neutral-200/60 bg-gradient-to-br from-white to-neutral-50 dark:border-neutral-800 dark:from-neutral-900 dark:to-neutral-900/80">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-amber-100/30 via-transparent to-transparent dark:from-amber-900/10" />
-      
+    <section className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-card to-muted dark:border-border dark:from-card dark:to-muted/80">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-accent/10 via-transparent to-transparent" />
       <div className="relative p-6 md:p-8">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold tracking-tight text-neutral-900 dark:text-white">
+          <h2 className="font-display text-lg font-semibold tracking-tight text-foreground dark:text-foreground">
             Cook now
           </h2>
           <Button
             variant="ghost"
             size="sm"
-            className="gap-2 text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+            className="gap-2 text-muted-foreground hover:text-foreground dark:text-muted-foreground dark:hover:text-foreground"
             onClick={handleSwap}
           >
             <Shuffle className="h-4 w-4" />
@@ -80,7 +79,7 @@ export function CookNowSpotlight({ recipes }: CookNowSpotlightProps): JSX.Elemen
 
         <div className="grid gap-6 md:grid-cols-[280px_1fr]">
           {/* Recipe Image */}
-          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-neutral-100 dark:bg-neutral-800 md:aspect-square">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-muted dark:bg-muted md:aspect-square">
             {spotlightRecipe.heroImage?.url ? (
               <Image
                 src={spotlightRecipe.heroImage.url}
@@ -92,7 +91,7 @@ export function CookNowSpotlight({ recipes }: CookNowSpotlightProps): JSX.Elemen
               />
             ) : (
               <div className="flex h-full items-center justify-center">
-                <Soup size={64} className="text-neutral-300 dark:text-neutral-600" />
+                <Soup size={64} className="text-muted-foreground/40 dark:text-muted-foreground" />
               </div>
             )}
           </div>
@@ -100,11 +99,11 @@ export function CookNowSpotlight({ recipes }: CookNowSpotlightProps): JSX.Elemen
           {/* Recipe Info */}
           <div className="flex flex-col justify-between">
             <div>
-              <h3 className="mb-2 text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white md:text-3xl">
+              <h3 className="mb-2 font-display text-2xl font-semibold tracking-tight text-foreground dark:text-foreground md:text-3xl">
                 {spotlightRecipe.name}
               </h3>
               
-              <p className="mb-4 line-clamp-2 text-[15px] leading-relaxed text-neutral-600 dark:text-neutral-400">
+              <p className="mb-4 line-clamp-2 text-[15px] leading-relaxed text-muted-foreground dark:text-muted-foreground">
                 {spotlightRecipe.description}
               </p>
 
@@ -151,26 +150,26 @@ export function CookNowSpotlight({ recipes }: CookNowSpotlightProps): JSX.Elemen
  */
 export function CookNowSpotlightSkeleton(): JSX.Element {
   return (
-    <section className="overflow-hidden rounded-3xl border border-neutral-200/60 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900 md:p-8">
+    <section className="overflow-hidden rounded-3xl border border-border bg-card p-6 dark:border-border dark:bg-card md:p-8">
       <div className="mb-4 flex items-center justify-between">
-        <div className="h-6 w-24 animate-pulse rounded bg-neutral-100 dark:bg-neutral-800" />
-        <div className="h-9 w-36 animate-pulse rounded bg-neutral-100 dark:bg-neutral-800" />
+        <div className="h-6 w-24 animate-pulse rounded bg-muted dark:bg-muted" />
+        <div className="h-9 w-36 animate-pulse rounded bg-muted dark:bg-muted" />
       </div>
       <div className="grid gap-6 md:grid-cols-[280px_1fr]">
-        <div className="aspect-[4/3] animate-pulse rounded-2xl bg-neutral-100 dark:bg-neutral-800 md:aspect-square" />
+        <div className="aspect-[4/3] animate-pulse rounded-2xl bg-muted dark:bg-muted md:aspect-square" />
         <div className="flex flex-col justify-between">
           <div>
-            <div className="mb-2 h-9 w-3/4 animate-pulse rounded bg-neutral-100 dark:bg-neutral-800" />
-            <div className="mb-4 h-12 w-full animate-pulse rounded bg-neutral-100 dark:bg-neutral-800" />
+            <div className="mb-2 h-9 w-3/4 animate-pulse rounded bg-muted dark:bg-muted" />
+            <div className="mb-4 h-12 w-full animate-pulse rounded bg-muted dark:bg-muted" />
             <div className="mb-6 flex gap-3">
-              <div className="h-8 w-20 animate-pulse rounded-full bg-neutral-100 dark:bg-neutral-800" />
-              <div className="h-8 w-16 animate-pulse rounded-full bg-neutral-100 dark:bg-neutral-800" />
+              <div className="h-8 w-20 animate-pulse rounded-full bg-muted dark:bg-muted" />
+              <div className="h-8 w-16 animate-pulse rounded-full bg-muted dark:bg-muted" />
             </div>
           </div>
           <div className="flex gap-3">
-            <div className="h-11 w-32 animate-pulse rounded-lg bg-neutral-100 dark:bg-neutral-800" />
-            <div className="h-11 w-11 animate-pulse rounded-lg bg-neutral-100 dark:bg-neutral-800" />
-            <div className="h-11 w-11 animate-pulse rounded-lg bg-neutral-100 dark:bg-neutral-800" />
+            <div className="h-11 w-32 animate-pulse rounded-lg bg-muted dark:bg-muted" />
+            <div className="h-11 w-11 animate-pulse rounded-lg bg-muted dark:bg-muted" />
+            <div className="h-11 w-11 animate-pulse rounded-lg bg-muted dark:bg-muted" />
           </div>
         </div>
       </div>

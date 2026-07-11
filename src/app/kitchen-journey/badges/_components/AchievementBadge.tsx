@@ -33,11 +33,11 @@ export default function AchievementBadge({
         />
       </div>
       <span
-        className={cn("text-sm font-medium", !isEarned && "text-slate-500")}
+        className={cn("text-sm font-medium", !isEarned && "text-muted-foreground")}
       >
         {name}
       </span>
-      <span className="text-center text-xs text-slate-500">{description}</span>
+      <span className="text-center text-xs text-muted-foreground">{description}</span>
     </div>
   );
 }

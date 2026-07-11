@@ -130,8 +130,8 @@ export default function TaggedRecipes({
   };
 
   return (
-    <Card className="w-full overflow-hidden border-2 border-amber-50 shadow-sm">
-      <CardHeader className="bg-gradient-to-r from-amber-50 to-amber-100/50 pb-3">
+    <Card className="w-full overflow-hidden border-2 border-accent/40 shadow-sm">
+      <CardHeader className="bg-gradient-to-r from-accent/10 to-accent/5 pb-3">
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-lg">Find Recipes By Category</CardTitle>
@@ -235,7 +235,7 @@ export default function TaggedRecipes({
           </Popover>
         </div>
         {selectedTag && (
-          <div className="mt-4 inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-800">
+          <div className="mt-4 inline-flex items-center rounded-full bg-accent/10 px-3 py-1 text-sm font-medium text-accent">
             {getTagTypeIcon(selectedTag.tagType)}
             {selectedTag.tagType}: {selectedTag.name}
           </div>
@@ -245,8 +245,8 @@ export default function TaggedRecipes({
         {selectedTag ? (
           isChanging ? (
             <div className="flex h-48 flex-col items-center justify-center rounded-lg border border-dashed bg-gray-50/50 p-12 text-center">
-              <Loader2 className="h-8 w-8 animate-spin text-amber-600" />
-              <p className="mt-2 text-sm text-slate-500">Loading recipes...</p>
+              <Loader2 className="h-8 w-8 animate-spin text-accent" />
+              <p className="mt-2 text-sm text-muted-foreground">Loading recipes...</p>
             </div>
           ) : selectedTag.id in renderedCarousels ? (
             renderedCarousels[selectedTag.id]
@@ -255,8 +255,8 @@ export default function TaggedRecipes({
           )
         ) : (
           <div className="flex h-48 flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50 p-12 text-center">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-100">
-              <UtensilsCrossed className="h-6 w-6 text-amber-600" />
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
+              <UtensilsCrossed className="h-6 w-6 text-accent" />
             </div>
             <h3 className="mt-2 text-sm font-semibold text-gray-900">
               No category selected

@@ -37,7 +37,7 @@ export function QuickFilters({
 }: QuickFiltersProps): JSX.Element {
   return (
     <div className="space-y-3">
-      <p className="text-[14px] font-medium text-neutral-600 dark:text-neutral-400">
+      <p className="text-[14px] font-medium text-muted-foreground dark:text-muted-foreground">
         Find something that fits...
       </p>
       <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-1">
@@ -50,8 +50,8 @@ export function QuickFilters({
               className={cn(
                 "flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-[13px] font-medium transition-all duration-150",
                 isActive
-                  ? "bg-neutral-900 text-white shadow-sm dark:bg-white dark:text-neutral-900"
-                  : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700 dark:hover:text-white"
+                  ? "bg-primary text-white shadow-sm dark:bg-card dark:text-foreground"
+                  : "bg-muted text-muted-foreground hover:bg-secondary hover:text-foreground dark:bg-muted dark:text-muted-foreground/40 dark:hover:bg-muted dark:hover:text-foreground"
               )}
             >
               {filter.icon}
@@ -107,12 +107,12 @@ export function filterRecipesByQuickFilters(
 export function QuickFiltersSkeleton(): JSX.Element {
   return (
     <div className="space-y-3">
-      <div className="h-5 w-40 animate-pulse rounded bg-neutral-100 dark:bg-neutral-800" />
+      <div className="h-5 w-40 animate-pulse rounded bg-muted dark:bg-muted" />
       <div className="flex gap-2 overflow-x-auto pb-1">
         {Array.from({ length: 6 }, (_, i) => (
           <div
             key={i}
-            className="h-9 w-24 shrink-0 animate-pulse rounded-full bg-neutral-100 dark:bg-neutral-800"
+            className="h-9 w-24 shrink-0 animate-pulse rounded-full bg-muted dark:bg-muted"
           />
         ))}
       </div>

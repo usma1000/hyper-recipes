@@ -10,7 +10,7 @@ import {
 import Link from "next/link";
 import { CommandSearch } from "./CommandSearch";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { LayoutDashboard, PlusCircle, Zap } from "lucide-react";
+import { LayoutDashboard, PlusCircle } from "lucide-react";
 import KitchenJourneyBadge from "./KitchenJourneyBadge";
 
 /**
@@ -23,15 +23,20 @@ export default function TopNav(): JSX.Element {
   const isAdmin = user?.publicMetadata?.role === "admin";
 
   return (
-    <div className="border-b border-slate-200 bg-white py-3 text-slate-950 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50 md:py-4">
-      <nav className="container flex items-center justify-between gap-2 font-semibold md:gap-4">
+    <div className="border-b border-border/80 bg-background/95 py-3 text-foreground backdrop-blur-sm md:py-4">
+      <nav className="container flex items-center justify-between gap-2 md:gap-4">
         <Link
           href="/"
-          className="flex shrink-0 items-center gap-1 text-base font-semibold md:text-xl"
+          className="group flex shrink-0 items-center gap-2 text-base font-medium md:text-lg"
         >
-          <Zap size={16} className="fill-yellow-300" />
-          <span className="hidden sm:inline">Hyper Recipe</span>
-          <span className="sm:hidden">Hyper</span>
+          <span
+            aria-hidden
+            className="inline-block h-2.5 w-2.5 rounded-sm bg-accent transition-transform duration-300 group-hover:scale-125"
+          />
+          <span className="font-display tracking-tight">
+            <span className="hidden sm:inline">Hyper Recipes</span>
+            <span className="sm:hidden">Hyper</span>
+          </span>
         </Link>
 
         <div className="flex flex-1 justify-center">
@@ -85,7 +90,7 @@ export default function TopNav(): JSX.Element {
             <div className="hidden md:block">
               <KitchenJourneyBadge />
             </div>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-500 md:h-9 md:w-9">
+            <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full ring-1 ring-border md:h-9 md:w-9">
               <UserButton />
             </div>
           </SignedIn>

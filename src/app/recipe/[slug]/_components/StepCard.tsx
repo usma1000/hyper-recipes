@@ -83,9 +83,9 @@ export function StepCard({
     <div
       className={cn(
         "group relative rounded-lg border p-4 transition-all",
-        isActive && "border-primary bg-primary/5 ring-1 ring-primary",
-        isCompleted && "border-muted bg-muted/30",
-        !isActive && !isCompleted && "border-border hover:border-primary/50",
+        isActive && "border-accent bg-accent/5 ring-1 ring-accent/40",
+        isCompleted && "border-herb/30 bg-herb-muted/50",
+        !isActive && !isCompleted && "border-border hover:border-accent/40",
         onClick && "cursor-pointer"
       )}
       onClick={onClick}
@@ -93,9 +93,9 @@ export function StepCard({
       <div className="flex gap-4">
         <div
           className={cn(
-            "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold",
-            isActive && "bg-primary text-primary-foreground",
-            isCompleted && "bg-muted-foreground/20 text-muted-foreground",
+            "flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-sm font-semibold",
+            isActive && "bg-accent text-accent-foreground",
+            isCompleted && "bg-herb text-herb-foreground",
             !isActive && !isCompleted && "bg-muted text-muted-foreground"
           )}
         >

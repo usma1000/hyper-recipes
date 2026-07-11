@@ -1,6 +1,7 @@
 import "~/styles/globals.css";
 import "@uploadthing/react/styles.css";
-import { Inter as FontSans } from "next/font/google";
+import { Fraunces } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
 
 import { ClerkProvider } from "@clerk/nextjs";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
@@ -13,9 +14,10 @@ import Footer from "./_components/Footer";
 import { Toaster } from "@/components/ui/sonner";
 import { env } from "~/env";
 
-const fontSans = FontSans({
+const fontDisplay = Fraunces({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-display",
+  axes: ["SOFT", "WONK", "opsz"],
 });
 
 /**
@@ -63,13 +65,14 @@ export default function RootLayout({
       <html
         lang="en"
         style={{ colorScheme: "light" }}
-        className={`${fontSans.variable} light`}
+        className={`${GeistSans.variable} ${fontDisplay.variable} light`}
       >
         <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
         <body
           className={cn(
-            "flex min-h-screen flex-col font-sans antialiased dark:bg-slate-950",
-            fontSans.variable,
+            "flex min-h-screen flex-col bg-background font-sans antialiased",
+            GeistSans.variable,
+            fontDisplay.variable,
           )}
         >
           <ThemeProvider attribute="class">

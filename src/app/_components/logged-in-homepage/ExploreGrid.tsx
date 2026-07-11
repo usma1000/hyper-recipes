@@ -67,10 +67,10 @@ export function ExploreGrid({
   return (
     <section className="py-2">
       <div className="mb-6">
-        <h2 className="mb-1 text-xl font-semibold tracking-tight text-neutral-900 dark:text-white">
+        <h2 className="mb-1 font-display text-xl font-semibold tracking-tight text-foreground">
           Explore smart recipes
         </h2>
-        <p className="mb-5 text-[15px] text-neutral-500 dark:text-neutral-400">
+        <p className="mb-5 text-[15px] text-muted-foreground dark:text-muted-foreground">
           Discover recipes that adapt to your needs
         </p>
         <QuickFilters
@@ -80,8 +80,8 @@ export function ExploreGrid({
       </div>
 
       {displayedRecipes.length === 0 ? (
-        <div className="flex items-center justify-center rounded-2xl border border-dashed border-neutral-200 bg-neutral-50/50 py-12 dark:border-neutral-800 dark:bg-neutral-900/50">
-          <p className="text-[15px] text-neutral-500 dark:text-neutral-400">
+        <div className="flex items-center justify-center rounded-2xl border border-dashed border-border bg-muted/50 py-12 dark:border-border dark:bg-card/50">
+          <p className="text-[15px] text-muted-foreground dark:text-muted-foreground">
             No recipes match your filters. Try removing some filters.
           </p>
         </div>
@@ -122,8 +122,8 @@ export function ExploreGridSkeleton(): JSX.Element {
   return (
     <section className="py-2">
       <div className="mb-6">
-        <div className="mb-1 h-7 w-48 animate-pulse rounded bg-neutral-100 dark:bg-neutral-800" />
-        <div className="mb-5 h-5 w-64 animate-pulse rounded bg-neutral-100 dark:bg-neutral-800" />
+        <div className="mb-1 h-7 w-48 animate-pulse rounded bg-muted dark:bg-muted" />
+        <div className="mb-5 h-5 w-64 animate-pulse rounded bg-muted dark:bg-muted" />
         <QuickFiltersSkeleton />
       </div>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">

@@ -156,28 +156,28 @@ export function AddToCollectionButton({
                           }
                         }}
                         disabled={isPending || isInCollection}
-                        className="flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-neutral-800"
+                        className="flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-muted"
                       >
                         <div className="flex-1">
                           <div className="font-medium">{collection.title}</div>
                           {collection.description && (
-                            <div className="text-xs text-neutral-500 dark:text-neutral-400">
+                            <div className="text-xs text-muted-foreground dark:text-muted-foreground">
                               {collection.description}
                             </div>
                           )}
                         </div>
                         {isInCollection && (
-                          <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
+                          <Check className="h-4 w-4 text-herb dark:text-herb" />
                         )}
                       </button>
                     );
                   })}
                 </div>
               )}
-              <div className="border-t border-neutral-200 pt-2 dark:border-neutral-800">
+              <div className="border-t border-border pt-2 dark:border-border">
                 <button
                   type="button"
-                  className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                  className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-muted dark:hover:bg-muted"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();

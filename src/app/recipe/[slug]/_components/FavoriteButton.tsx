@@ -63,7 +63,7 @@ export function FavoriteButton({ recipeId }: FavoriteButtonProps): JSX.Element |
     >
       <Star
         className={`h-5 w-5 transition-all active:-translate-y-1 ${
-          isFavorite ? "fill-amber-400" : ""
+          isFavorite ? "fill-accent" : ""
         } ${isLoading ? "opacity-50" : ""}`}
       />
     </Button>

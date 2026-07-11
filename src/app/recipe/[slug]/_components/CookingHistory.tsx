@@ -43,7 +43,7 @@ type Cook = {
 
 function StarRating({ rating }: { rating: number }) {
   return (
-    <div className="flex text-amber-400">
+    <div className="flex text-accent">
       {[1, 2, 3, 4, 5].map((value) => {
         const difference = value - rating;
         if (difference <= 0) {
@@ -51,7 +51,7 @@ function StarRating({ rating }: { rating: number }) {
         } else if (difference > 0 && difference < 1) {
           return <StarHalf key={value} size={16} className="fill-current" />;
         } else {
-          return <Star key={value} size={16} className="text-slate-200" />;
+          return <Star key={value} size={16} className="text-muted" />;
         }
       })}
     </div>
@@ -127,11 +127,11 @@ export default function CookingHistory({ recipeSlug }: CookingHistoryProps) {
 
   const renderStar = (starNumber: number, currentRating: number) => {
     if (starNumber <= Math.floor(currentRating)) {
-      return <Star className="h-8 w-8 fill-amber-400 text-amber-400" />;
+      return <Star className="h-8 w-8 fill-accent text-accent" />;
     } else if (starNumber - 0.5 === currentRating) {
-      return <StarHalf className="h-8 w-8 fill-amber-400 text-amber-400" />;
+      return <StarHalf className="h-8 w-8 fill-accent text-accent" />;
     } else {
-      return <Star className="h-8 w-8 text-slate-200" />;
+      return <Star className="h-8 w-8 text-muted" />;
     }
   };
 
@@ -189,7 +189,7 @@ export default function CookingHistory({ recipeSlug }: CookingHistoryProps) {
                   {cooks.map((cook, i) => (
                     <div
                       key={i}
-                      className="flex flex-col space-y-1 border-b border-slate-100 pb-2 last:border-0"
+                      className="flex flex-col space-y-1 border-b border-border pb-2 last:border-0"
                     >
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-muted-foreground">
@@ -237,7 +237,7 @@ export default function CookingHistory({ recipeSlug }: CookingHistoryProps) {
                     onClick={(e) => handleStarClick(star, e)}
                     onMouseMove={(e) => handleStarHover(star, e)}
                     onMouseLeave={() => setHoveredRating(0)}
-                    className="p-1 hover:text-amber-400"
+                    className="p-1 hover:text-accent"
                   >
                     {renderStar(star, hoveredRating || editingRating)}
                   </button>
@@ -252,7 +252,7 @@ export default function CookingHistory({ recipeSlug }: CookingHistoryProps) {
             {selectedCook?.notes && (
               <div className="space-y-2">
                 <label className="text-sm font-medium">Notes</label>
-                <p className="whitespace-pre-wrap rounded-md border border-slate-200 p-3 text-sm text-slate-700 dark:border-slate-800 dark:text-slate-300">
+                <p className="whitespace-pre-wrap rounded-md border border-border p-3 text-sm text-foreground/80 dark:border-border dark:text-muted-foreground">
                   {selectedCook.notes}
                 </p>
               </div>
