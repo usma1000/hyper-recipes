@@ -13,7 +13,6 @@ import {
   type DragEndEvent,
 } from "@dnd-kit/core";
 import {
-  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
@@ -24,7 +23,6 @@ import { CSS } from "@dnd-kit/utilities";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
 import {
   FormControl,
   FormField,
@@ -72,6 +70,41 @@ type IngredientOption = {
   id: number;
   name: string;
 };
+
+type SortableIngredientRowProps = {
+  id: string;
+  children: (sortable: {
+    attributes: ReturnType<typeof useSortable>["attributes"];
+    listeners: ReturnType<typeof useSortable>["listeners"];
+  }) => React.ReactNode;
+};
+
+/**
+ * Sortable wrapper so useSortable is called in a component, not a map callback.
+ */
+function SortableIngredientRow({
+  id,
+  children,
+}: SortableIngredientRowProps): JSX.Element {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+    useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="rounded-lg border bg-card p-4"
+    >
+      {children({ attributes, listeners })}
+    </div>
+  );
+}
 
 interface IngredientCommandProps {
   availableIngredients: IngredientOption[];
@@ -180,7 +213,7 @@ export function WizardIngredients({
   availableIngredients: initialIngredients,
   onIngredientsUpdated,
 }: WizardIngredientsProps): JSX.Element {
-  const { control, watch, setValue } = useFormContext<RecipeWizardFormData>();
+  const { control, setValue } = useFormContext<RecipeWizardFormData>();
   const { fields, append, remove, move } = useFieldArray({
     control,
     name: "ingredients",
@@ -300,30 +333,10 @@ export function WizardIngredients({
             strategy={verticalListSortingStrategy}
           >
             <div className="space-y-4">
-              {fields.map((field, index) => {
-                const {
-                  attributes,
-                  listeners,
-                  setNodeRef,
-                  transform,
-                  transition,
-                  isDragging,
-                } = useSortable({ id: field.id });
-
-                const style = {
-                  transform: CSS.Transform.toString(transform),
-                  transition,
-                  opacity: isDragging ? 0.5 : 1,
-                };
-
-                return (
-                  <div
-                    key={field.id}
-                    ref={setNodeRef}
-                    style={style}
-                    className="rounded-lg border bg-card p-4"
-                  >
-                    <div className="flex items-start gap-4">
+              {fields.map((field, index) => (
+                <SortableIngredientRow key={field.id} id={field.id}>
+                  {({ attributes, listeners }) => (
+                  <div className="flex items-start gap-4">
                       {/* Drag handle and reorder buttons */}
                       <div className="flex flex-col items-center gap-1 pt-2">
                         <button
@@ -563,9 +576,9 @@ export function WizardIngredients({
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
-            </div>
-                );
-              })}
+                  )}
+                </SortableIngredientRow>
+              ))}
             </div>
           </SortableContext>
         </DndContext>

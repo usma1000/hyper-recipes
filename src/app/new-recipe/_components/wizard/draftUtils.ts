@@ -30,7 +30,8 @@ export function getAllDrafts(): DraftMetadata[] {
     const stored = localStorage.getItem(DRAFT_STORAGE_KEY);
     if (!stored) return [];
 
-    const drafts: Record<string, Draft> = JSON.parse(stored);
+    const parsed: unknown = JSON.parse(stored);
+    const drafts = parsed as Record<string, Draft>;
     return Object.values(drafts).map((draft) => ({
       ...draft.metadata,
       lastSaved: new Date(draft.metadata.lastSaved),
@@ -71,7 +72,8 @@ export function saveDraftToStorage(
 
   try {
     const stored = localStorage.getItem(DRAFT_STORAGE_KEY);
-    const drafts: Record<string, Draft> = stored ? JSON.parse(stored) : {};
+    const parsed: unknown = stored ? JSON.parse(stored) : {};
+    const drafts = parsed as Record<string, Draft>;
 
     drafts[draftId] = draft;
 
@@ -112,7 +114,8 @@ export function loadDraftFromStorage(draftId: string): Draft | null {
     const stored = localStorage.getItem(DRAFT_STORAGE_KEY);
     if (!stored) return null;
 
-    const drafts: Record<string, Draft> = JSON.parse(stored);
+    const parsed: unknown = JSON.parse(stored);
+    const drafts = parsed as Record<string, Draft>;
     const draft = drafts[draftId];
 
     if (!draft) return null;
@@ -141,7 +144,8 @@ export function deleteDraftFromStorage(draftId: string): void {
     const stored = localStorage.getItem(DRAFT_STORAGE_KEY);
     if (!stored) return;
 
-    const drafts: Record<string, Draft> = JSON.parse(stored);
+    const parsed: unknown = JSON.parse(stored);
+    const drafts = parsed as Record<string, Draft>;
     delete drafts[draftId];
 
     localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(drafts));
