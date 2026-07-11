@@ -17,16 +17,43 @@ import { AuthGateModal } from "./AuthGateModal";
 
 type DifficultyLevel = "EASY" | "MEDIUM" | "HARD";
 
+export type IngredientSwap = {
+  originalIngredientId: number;
+  originalName: string;
+  substitutes: Array<{
+    ingredientId: number;
+    ingredientName: string;
+    quantity: number;
+    unit: string;
+    notes: string | null;
+  }>;
+};
+
 interface AdaptThisRecipeProps {
   servings: number;
   onServingsChange: (servings: number) => void;
   difficulty?: DifficultyLevel;
   onDifficultyChange?: (difficulty: DifficultyLevel) => void;
   hasV2Data?: boolean;
+  swaps?: IngredientSwap[];
 }
 
 type TimeOption = "quick" | "standard" | "slow";
 type DifficultyOption = "beginner" | "confident";
+
+/**
+ * Formats a swap quantity for display.
+ * @param quantity - Numeric quantity
+ * @param unit - Unit string
+ * @returns Formatted quantity string
+ */
+function formatSwapQuantity(quantity: number, unit: string): string {
+  const formatted =
+    quantity % 1 === 0
+      ? quantity.toString()
+      : quantity.toFixed(2).replace(/\.?0+$/, "");
+  return unit ? `${formatted} ${unit}` : formatted;
+}
 
 /**
  * Adapt this recipe card - the key differentiator feature.
@@ -38,6 +65,7 @@ type DifficultyOption = "beginner" | "confident";
  * @param difficulty - Current difficulty level (v2)
  * @param onDifficultyChange - Callback when difficulty changes (v2)
  * @param hasV2Data - Whether this recipe has v2 difficulty variations
+ * @param swaps - Ingredient substitution suggestions
  */
 export function AdaptThisRecipe({
   servings,
@@ -45,6 +73,7 @@ export function AdaptThisRecipe({
   difficulty = "MEDIUM",
   onDifficultyChange,
   hasV2Data = false,
+  swaps = [],
 }: AdaptThisRecipeProps): JSX.Element {
   const { isSignedIn, isLoaded } = useUser();
   const [showAuthGate, setShowAuthGate] = useState(false);
@@ -173,6 +202,7 @@ export function AdaptThisRecipe({
             >
               <ArrowRightLeft className="mr-2 h-4 w-4" />
               See swaps
+              {swaps.length > 0 ? ` (${swaps.length})` : ""}
             </Button>
           </div>
 
@@ -257,14 +287,39 @@ export function AdaptThisRecipe({
               Suggested alternatives for this recipe
             </DrawerDescription>
           </DrawerHeader>
-          <div className="p-4 pb-8">
-            <p className="text-center text-sm text-muted-foreground">
-              No swap suggestions available for this recipe yet.
-            </p>
+          <div className="max-h-[60vh] space-y-4 overflow-y-auto p-4 pb-8">
+            {swaps.length === 0 ? (
+              <p className="text-center text-sm text-muted-foreground">
+                No swap suggestions available for this recipe yet.
+              </p>
+            ) : (
+              swaps.map((swap) => (
+                <div
+                  key={swap.originalIngredientId}
+                  className="rounded-lg border p-3"
+                >
+                  <p className="text-sm font-medium">{swap.originalName}</p>
+                  <ul className="mt-2 space-y-1.5">
+                    {swap.substitutes.map((sub) => (
+                      <li
+                        key={sub.ingredientId}
+                        className="text-sm text-muted-foreground"
+                      >
+                        <span className="font-medium text-foreground">
+                          {sub.ingredientName}
+                        </span>
+                        {" — "}
+                        {formatSwapQuantity(sub.quantity, sub.unit)}
+                        {sub.notes ? ` (${sub.notes})` : ""}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))
+            )}
           </div>
         </DrawerContent>
       </Drawer>
     </>
   );
 }
-

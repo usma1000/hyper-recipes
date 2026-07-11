@@ -12,10 +12,14 @@ import {
   getStepNotesForRecipe,
   getGeneralNoteForRecipe,
 } from "~/server/queries/userNotes";
+import { fetchRecipeView } from "./actions";
+import type { RecipeViewDTO } from "./recipeViewTypes";
 
 interface FullRecipePageServerProps {
   id: number;
 }
+
+const DEFAULT_SERVINGS = 4;
 
 /**
  * Server component that fetches recipe data and passes to client component.
@@ -28,18 +32,26 @@ export default async function FullRecipePageServer({
 }: FullRecipePageServerProps): Promise<JSX.Element> {
   const { userId } = auth();
 
-  // Fetch recipe, v2 data, related set, and user notes in parallel
   const [fullRecipe, hasV2, relatedRows, stepNotes, generalNote] =
     await Promise.all([
       getFullRecipeById(id),
       hasV2DataAsync(id),
       getRelatedRecipeSummariesExcluding(id),
-      getStepNotesForRecipe(id),
-      getGeneralNoteForRecipe(id),
+      userId ? getStepNotesForRecipe(id) : Promise.resolve({}),
+      userId ? getGeneralNoteForRecipe(id) : Promise.resolve(""),
     ]);
 
   if (!fullRecipe.published && !userId) {
     throw new Error("Recipe is unpublished.");
+  }
+
+  let initialRecipeView: RecipeViewDTO | undefined;
+  if (hasV2) {
+    try {
+      initialRecipeView = await fetchRecipeView(id, "MEDIUM", DEFAULT_SERVINGS);
+    } catch (err) {
+      console.error("Failed to load initial recipe view:", err);
+    }
   }
 
   const userNotes = userId ? { stepNotes, generalNote } : undefined;
@@ -97,6 +109,7 @@ export default async function FullRecipePageServer({
         />
       }
       hasV2Data={hasV2}
+      initialRecipeView={initialRecipeView}
       userNotes={userNotes}
     />
   );
