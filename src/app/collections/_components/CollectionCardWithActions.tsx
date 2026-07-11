@@ -66,7 +66,7 @@ export function CollectionCardWithActions({
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="flex h-8 w-8 items-center justify-center rounded-md bg-white/90 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-neutral-900/90 dark:hover:bg-neutral-900"
+                className="flex h-8 w-8 items-center justify-center rounded-md bg-card/90 shadow-sm backdrop-blur-sm transition-colors hover:bg-card dark:bg-card/90 dark:hover:bg-card"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();

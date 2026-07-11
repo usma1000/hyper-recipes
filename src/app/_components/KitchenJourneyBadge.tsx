@@ -59,8 +59,8 @@ export default function KitchenJourneyBadge() {
                   : `conic-gradient(rgb(34 197 94) ${progress.percentage}%, rgb(226 232 240) ${progress.percentage}%)`,
               }}
             >
-              <div className="absolute inset-[2px] flex items-center justify-center rounded-full bg-white transition-transform dark:bg-slate-950">
-                <Trophy className="h-5 w-5 fill-yellow-300 dark:fill-yellow-300" />
+              <div className="absolute inset-[2px] flex items-center justify-center rounded-full bg-card transition-transform dark:bg-background">
+                <Trophy className="h-5 w-5 fill-accent dark:fill-accent" />
               </div>
             </div>
             {isLoading ? (
@@ -86,9 +86,9 @@ export default function KitchenJourneyBadge() {
                 <p className="-mt-0.5 text-xs text-muted-foreground">
                   {progress.xp}/{progress.nextLevelXp} XP
                 </p>
-                <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                   <div
-                    className="h-full rounded-full bg-emerald-500"
+                    className="h-full rounded-full bg-herb"
                     style={{ width: `${progress.percentage}%` }}
                   />
                 </div>

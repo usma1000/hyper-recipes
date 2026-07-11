@@ -54,7 +54,7 @@ export default async function CollectionPage({
     <>
       <SignedOut>
         <div className="container py-8">
-          <p className="text-center text-neutral-500">
+          <p className="text-center text-muted-foreground">
             Please sign in to view collections.
           </p>
         </div>
@@ -75,15 +75,15 @@ export default async function CollectionPage({
           </div>
 
           <div className="mb-8">
-            <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-white">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground dark:text-foreground">
               {collection.title}
             </h1>
             {collection.description && (
-              <p className="mt-2 text-[15px] text-neutral-500 dark:text-neutral-400">
+              <p className="mt-2 text-[15px] text-muted-foreground dark:text-muted-foreground">
                 {collection.description}
               </p>
             )}
-            <p className="mt-2 text-[14px] text-neutral-400 dark:text-neutral-500">
+            <p className="mt-2 text-[14px] text-muted-foreground dark:text-muted-foreground">
               {recipes.length} {recipes.length === 1 ? "recipe" : "recipes"}
             </p>
           </div>

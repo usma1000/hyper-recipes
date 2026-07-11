@@ -60,8 +60,8 @@ export function QuickActions(): JSX.Element {
           className={cn(
             "flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-150",
             action.variant === "primary"
-              ? "bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100"
-              : "border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:border-neutral-700 dark:hover:bg-neutral-800"
+              ? "bg-primary text-white hover:bg-muted dark:bg-card dark:text-foreground dark:hover:bg-muted"
+              : "border border-border bg-card text-foreground/80 hover:border-foreground/15 hover:bg-muted dark:border-border dark:bg-card dark:text-foreground dark:hover:border-border dark:hover:bg-muted"
           )}
         >
           {action.icon}
@@ -71,8 +71,8 @@ export function QuickActions(): JSX.Element {
               className={cn(
                 "text-[12px]",
                 action.variant === "primary"
-                  ? "text-neutral-400 dark:text-neutral-500"
-                  : "text-neutral-500 dark:text-neutral-400"
+                  ? "text-muted-foreground dark:text-muted-foreground"
+                  : "text-muted-foreground dark:text-muted-foreground"
               )}
             >
               {action.description}

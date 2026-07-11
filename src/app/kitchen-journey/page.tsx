@@ -247,7 +247,7 @@ const KitchenJourney = () => {
 
               <div className="pt-2">
                 <div className="mb-1 text-sm font-medium">Current Streak</div>
-                <div className="flex items-center gap-1 text-amber-600">
+                <div className="flex items-center gap-1 text-accent">
                   <Clock className="h-4 w-4" />
                   <span className="font-bold">
                     {userProgress.streakDays} days
@@ -263,7 +263,7 @@ const KitchenJourney = () => {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-sm">
-                <Award className="h-5 w-5 text-amber-500" />
+                <Award className="h-5 w-5 text-accent" />
                 Next Achievements
               </CardTitle>
             </CardHeader>
@@ -274,7 +274,7 @@ const KitchenJourney = () => {
                     variant="outline"
                     className="flex h-8 w-8 items-center justify-center rounded-full p-0"
                   >
-                    <Star className="h-4 w-4 text-amber-500" />
+                    <Star className="h-4 w-4 text-accent" />
                   </Badge>
                   <span>Create 5 more recipes</span>
                 </li>
@@ -283,7 +283,7 @@ const KitchenJourney = () => {
                     variant="outline"
                     className="flex h-8 w-8 items-center justify-center rounded-full p-0"
                   >
-                    <Star className="h-4 w-4 text-amber-500" />
+                    <Star className="h-4 w-4 text-accent" />
                   </Badge>
                   <span>Maintain a 7-day streak</span>
                 </li>
@@ -361,7 +361,7 @@ const KitchenJourney = () => {
                   <div className="grid grid-cols-3 gap-3">
                     {/* Sample badges - dynamically generated based on actual badges */}
                     <div className="flex flex-col items-center text-center">
-                      <Badge className="mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-amber-600 p-0 hover:bg-amber-700">
+                      <Badge className="mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-accent/10 p-0 hover:bg-accent/10">
                         <Award className="h-8 w-8" />
                       </Badge>
                       <span className="text-sm font-medium">First Recipe</span>
@@ -371,7 +371,7 @@ const KitchenJourney = () => {
                     </div>
 
                     <div className="flex flex-col items-center text-center">
-                      <Badge className="mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-amber-600 p-0 hover:bg-amber-700">
+                      <Badge className="mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-accent/10 p-0 hover:bg-accent/10">
                         <Star className="h-8 w-8" />
                       </Badge>
                       <span className="text-sm font-medium">Level 2</span>
@@ -452,8 +452,8 @@ const KitchenJourney = () => {
 
           {/* Admin Panel */}
           {isAdmin && (
-            <Card className="overflow-hidden border-2 border-amber-200">
-              <CardHeader className="bg-amber-50">
+            <Card className="overflow-hidden border-2 border-accent/40">
+              <CardHeader className="bg-accent/10">
                 <CardTitle className="flex items-center gap-2">
                   <Settings className="h-5 w-5" />
                   Admin Controls

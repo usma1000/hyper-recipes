@@ -173,7 +173,7 @@ export function WizardPublish({ onPublish }: WizardPublishProps): JSX.Element {
                   <div
                     className={`flex h-6 w-6 items-center justify-center rounded-full ${
                       isPassed
-                        ? "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-400"
+                        ? "bg-green-100 text-herb dark:bg-green-900 dark:text-herb"
                         : check.severity === "error"
                           ? "bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-400"
                           : "bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-400"

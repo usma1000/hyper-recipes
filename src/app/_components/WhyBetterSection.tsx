@@ -39,7 +39,7 @@ export function WhyBetterSection(): JSX.Element {
   return (
     <section>
       <div className="mb-10 text-center">
-        <h2 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white md:text-3xl">
+        <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
           Why Hyper Recipes beats traditional recipe blogs
         </h2>
       </div>
@@ -48,15 +48,15 @@ export function WhyBetterSection(): JSX.Element {
         {VALUE_POINTS.map((point) => (
           <div
             key={point.title}
-            className="rounded-2xl border border-neutral-200/60 bg-white p-6 transition-all hover:border-neutral-300 hover:shadow-sm dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700"
+            className="rounded-2xl border border-border bg-card p-6 transition-all hover:border-foreground/15 hover:shadow-soft"
           >
-            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
+            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-herb-muted text-herb">
               {point.icon}
             </div>
-            <h3 className="mb-2 text-[16px] font-semibold tracking-tight text-neutral-900 dark:text-white">
+            <h3 className="mb-2 font-display text-[16px] font-semibold tracking-tight text-foreground">
               {point.title}
             </h3>
-            <p className="text-[14px] leading-relaxed text-neutral-500 dark:text-neutral-400">
+            <p className="text-[14px] leading-relaxed text-muted-foreground">
               {point.description}
             </p>
           </div>
@@ -65,4 +65,3 @@ export function WhyBetterSection(): JSX.Element {
     </section>
   );
 }
-

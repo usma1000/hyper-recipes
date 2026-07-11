@@ -8,13 +8,13 @@ import { buttonVariants } from "@/components/ui/button";
  */
 export function UpsellStrip(): JSX.Element {
   return (
-    <div className="border-b border-neutral-200/60 bg-neutral-50/80 py-3 dark:border-neutral-800 dark:bg-neutral-900/30">
+    <div className="border-b border-border/60 bg-herb-muted/60 py-3">
       <div className="container mx-auto flex flex-col items-center gap-3 px-4 sm:flex-row sm:justify-between sm:gap-4">
         <div className="flex flex-col items-center gap-1 text-center sm:items-start sm:text-left">
-          <p className="text-sm font-medium text-neutral-900 dark:text-white sm:text-base">
+          <p className="text-sm font-medium text-foreground sm:text-base">
             Unlock Pro: meal planning, smarter swaps, and premium features.
           </p>
-          <p className="hidden text-xs text-neutral-500 dark:text-neutral-400 md:block">
+          <p className="hidden text-xs text-muted-foreground md:block">
             Monthly or annual. Cancel anytime.
           </p>
         </div>
@@ -32,4 +32,3 @@ export function UpsellStrip(): JSX.Element {
     </div>
   );
 }
-

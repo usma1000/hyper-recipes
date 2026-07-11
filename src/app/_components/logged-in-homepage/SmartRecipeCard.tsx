@@ -61,9 +61,9 @@ export function SmartRecipeCard({
   return (
     <Link
       href={`/recipe/${recipe.slug}`}
-      className="group block h-full overflow-hidden rounded-2xl border border-neutral-200/60 bg-white transition-all duration-200 hover:border-neutral-300 hover:shadow-lg hover:shadow-neutral-200/50 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700 dark:hover:shadow-neutral-950/50"
+      className="group block h-full overflow-hidden rounded-2xl border border-border bg-card transition-all duration-200 hover:border-foreground/15 hover:shadow-lg hover:shadow-lift dark:border-border dark:bg-card dark:hover:border-border dark:hover:shadow-lift"
     >
-      <div className="relative aspect-[4/3] overflow-hidden bg-neutral-100 dark:bg-neutral-800">
+      <div className="relative aspect-[4/3] overflow-hidden bg-muted dark:bg-muted">
         {recipe.heroImage?.url ? (
           <Image
             src={recipe.heroImage.url}
@@ -74,7 +74,7 @@ export function SmartRecipeCard({
           />
         ) : (
           <div className="flex h-full items-center justify-center">
-            <Soup size={48} className="text-neutral-300 dark:text-neutral-600" />
+            <Soup size={48} className="text-muted-foreground/40 dark:text-muted-foreground" />
           </div>
         )}
 
@@ -83,8 +83,8 @@ export function SmartRecipeCard({
             variant="ghost"
             size="icon"
             className={cn(
-              "absolute right-2 top-2 h-8 w-8 rounded-full bg-white/90 backdrop-blur-sm transition-all hover:bg-white dark:bg-neutral-900/90 dark:hover:bg-neutral-900",
-              isSaved && "text-red-500"
+              "absolute right-2 top-2 h-8 w-8 rounded-full bg-card/90 backdrop-blur-sm transition-all hover:bg-card dark:bg-card/90 dark:hover:bg-card",
+              isSaved && "text-destructive"
             )}
             onClick={handleSaveClick}
           >
@@ -94,12 +94,12 @@ export function SmartRecipeCard({
       </div>
 
       <div className="p-4">
-        <h3 className="mb-2 text-[16px] font-semibold leading-snug tracking-tight text-neutral-900 transition-colors group-hover:text-neutral-700 dark:text-white dark:group-hover:text-neutral-200">
+        <h3 className="mb-2 font-display text-[16px] font-semibold leading-snug tracking-tight text-foreground transition-colors group-hover:text-accent">
           {recipe.name}
         </h3>
 
         {/* Time and difficulty row */}
-        <div className="mb-3 flex items-center gap-3 text-[13px] text-neutral-500 dark:text-neutral-400">
+        <div className="mb-3 flex items-center gap-3 text-[13px] text-muted-foreground dark:text-muted-foreground">
           {timeDisplay && (
             <span className="flex items-center gap-1">
               <Clock className="h-3.5 w-3.5" />
@@ -134,8 +134,8 @@ export function SmartRecipeCard({
           <div className="flex items-center gap-2">
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className="flex h-6 w-6 items-center justify-center rounded-md bg-neutral-100 dark:bg-neutral-800">
-                  <ArrowLeftRight className="h-3 w-3 text-neutral-500 dark:text-neutral-400" />
+                <div className="flex h-6 w-6 items-center justify-center rounded-md bg-muted dark:bg-muted">
+                  <ArrowLeftRight className="h-3 w-3 text-muted-foreground dark:text-muted-foreground" />
                 </div>
               </TooltipTrigger>
               <TooltipContent>
@@ -145,8 +145,8 @@ export function SmartRecipeCard({
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className="flex h-6 w-6 items-center justify-center rounded-md bg-neutral-100 dark:bg-neutral-800">
-                  <Scale className="h-3 w-3 text-neutral-500 dark:text-neutral-400" />
+                <div className="flex h-6 w-6 items-center justify-center rounded-md bg-muted dark:bg-muted">
+                  <Scale className="h-3 w-3 text-muted-foreground dark:text-muted-foreground" />
                 </div>
               </TooltipTrigger>
               <TooltipContent>
@@ -156,8 +156,8 @@ export function SmartRecipeCard({
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className="flex h-6 w-6 items-center justify-center rounded-md bg-neutral-100 dark:bg-neutral-800">
-                  <Timer className="h-3 w-3 text-neutral-500 dark:text-neutral-400" />
+                <div className="flex h-6 w-6 items-center justify-center rounded-md bg-muted dark:bg-muted">
+                  <Timer className="h-3 w-3 text-muted-foreground dark:text-muted-foreground" />
                 </div>
               </TooltipTrigger>
               <TooltipContent>
@@ -176,22 +176,22 @@ export function SmartRecipeCard({
  */
 export function SmartRecipeCardSkeleton(): JSX.Element {
   return (
-    <div className="h-full overflow-hidden rounded-2xl border border-neutral-200/60 bg-white dark:border-neutral-800 dark:bg-neutral-900">
-      <div className="relative aspect-[4/3] animate-pulse bg-neutral-100 dark:bg-neutral-800" />
+    <div className="h-full overflow-hidden rounded-2xl border border-border bg-card dark:border-border dark:bg-card">
+      <div className="relative aspect-[4/3] animate-pulse bg-muted dark:bg-muted" />
       <div className="p-4">
-        <div className="mb-2 h-5 w-3/4 animate-pulse rounded bg-neutral-100 dark:bg-neutral-800" />
+        <div className="mb-2 h-5 w-3/4 animate-pulse rounded bg-muted dark:bg-muted" />
         <div className="mb-3 flex gap-3">
-          <div className="h-4 w-16 animate-pulse rounded bg-neutral-100 dark:bg-neutral-800" />
-          <div className="h-4 w-12 animate-pulse rounded bg-neutral-100 dark:bg-neutral-800" />
+          <div className="h-4 w-16 animate-pulse rounded bg-muted dark:bg-muted" />
+          <div className="h-4 w-12 animate-pulse rounded bg-muted dark:bg-muted" />
         </div>
         <div className="mb-3 flex gap-1.5">
-          <div className="h-5 w-14 animate-pulse rounded-full bg-neutral-100 dark:bg-neutral-800" />
-          <div className="h-5 w-16 animate-pulse rounded-full bg-neutral-100 dark:bg-neutral-800" />
+          <div className="h-5 w-14 animate-pulse rounded-full bg-muted dark:bg-muted" />
+          <div className="h-5 w-16 animate-pulse rounded-full bg-muted dark:bg-muted" />
         </div>
         <div className="flex gap-2">
-          <div className="h-6 w-6 animate-pulse rounded-md bg-neutral-100 dark:bg-neutral-800" />
-          <div className="h-6 w-6 animate-pulse rounded-md bg-neutral-100 dark:bg-neutral-800" />
-          <div className="h-6 w-6 animate-pulse rounded-md bg-neutral-100 dark:bg-neutral-800" />
+          <div className="h-6 w-6 animate-pulse rounded-md bg-muted dark:bg-muted" />
+          <div className="h-6 w-6 animate-pulse rounded-md bg-muted dark:bg-muted" />
+          <div className="h-6 w-6 animate-pulse rounded-md bg-muted dark:bg-muted" />
         </div>
       </div>
     </div>

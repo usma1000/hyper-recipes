@@ -14,9 +14,9 @@ type FeaturedRecipeSpotlightProps = {
  */
 export function FeaturedRecipeSpotlight({ recipe }: FeaturedRecipeSpotlightProps): JSX.Element {
   return (
-    <section className="group overflow-hidden rounded-2xl border border-neutral-200/60 bg-white transition-all duration-200 hover:border-neutral-300 hover:shadow-lg hover:shadow-neutral-200/50 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700 dark:hover:shadow-neutral-950/50">
+    <section className="group overflow-hidden rounded-2xl border border-border bg-card transition-all duration-200 hover:border-foreground/15 hover:shadow-lg hover:shadow-lift dark:border-border dark:bg-card dark:hover:border-border dark:hover:shadow-lift">
       <div className="grid grid-cols-1 md:grid-cols-2">
-        <div className="relative aspect-[4/3] overflow-hidden bg-neutral-100 dark:bg-neutral-800 md:aspect-auto md:min-h-[320px]">
+        <div className="relative aspect-[4/3] overflow-hidden bg-muted dark:bg-muted md:aspect-auto md:min-h-[320px]">
           {recipe.heroImage?.url ? (
             <Image
               src={recipe.heroImage.url}
@@ -27,23 +27,23 @@ export function FeaturedRecipeSpotlight({ recipe }: FeaturedRecipeSpotlightProps
             />
           ) : (
             <div className="flex h-full min-h-[280px] w-full items-center justify-center">
-              <Utensils className="h-16 w-16 text-neutral-300 dark:text-neutral-600" />
+              <Utensils className="h-16 w-16 text-muted-foreground/40 dark:text-muted-foreground" />
             </div>
           )}
         </div>
         <div className="flex flex-col justify-center p-8 md:p-10">
-          <p className="mb-3 text-[12px] font-semibold uppercase tracking-widest text-neutral-400 dark:text-neutral-500">
+          <p className="mb-3 text-[12px] font-semibold uppercase tracking-widest text-muted-foreground dark:text-muted-foreground">
             Featured Recipe
           </p>
-          <h3 className="mb-3 text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white md:text-3xl">
+          <h3 className="mb-3 text-2xl font-semibold tracking-tight text-foreground dark:text-foreground md:text-3xl">
             {recipe.name}
           </h3>
-          <p className="mb-8 line-clamp-3 text-[15px] leading-relaxed text-neutral-500 dark:text-neutral-400">
+          <p className="mb-8 line-clamp-3 text-[15px] leading-relaxed text-muted-foreground dark:text-muted-foreground">
             {recipe.description}
           </p>
           <Button 
             asChild 
-            className="w-fit rounded-xl bg-neutral-900 px-6 text-[14px] font-medium shadow-sm transition-all hover:bg-neutral-800 hover:shadow-md dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100"
+            className="w-fit rounded-xl bg-primary px-6 text-[14px] font-medium shadow-sm transition-all hover:bg-muted hover:shadow-md dark:bg-card dark:text-foreground dark:hover:bg-muted"
           >
             <Link href={`/recipe/${recipe.slug}`}>
               View Recipe

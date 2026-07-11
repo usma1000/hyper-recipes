@@ -46,11 +46,11 @@ export default function RateRecipePage({
 
   const renderStar = (starNumber: number, currentRating: number) => {
     if (starNumber <= Math.floor(currentRating)) {
-      return <Star className="h-8 w-8 fill-amber-400 text-amber-400" />;
+      return <Star className="h-8 w-8 fill-accent text-accent" />;
     } else if (starNumber - 0.5 === currentRating) {
-      return <StarHalf className="h-8 w-8 fill-amber-400 text-amber-400" />;
+      return <StarHalf className="h-8 w-8 fill-accent text-accent" />;
     } else {
-      return <Star className="h-8 w-8 text-slate-200" />;
+      return <Star className="h-8 w-8 text-muted" />;
     }
   };
 
@@ -104,7 +104,7 @@ export default function RateRecipePage({
                   onClick={(e) => handleStarClick(star, e)}
                   onMouseMove={(e) => handleStarHover(star, e)}
                   onMouseLeave={() => setHoveredRating(0)}
-                  className="p-1 hover:text-amber-400"
+                  className="p-1 hover:text-accent"
                 >
                   {renderStar(star, hoveredRating || rating)}
                 </button>

@@ -299,7 +299,7 @@ export function FullRecipePageClient({
   return (
     <>
       {!recipe.published && (
-        <div className="mb-8 flex items-center justify-between rounded-md border border-yellow-400 bg-yellow-100 p-4 font-semibold text-yellow-800 dark:border-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-200">
+        <div className="mb-8 flex items-center justify-between rounded-md border border-accent/40 bg-accent/10 p-4 font-semibold text-accent">
           <div>
             <AlertTriangle
               size={16}

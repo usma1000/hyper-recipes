@@ -60,7 +60,7 @@ export default function AssignTagsForm({
       >
         {isLoading ||
           (isSubmitting && (
-            <div className="absolute left-0 top-0 z-10 h-full w-full bg-white bg-opacity-50">
+            <div className="absolute left-0 top-0 z-10 h-full w-full bg-card bg-opacity-50">
               <div className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
                 <LoadingSpinner />
               </div>

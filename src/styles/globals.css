@@ -14,72 +14,89 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  .animate-rise {
+    animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out both;
+  }
 }
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    /* Cool stone paper — not warm cream */
+    --background: 40 10% 97%;
+    --foreground: 30 8% 12%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card: 40 12% 99%;
+    --card-foreground: 30 8% 12%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover: 40 12% 99%;
+    --popover-foreground: 30 8% 12%;
 
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
+    /* Ink primary */
+    --primary: 30 10% 14%;
+    --primary-foreground: 40 15% 98%;
 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    --secondary: 35 8% 92%;
+    --secondary-foreground: 30 8% 18%;
 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --muted: 35 8% 93%;
+    --muted-foreground: 30 5% 42%;
 
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    /* Chili / paprika brand accent */
+    --accent: 12 78% 48%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
+    --border: 35 8% 86%;
+    --input: 35 8% 86%;
+    --ring: 12 78% 48%;
 
-    --radius: 0.625rem;
+    /* Herb / sage secondary */
+    --herb: 145 18% 38%;
+    --herb-foreground: 0 0% 100%;
+    --herb-muted: 145 20% 94%;
 
-    --amber-accent: 25 95% 53%;
-    --amber-accent-muted: 30 80% 96%;
+    --radius: 0.5rem;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    --background: 30 8% 8%;
+    --foreground: 40 10% 96%;
 
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
+    --card: 30 8% 11%;
+    --card-foreground: 40 10% 96%;
 
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 30 8% 11%;
+    --popover-foreground: 40 10% 96%;
 
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
+    --primary: 40 12% 96%;
+    --primary-foreground: 30 10% 12%;
 
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 30 6% 16%;
+    --secondary-foreground: 40 10% 94%;
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 30 6% 16%;
+    --muted-foreground: 35 6% 62%;
 
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 12 72% 52%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 62% 42%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --border: 30 6% 18%;
+    --input: 30 6% 18%;
+    --ring: 12 72% 52%;
+
+    --herb: 145 22% 52%;
+    --herb-foreground: 30 8% 8%;
+    --herb-muted: 145 14% 16%;
   }
 
   * {
@@ -91,18 +108,18 @@
   }
 
   h1 {
-    @apply scroll-m-20 text-4xl font-semibold tracking-tight lg:text-5xl;
-    letter-spacing: -0.025em;
-  }
-
-  h2 {
-    @apply scroll-m-20 text-2xl font-semibold tracking-tight first:mt-0;
+    @apply scroll-m-20 font-display text-4xl font-semibold tracking-tight lg:text-5xl;
     letter-spacing: -0.02em;
   }
 
-  h3 {
-    @apply scroll-m-20 text-xl font-semibold tracking-tight;
+  h2 {
+    @apply scroll-m-20 font-display text-2xl font-semibold tracking-tight first:mt-0;
     letter-spacing: -0.015em;
+  }
+
+  h3 {
+    @apply scroll-m-20 font-display text-xl font-semibold tracking-tight;
+    letter-spacing: -0.01em;
   }
 
   h4 {
@@ -114,7 +131,7 @@
   }
 
   blockquote {
-    @apply mt-6 border-l-2 pl-6 italic;
+    @apply mt-6 border-l-2 border-accent/40 pl-6 italic;
   }
 
   ul {
@@ -123,5 +140,25 @@
 
   li {
     @apply leading-relaxed;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }

@@ -55,10 +55,10 @@ export function FilterableRecipeSection({
   return (
     <section id="recipes" className="scroll-mt-8">
       <div className="mb-8">
-        <h2 className="mb-1 text-xl font-semibold tracking-tight text-neutral-900 dark:text-white">
+        <h2 className="mb-1 text-xl font-semibold tracking-tight text-foreground dark:text-foreground">
           Browse Recipes
         </h2>
-        <p className="mb-5 text-[15px] text-neutral-500 dark:text-neutral-400">
+        <p className="mb-5 text-[15px] text-muted-foreground dark:text-muted-foreground">
           Explore our collection of curated recipes
         </p>
         <CategoryPills

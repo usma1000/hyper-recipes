@@ -42,6 +42,12 @@ export function CategoryPills({
     }
   };
 
+  const pillBase =
+    "flex shrink-0 items-center gap-1.5 rounded-md px-4 py-2 text-[13px] font-medium transition-all duration-150";
+  const pillActive = "bg-primary text-primary-foreground shadow-soft";
+  const pillIdle =
+    "bg-muted text-muted-foreground hover:bg-secondary hover:text-foreground";
+
   return (
     <div className="relative -mx-1">
       <div className="scrollbar-hide flex gap-2 overflow-x-auto px-1 pb-1">
@@ -49,10 +55,8 @@ export function CategoryPills({
           <button
             onClick={() => onSelect(null)}
             className={cn(
-              "flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-medium transition-all duration-150",
-              selectedTagId === null
-                ? "bg-neutral-900 text-white shadow-sm dark:bg-white dark:text-neutral-900"
-                : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700 dark:hover:text-white",
+              pillBase,
+              selectedTagId === null ? pillActive : pillIdle,
             )}
           >
             All Recipes
@@ -63,10 +67,8 @@ export function CategoryPills({
             key={tag.id}
             onClick={() => onSelect(tag.id)}
             className={cn(
-              "flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-medium transition-all duration-150",
-              selectedTagId === tag.id
-                ? "bg-neutral-900 text-white shadow-sm dark:bg-white dark:text-neutral-900"
-                : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700 dark:hover:text-white",
+              pillBase,
+              selectedTagId === tag.id ? pillActive : pillIdle,
             )}
           >
             {getTagIcon(tag.tagType)}
@@ -87,7 +89,7 @@ export function CategoryPillsSkeleton(): JSX.Element {
       {Array.from({ length: 6 }, (_, i) => (
         <div
           key={i}
-          className="h-9 w-24 shrink-0 animate-pulse rounded-full bg-neutral-100 dark:bg-neutral-800"
+          className="h-9 w-24 shrink-0 animate-pulse rounded-md bg-muted"
         />
       ))}
     </div>

@@ -25,8 +25,8 @@ export function RecipeGrid({
 
   if (!recipes || recipes.length === 0) {
     return (
-      <div className="flex min-h-[200px] items-center justify-center rounded-2xl border border-dashed border-neutral-200 bg-neutral-50/50 dark:border-neutral-800 dark:bg-neutral-900/50">
-        <p className="text-[15px] text-neutral-400 dark:text-neutral-500">
+      <div className="flex min-h-[200px] items-center justify-center rounded-2xl border border-dashed border-border bg-muted/50 dark:border-border dark:bg-card/50">
+        <p className="text-[15px] text-muted-foreground dark:text-muted-foreground">
           No recipes found
         </p>
       </div>
