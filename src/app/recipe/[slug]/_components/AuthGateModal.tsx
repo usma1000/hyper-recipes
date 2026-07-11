@@ -14,17 +14,22 @@ import { Button } from "@/components/ui/button";
 interface AuthGateModalProps {
   isOpen: boolean;
   onClose: () => void;
+  title?: string;
+  description?: string;
 }
 
 /**
- * Modal gate for anonymous users attempting to use adapt controls.
- * Displays signup prompt with exact copy from spec.
+ * Modal gate for anonymous users attempting interactive features.
  * @param isOpen - Whether the modal is open
  * @param onClose - Callback to close the modal
+ * @param title - Optional custom title
+ * @param description - Optional custom description
  */
 export function AuthGateModal({
   isOpen,
   onClose,
+  title = "Unlock smart recipe controls",
+  description = "Adjust time, servings, and difficulty with a free account.",
 }: AuthGateModalProps): JSX.Element {
   const { signIn } = useSignIn();
 
@@ -44,10 +49,8 @@ export function AuthGateModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Unlock smart recipe controls</DialogTitle>
-          <DialogDescription>
-            Adjust time, servings, and difficulty with a free account.
-          </DialogDescription>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex-col gap-2 sm:flex-col">
           <Button onClick={handleCreateAccount} className="w-full">

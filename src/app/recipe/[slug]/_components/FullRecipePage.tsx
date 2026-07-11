@@ -24,6 +24,9 @@ import { CookModeOverlay } from "./CookModeOverlay";
 import { MobileStickyBar } from "./MobileStickyBar";
 import { MoreLikeThis } from "./MoreLikeThis";
 import { AdminWrapper } from "./AdminWrapper";
+import { CommunityCheckIns } from "./CommunityCheckIns";
+import { CheckInModal } from "./CheckInModal";
+import CookingHistory from "./CookingHistory";
 import { checkIfFavorite, toggleFavorite } from "~/app/_actions/favorites";
 import { saveGeneralNote } from "~/app/_actions/userNotes";
 import { fetchRecipeView, onPublishRecipe } from "./actions";
@@ -31,6 +34,10 @@ import type {
   RecipeViewDTO,
   RecipeViewIngredient,
 } from "./recipeViewTypes";
+import type {
+  PublicCheckIn,
+  RecipeCookStats,
+} from "~/server/queries/cookingHistory";
 
 interface FullRecipe {
   id: number;
@@ -87,6 +94,8 @@ interface FullRecipePageProps {
   hasV2Data?: boolean;
   initialRecipeView?: RecipeViewDTO;
   userNotes?: UserNotes;
+  cookStats?: RecipeCookStats;
+  publicCheckIns?: PublicCheckIn[];
 }
 
 const DEFAULT_SERVINGS = 4;
@@ -149,14 +158,7 @@ function buildSwaps(ingredients: RecipeViewIngredient[]): IngredientSwap[] {
 }
 
 /**
- * Recipe detail page with hero photo, sticky ingredients, and tucked adapt controls.
- * @param recipe - The full recipe data
- * @param relatedRecipes - Related recipes for "More like this" section
- * @param adminEditSheet - Server component for admin edit functionality
- * @param dangerZoneDialog - Server component for danger zone dialog
- * @param hasV2Data - Whether this recipe has v2 versions
- * @param initialRecipeView - SSR-loaded MEDIUM view for v2 recipes
- * @param userNotes - Personalized notes for the signed-in user
+ * Recipe detail page with hero, cook check-ins, community reviews, and cook mode.
  */
 export function FullRecipePageClient({
   recipe,
@@ -166,6 +168,8 @@ export function FullRecipePageClient({
   hasV2Data = false,
   initialRecipeView,
   userNotes,
+  cookStats = { cookCount: 0, avgRating: null },
+  publicCheckIns = [],
 }: FullRecipePageProps): JSX.Element {
   const { isSignedIn, isLoaded } = useUser();
   const [servings, setServings] = useState(DEFAULT_SERVINGS);
@@ -185,6 +189,11 @@ export function FullRecipePageClient({
 
   const [isCookModeOpen, setIsCookModeOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isCheckInOpen, setIsCheckInOpen] = useState(false);
+  const [checkInTimeMinutes, setCheckInTimeMinutes] = useState(0);
+  const [historyRefreshKey, setHistoryRefreshKey] = useState(0);
+  const [localCookStats, setLocalCookStats] =
+    useState<RecipeCookStats>(cookStats);
 
   const [generalNote, setGeneralNote] = useState(userNotes?.generalNote ?? "");
   const [savedGeneralNote, setSavedGeneralNote] = useState(
@@ -254,6 +263,19 @@ export function FullRecipePageClient({
     setIsCookModeOpen(true);
   };
 
+  const openCheckIn = (elapsedMinutes = 0): void => {
+    setCheckInTimeMinutes(elapsedMinutes);
+    setIsCheckInOpen(true);
+  };
+
+  const handleCheckInSuccess = (): void => {
+    setHistoryRefreshKey((k) => k + 1);
+    setLocalCookStats((prev) => ({
+      cookCount: prev.cookCount + 1,
+      avgRating: prev.avgRating,
+    }));
+  };
+
   const handleSaveGeneralNote = useCallback(async () => {
     setGeneralNoteSaveState("saving");
     setGeneralNoteError("");
@@ -306,7 +328,9 @@ export function FullRecipePageClient({
         recipe={recipe}
         tags={tags}
         servings={servings}
+        cookStats={localCookStats}
         onStartCookMode={handleStartCookMode}
+        onCheckIn={() => openCheckIn()}
       />
 
       <div className="container py-8 lg:py-10">
@@ -343,6 +367,14 @@ export function FullRecipePageClient({
                 hasV2Data={hasV2Data}
                 defaultCollapsed
               />
+
+              <SignedIn>
+                <CookingHistory
+                  recipeId={recipe.id}
+                  refreshKey={historyRefreshKey}
+                  onCheckIn={() => openCheckIn()}
+                />
+              </SignedIn>
             </div>
           </aside>
 
@@ -356,6 +388,12 @@ export function FullRecipePageClient({
               isLoading={isViewLoading}
               swaps={swaps}
             />
+
+            <div className="mt-8 flex justify-center sm:justify-start">
+              <Button onClick={() => openCheckIn()} size="lg">
+                I cooked this
+              </Button>
+            </div>
 
             <section className="mt-10 rounded-2xl border border-border/70 bg-gradient-to-br from-card via-card to-herb-muted/40 p-5 sm:p-6">
               <h2 className="font-display text-xl font-semibold tracking-tight">
@@ -412,6 +450,11 @@ export function FullRecipePageClient({
               </div>
             </section>
 
+            <CommunityCheckIns
+              stats={localCookStats}
+              checkIns={publicCheckIns}
+            />
+
             {dangerZoneDialog && (
               <AdminWrapper>
                 <div className="mt-8">{dangerZoneDialog}</div>
@@ -429,6 +472,7 @@ export function FullRecipePageClient({
         isFavorite={isFavorite}
         onToggleFavorite={handleToggleFavorite}
         onStartCookMode={handleStartCookMode}
+        onCheckIn={() => openCheckIn()}
         servings={servings}
         onServingsChange={setServings}
         difficulty={difficulty}
@@ -441,6 +485,16 @@ export function FullRecipePageClient({
         onClose={() => setIsCookModeOpen(false)}
         steps={stepStrings}
         ingredients={displayIngredients}
+        onLogCook={(minutes) => openCheckIn(minutes)}
+      />
+
+      <CheckInModal
+        isOpen={isCheckInOpen}
+        onClose={() => setIsCheckInOpen(false)}
+        recipeId={recipe.id}
+        recipeSlug={recipe.slug}
+        initialTimeMinutes={checkInTimeMinutes}
+        onSuccess={handleCheckInSuccess}
       />
     </>
   );

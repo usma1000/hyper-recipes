@@ -12,6 +12,10 @@ import {
   getStepNotesForRecipe,
   getGeneralNoteForRecipe,
 } from "~/server/queries/userNotes";
+import {
+  getPublicCheckIns,
+  getRecipeCookStats,
+} from "~/server/queries/cookingHistory";
 import { fetchRecipeView } from "./actions";
 import type { RecipeViewDTO } from "./recipeViewTypes";
 
@@ -32,14 +36,23 @@ export default async function FullRecipePageServer({
 }: FullRecipePageServerProps): Promise<JSX.Element> {
   const { userId } = auth();
 
-  const [fullRecipe, hasV2, relatedRows, stepNotes, generalNote] =
-    await Promise.all([
-      getFullRecipeById(id),
-      hasV2DataAsync(id),
-      getRelatedRecipeSummariesExcluding(id),
-      userId ? getStepNotesForRecipe(id) : Promise.resolve({}),
-      userId ? getGeneralNoteForRecipe(id) : Promise.resolve(""),
-    ]);
+  const [
+    fullRecipe,
+    hasV2,
+    relatedRows,
+    stepNotes,
+    generalNote,
+    cookStats,
+    publicCheckIns,
+  ] = await Promise.all([
+    getFullRecipeById(id),
+    hasV2DataAsync(id),
+    getRelatedRecipeSummariesExcluding(id),
+    userId ? getStepNotesForRecipe(id) : Promise.resolve({}),
+    userId ? getGeneralNoteForRecipe(id) : Promise.resolve(""),
+    getRecipeCookStats(id),
+    getPublicCheckIns(id),
+  ]);
 
   if (!fullRecipe.published && !userId) {
     throw new Error("Recipe is unpublished.");
@@ -111,6 +124,8 @@ export default async function FullRecipePageServer({
       hasV2Data={hasV2}
       initialRecipeView={initialRecipeView}
       userNotes={userNotes}
+      cookStats={cookStats}
+      publicCheckIns={publicCheckIns}
     />
   );
 }
